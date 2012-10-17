@@ -9,9 +9,13 @@
 
     <!-- Le styles -->
     <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <style>
+    <style type="text/css">
       body {
-        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+      .sidebar-nav {
+        padding: 9px 0;
       }
     </style>
     <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
@@ -50,17 +54,19 @@
         </div>
       </div>
     </div>
-
-    <div class="hero-unit">
+    
+    
+<div class="container-fluid">
       <div class="row-fluid">
-        <div class="span3">
-          <p>Welcome to my website! I am a graduate student in the Department of <a href="http://www.stat.iastate.edu">Statistics</a> at Iowa State University and currently teaching <a href="http://www.registrar.iastate.edu/catalog/2009-11/courses/stat.html#200">Introduction to Business Statistics</a>. My interests are quickly gravitating toward statistical computing, data visualization and dynamic report generation (ie, reproducible research). I am fairly new to <a href="http://www.r-project.org">R</a>, but entranced by its capabilities. In fact, I love using <a href="http://rstudio.org/docs/authoring/using_markdown">R-studio, knitr and Markdown</a> to create flexible and dynamic <a href="projects.html">reports</a>. Besides golfing and drinking guiness, I enjoy data-oriented programming, <a href="http://plyr.had.co.nz/">short cuts</a> and <a href="http://d3js.org/">good graphics</a>.</p>
-        </div>
+        <div class="span9">
+          <div class="hero-unit">
+            <p>Welcome to my website! I am a graduate student in the Department of <a href="http://www.stat.iastate.edu">Statistics</a> at Iowa State University and currently teaching <a href="http://www.registrar.iastate.edu/catalog/2009-11/courses/stat.html#200">Introduction to Business Statistics</a>. My interests are quickly gravitating toward statistical computing, data visualization and dynamic report generation (ie, reproducible research). I am fairly new to <a href="http://www.r-project.org">R</a>, but entranced by its capabilities. In fact, I love using <a href="http://rstudio.org/docs/authoring/using_markdown">R-studio, knitr and Markdown</a> to create flexible and dynamic <a href="projects.html">reports</a>. Besides golfing and drinking guiness, I enjoy data-oriented programming, <a href="http://plyr.had.co.nz/">short cuts</a> and <a href="http://d3js.org/">good graphics</a>.</p>
+          </div>
+        </div><!--/span-->
         <div class="span12">
           <p><img src="home_pic.jpeg" alt="Mysterious Self Portrait" align="right" width="600" height="800"></p>
-        </div>
-      </div>
-    </div>
+        </div><!--/span-->
+      </div><!--/row-->
 
       <hr>
 
@@ -68,7 +74,7 @@
         <p>&copy; Carson Sievert 2012</p>
       </footer>
 
-    </div><!--/.fluid-container-->
+</div><!--/.fluid-container-->
 
     <!-- Le javascript
     ================================================== -->
