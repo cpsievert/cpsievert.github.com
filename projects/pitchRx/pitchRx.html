@@ -2,7 +2,7 @@
 <head>
 <meta charset="utf-8">
   <meta name="author" content="Carson Sievert (Advisor: Dr. Hofmann)" />
-  <title>Simple Methods for Scraping and Visualizing Major League Baseball’s PITCHf/x Data</title>
+  <title>Simple Methods for Collecting and Analyzing Major League Baseball’s PITCHf/x Data</title>
   <style type="text/css">
 table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
   margin: 0; padding: 0; vertical-align: baseline; border: none; }
@@ -96,9 +96,9 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </head>
 <body>
 <section>
-  <h1 class="title">Simple Methods for Scraping and Visualizing Major League Baseball’s PITCHf/x Data</h1>
+  <h1 class="title">Simple Methods for Collecting and Analyzing Major League Baseball’s PITCHf/x Data</h1>
   <h2 class="author">Carson Sievert (Advisor: Dr. Hofmann)</h2>
-  <h3 class="date"><code>10/15/2012</code></h3>
+  <h3 class="date"><code>10/18/2012</code></h3>
 </section>
 <section class="slide level2" id="what-the-heck-is-pitchfx">
 <h1>What the heck is PITCHf/x?</h1>
@@ -190,86 +190,79 @@ data &lt;- <span class="kw">scrapeFX</span>(<span class="dt">start =</span> <spa
 <img src="XML.png"><figcaption></figcaption>
 </figure>
 </section>
+<section class="slide level2" id="pitchfx-xml-formatting">
+<h1>PITCHf/x XML formatting</h1>
+<figure>
+<img src="FXML.png"><figcaption></figcaption>
+</figure>
+</section>
 <section class="slide level2" id="xml-scraping-made-easy">
 <h1>XML scraping made easy</h1>
-<ul class="incremental">
-<li>pitchRx::urlsToDataFrame makes scraping XML data from <strong>any set of files</strong> much easier.</li>
-<li>Main purpose is to collect data stored as XML attributes (but it can also scrape for XML values)</li>
-<li>Tables are defined by a single XML node</li>
-<li>Table fields are defined by the most complete set of XML attribute <q>tags</q>. This can changed through the <em>tables</em> parameter.</li>
-<li>Missing (or incomplete) information is filled with NAs.</li>
-</ul>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">urlsToDataFrame</span>(urls, <span class="dt">tables =</span> <span class="kw">list</span>(),
     <span class="dt">add.children =</span> <span class="ot">FALSE</span>, <span class="dt">use.values =</span> <span class="ot">FALSE</span>)</code></pre>
+<ul class="incremental">
+<li>scrapeFX is essentially a wrapper around a more general function called urlsToDataFrame.</li>
+<li>urlsToDataFrame simplifies the parsing process for <strong>any set of XML files</strong> and casts data into a list of data frames.</li>
+<li>Main purpose is to collect data stored as XML attributes (but it can also scrape for XML content/values)</li>
+<li>Tables are defined by a tag (or node). For example, each <q>atbat</q> tag translates to one record</li>
+<li>Table fields are defined by the most complete set of XML attribute names for a tag. This can altered through the values of the <strong>tables</strong> parameter.</li>
+<li>Missing (or incomplete) attributes are filled with NAs.</li>
+</ul>
 </section>
-<section class="slide level2" id="for-our-purposes">
-<h1>For our purposes…</h1>
-<pre class="sourceCode r"><code class="sourceCode r">data &lt;- <span class="kw">scrapeFX</span>(<span class="dt">start =</span> <span class="st">&quot;2011-01-01&quot;</span>, 
-  <span class="dt">end =</span> <span class="st">&quot;2012-01-01&quot;</span>, <span class="dt">type =</span> <span class="st">&quot;pitcher&quot;</span>,
-  <span class="dt">player =</span> <span class="kw">c</span>(<span class="st">&quot;Mariano Rivera&quot;</span>, <span class="st">&quot;Phil Hughes&quot;</span>), 
-  <span class="dt">tables =</span> <span class="kw">list</span>(<span class="dt">atbat =</span> fields$atbat, 
-  <span class="dt">pitch =</span> fields$pitch, <span class="dt">game =</span> fields$game, 
-  <span class="dt">umpire =</span> <span class="ot">NULL</span>))
-
-pitchFX &lt;- <span class="kw">join</span>(data$pitch, data$atbat, 
-  <span class="dt">by =</span> <span class="kw">c</span>(<span class="st">&quot;num&quot;</span>, <span class="st">&quot;url&quot;</span>), <span class="dt">type =</span> <span class="st">&quot;inner&quot;</span>)
-pitches &lt;- pitchFX[pitchFX$pitch_type 
-  %in% <span class="kw">c</span>(<span class="st">&quot;FF&quot;</span>, <span class="st">&quot;FC&quot;</span>), ]</code></pre>
-</section>
-<section class="slide level2" id="how-can-we-gain-insight-from-pitchfx">
-<h1>How can we gain insight from PITCHf/x?</h1>
+<section class="slide level2" id="visualizing-pitchfx">
+<h1>Visualizing PITCHf/x</h1>
 <ul class="incremental">
 <li>PITCHf/x data is unique from other baseball data because of it’s inherit spatial properties.</li>
-<li>Spatial analysis of this data is most easily portrayed through visuals.</li>
-<li>For years, the most common use of PITCHf/x data has been to analyze strikezones plots (ie, horizontal and vertical locations of pitches as they cross home plate.)</li>
+<li>Spatial analysis of this data is most easily acheieved through visuals.</li>
+<li>The most common use of PITCHf/x data has been strikezones plots (ie, horizontal and vertical locations of pitches as they cross home plate.)</li>
 <li><strong>pitchRx</strong> produces strikezone plots <em>with a special twist</em>.</li>
 <li><em>Note:</em> only include <q>called strikes</q> and <q>balls</q> when examining strikezones.</li>
 </ul>
 </section>
-<section class="slide level2" id="output-of-strikefxpitches">
-<h1>Output of strikeFX(pitches)</h1>
-<figure>
-<img src="figure/visual1.png"><figcaption></figcaption>
-</figure>
-</section>
-<section class="slide level2" id="faceting-by-batter-stance">
-<h1>Faceting by batter stance</h1>
-<figure>
-<img src="figure/stand.png"><figcaption></figcaption>
-</figure>
-</section>
-<section class="slide level2" id="faceting-by-stance-and-home">
-<h1>Faceting by stance and <q>home</q></h1>
-<figure>
-<img src="figure/home.png"><figcaption></figcaption>
-</figure>
-</section>
-<section class="slide level2" id="all-the-pitches">
-<h1>All the pitches!</h1>
+<section class="slide level2" id="home-field-bias">
+<h1>Home field bias?</h1>
 <figure>
 <img src="figure/dim.png"><figcaption></figcaption>
 </figure>
 </section>
-<section class="slide level2" id="hex">
-<h1>HEX</h1>
+<section class="slide level2" id="home-field-bias2">
+<h1>Home field bias2</h1>
+<figure>
+<img src="figure/dim2.png"><figcaption></figcaption>
+</figure>
+</section>
+<section class="slide level2" id="called-strikes">
+<h1>Called Strikes</h1>
 <figure>
 <img src="figure/hex.png"><figcaption></figcaption>
 </figure>
 </section>
-<section class="slide level2" id="hex2">
-<h1>HEX2</h1>
+<section class="slide level2" id="balls">
+<h1>Balls</h1>
 <figure>
 <img src="figure/hex2.png"><figcaption></figcaption>
 </figure>
 </section>
-<section class="slide level2" id="gaining-insight-through-animation">
-<h1>Gaining insight through animation</h1>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">animateFX</span>(<span class="dt">data =</span> pitches)</code></pre>
+<section class="slide level2" id="gaining-insight-with-animatefx">
+<h1>Gaining insight with <code>animateFX()</code></h1>
 <ul class="incremental">
 <li><p>Produces a series of plots with each pitch’s location as it travels from the pitcher’s hand until they reach home plate.</p></li>
+<li><p>Plots take the viewpoint of umpire/catcher (pitcher is throwing towards us).</p></li>
 <li><p>As the animation progresses, the pitches get closer to home plate. Note that different pitches travel at different speeds. Thus, some pitches are closer (to the viewer) than others within each plot.</p></li>
+<li><p>Clearly, it would be infeasible (and uninteresting) to animate these many pitches.</p></li>
 </ul>
-<p>-</p>
+</section>
+<section class="slide level2" id="for-our-purposes">
+<h1>For our purposes…</h1>
+<pre class="sourceCode r"><code class="sourceCode r">data &lt;- <span class="kw">scrapeFX</span>(<span class="dt">start=</span><span class="st">&quot;2011-01-01&quot;</span>,
+  <span class="dt">end=</span><span class="st">&quot;2012-01-01&quot;</span>, <span class="dt">type=</span><span class="st">&quot;pitcher&quot;</span>,
+  <span class="dt">player=</span><span class="kw">c</span>(<span class="st">&quot;Mariano Rivera&quot;</span>, <span class="st">&quot;Phil Hughes&quot;</span>),
+  <span class="dt">tables =</span> <span class="kw">list</span>(<span class="dt">atbat =</span> fields$atbat, 
+                <span class="dt">pitch =</span> fields$pitch))
+FX &lt;- <span class="kw">join</span>(data$pitch, data$atbat, 
+  <span class="dt">by =</span> <span class="kw">c</span>(<span class="st">&quot;num&quot;</span>, <span class="st">&quot;url&quot;</span>), <span class="dt">type =</span> <span class="st">&quot;inner&quot;</span>)
+pitches &lt;- <span class="kw">subset</span>(FX, pitch_type %in% 
+  <span class="kw">c</span>(<span class="st">&quot;FF&quot;</span>, <span class="st">&quot;FC&quot;</span>))</code></pre>
 </section>
 <section class="slide level2" id="output-of-animatefxpitches">
 <h1>Output of animateFX(pitches)</h1>
@@ -289,12 +282,8 @@ pitches &lt;- pitchFX[pitchFX$pitch_type
 
 
 </section>
-<section class="slide level2" id="section">
-<h1>????</h1>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dim</span>(pitches)</code></pre>
-<pre><code>## [1] 602  53</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">opts_chunk$<span class="kw">get</span>(<span class="st">&#39;output.format&#39;</span>)</code></pre>
-<pre><code>## NULL</code></pre>
+<section class="slide level2" id="commentssuggestionsquestions">
+<h1>Comments/Suggestions/Questions???</h1>
 </section>
 <!-- {{{{ dzslides core
 #
