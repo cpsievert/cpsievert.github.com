@@ -1,6 +1,6 @@
-% Simple Methods for Scraping and Visualizing Major League Baseball's PITCHf/x Data
+% Simple Methods for Collecting and Analyzing Major League Baseball's PITCHf/x Data
 % Carson Sievert (Advisor: Dr. Hofmann)
-% `10/15/2012`
+% `10/17/2012`
 
 
 
@@ -105,13 +105,12 @@ data <- scrapeFX(start = "2011-01-01",
   end = "2012-01-01", type = "pitcher",
   player = c("Mariano Rivera", "Phil Hughes"), 
   tables = list(atbat = fields$atbat, 
-  pitch = fields$pitch, game = fields$game, 
-  umpire = NULL))
+  pitch = fields$pitch))
 
 pitchFX <- join(data$pitch, data$atbat, 
   by = c("num", "url"), type = "inner")
-pitches <- pitchFX[pitchFX$pitch_type 
-  %in% c("FF", "FC"), ]
+pitches <- subset(pitchFX, pitch_type 
+    %in% c("FF", "FC"))
 ```
 
 
@@ -139,7 +138,9 @@ pitches <- pitchFX[pitchFX$pitch_type
 
 
 
-## All the pitches!
+% That's cool...but it doesn't tell me much
+
+## Let's visualize all pitches!!
 
 
 

@@ -1,4 +1,4 @@
-% Simple Methods for Scraping and Visualizing Major League Baseball's PITCHf/x Data
+% Simple Methods for Collecting and Analyzing Major League Baseball's PITCHf/x Data
 % Carson Sievert (Advisor: Dr. Hofmann)
 % `r library(lubridate); paste(month(Sys.Date()), day(Sys.Date()), year(Sys.Date()), sep = "/")`
 
@@ -110,13 +110,12 @@ data <- scrapeFX(start = "2011-01-01",
   end = "2012-01-01", type = "pitcher",
   player = c("Mariano Rivera", "Phil Hughes"), 
   tables = list(atbat = fields$atbat, 
-  pitch = fields$pitch, game = fields$game, 
-  umpire = NULL))
+  pitch = fields$pitch))
 
 pitchFX <- join(data$pitch, data$atbat, 
   by = c("num", "url"), type = "inner")
-pitches <- pitchFX[pitchFX$pitch_type 
-  %in% c("FF", "FC"), ]
+pitches <- subset(pitchFX, pitch_type 
+    %in% c("FF", "FC"))
 ```
 
 ## How can we gain insight from PITCHf/x?
@@ -130,29 +129,25 @@ pitches <- pitchFX[pitchFX$pitch_type
 ## Output of strikeFX(pitches)
 
 ```{r visual1, echo=FALSE}
-example2 <- join(pitches, data$game, by = "url", type = "inner") 
-#Now create a faceting variable used for strikezone analysis
-example2$home <- NULL
-example2$home[example2$home_team_name == "Yankees"] <- "home"
-example2$home[example2$home_team_name != "Yankees"] <- "away"
-strikes <- example2[example2$des %in% c("Called Strike", "Ball"),]
-strikeFX(strikes, aes(color=des))
+strikeFX(pitches, aes(color=des))
 ```
 
 ## Faceting by batter stance
 
 ```{r stand, echo=FALSE}
-strikeFX(strikes, layer=list(aes(color=des), facet_grid(.~stand)))
+strikeFX(pitches, layer=list(aes(color=des), facet_grid(.~stand)))
 ```
 
 ## Faceting by stance and "home"
 
 ```{r home, echo=FALSE}
-strikeFX(strikes, layer=list(aes(color=des), facet_grid(top_inning~stand)))
+strikeFX(pitches, layer=list(aes(color=des), facet_grid(top_inning~stand)))
 ```
 
 
-## All the pitches!
+% That's cool...but it doesn't tell me much
+
+## Let's visualize all pitches!!
 
 ```{r getData2, echo=FALSE, cache=TRUE}
 data2 <- dbGetQuery(MLB, "SELECT pitches.px, pitches.pz, pitches.des, atbats.top_inning, atbats.stand FROM pitches INNER JOIN atbats ON (atbats.num = pitches.num AND atbats.url = pitches.url) WHERE pitches.des = 'Called Strike' OR pitches.des = 'Ball'")
