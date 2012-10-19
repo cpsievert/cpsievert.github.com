@@ -98,7 +98,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <section>
   <h1 class="title">Simple Methods for Collecting and Analyzing Major League Baseball’s PITCHf/x Data</h1>
   <h2 class="author">Carson Sievert (Advisor: Dr. Hofmann)</h2>
-  <h3 class="date"><code>10/18/2012</code></h3>
+  <h3 class="date"><code>10/19/2012</code></h3>
 </section>
 <section class="slide level2" id="what-the-heck-is-pitchfx">
 <h1>What the heck is PITCHf/x?</h1>
@@ -106,18 +106,25 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <img src="pitchfx.jpg"><figcaption></figcaption>
 </figure>
 </section>
-<section class="slide level2" id="so-what-who-cares">
-<h1>So what? Who Cares?</h1>
-<ul class="incremental">
-<li><p>PITCHf/x offers baseball analysts incredibly intricate looks at player performance (especially for pitchers)</p></li>
-<li><p>More general observations about the game of baseball are now feasible. For example, do different umpires have different strikezones?</p></li>
-<li><p>Most importantly, keeps baseball and data nerds occupied</p></li>
-</ul>
+<section class="slide level2" id="patent1">
+<figure>
+<img src="patent1.png"><figcaption></figcaption>
+</figure>
+</section>
+<section class="slide level2" id="patent2">
+<figure>
+<img src="patent2.png"><figcaption></figcaption>
+</figure>
+</section>
+<section class="slide level2" id="gameday">
+<figure>
+<img src="gameday.png"><figcaption></figcaption>
+</figure>
 </section>
 <section class="slide level2" id="pitchfx-data-structure">
 <h1>PITCHf/x data structure</h1>
 <ol class="incremental" type="1">
-<li>Among other things, MLBAM stores the parameters of a best fitting curve to almost <em>every</em> pitch thrown since 2008 in XML format.</li>
+<li>Among many other things, MLBAM stores the parameters of a best fitting curve to almost <em>every</em> pitch thrown since 2008 in XML format. These data are used to produce cool things like MLB Gameday.</li>
 <li>That’s a lot of data!!!</li>
 </ol>
 <ul class="incremental">
@@ -127,29 +134,38 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li>Over 3.5M pitches</li>
 </ul>
 </section>
+<section class="slide level2" id="so-what-who-cares">
+<h1>So what? Who Cares?</h1>
+<ul class="incremental">
+<li><p>PITCHf/x offers baseball analysts incredibly intricate looks at player performance (especially for pitchers)</p></li>
+<li><p>More general observations about the game of baseball are now feasible. For example, do different umpires have different strikezones? Do umpires tend to have different strikezones for <q>home field</q> pitchers?</p></li>
+<li><p>Most importantly, it keeps baseball and data nerds occupied.</p></li>
+</ul>
+</section>
 <section class="slide level2" id="drawbacks-to-pitchfx-data">
 <h1>Drawbacks to PITCHf/x data</h1>
 <ol class="incremental" type="1">
 <li>Scraping (and storing) data from that many files is computationally intensive.</li>
 </ol>
 <ul class="incremental">
-<li>Can’t do much to avoid this.</li>
+<li>Can’t do much to avoid this (other than options for scraping subsets of data).</li>
 </ul>
 <ol class="incremental" start="2" type="1">
 <li>Relationships between data structures aren’t intuitive.</li>
 </ol>
 <ul class="incremental">
-<li>Solution: save the file name for each record of a data frame.</li>
+<li>Solution: store file name for each record of a data frame.</li>
+<li>Other things like an <q>atbat id</q> are derived for each pitch</li>
 </ul>
 <ol class="incremental" start="3" type="1">
-<li>Many records have inconsistent fields.</li>
+<li>Inconsistent fields among records (that should be similar).</li>
 </ol>
 <ul class="incremental">
-<li>Solution: fill missing fields with NAs for each record.</li>
+<li>Solution: assign NAs to missing data.</li>
 </ul>
 </section>
-<section class="slide level2" id="pitchrx-makes-scraping-xml-data-easy">
-<h1>pitchRx makes scraping XML data easy</h1>
+<section class="slide level2" id="scraping-pitchfx-from-the-source-made-easy">
+<h1>Scraping PITCHf/x from the source made easy</h1>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(devtools)
 <span class="kw">install_github</span>(<span class="st">&#39;pitchRx&#39;</span>, <span class="st">&#39;cpsievert&#39;</span>)
 <span class="kw">library</span>(pitchRx)
@@ -213,32 +229,23 @@ data &lt;- <span class="kw">scrapeFX</span>(<span class="dt">start =</span> <spa
 <h1>Visualizing PITCHf/x</h1>
 <ul class="incremental">
 <li>PITCHf/x data is unique from other baseball data because of it’s inherit spatial properties.</li>
-<li>Spatial analysis of this data is most easily acheieved through visuals.</li>
+<li>Spatial analysis of this data is most easily achieved through visuals.</li>
 <li>The most common use of PITCHf/x data has been strikezones plots (ie, horizontal and vertical locations of pitches as they cross home plate.)</li>
 <li><strong>pitchRx</strong> produces strikezone plots <em>with a special twist</em>.</li>
-<li><em>Note:</em> only include <q>called strikes</q> and <q>balls</q> when examining strikezones.</li>
+<li><em>Note:</em> only include <q>called strikes</q> and <q>balls</q> should be used when examining strikezones.</li>
 </ul>
 </section>
 <section class="slide level2" id="home-field-bias">
-<h1>Home field bias?</h1>
 <figure>
 <img src="figure/dim.png"><figcaption></figcaption>
 </figure>
 </section>
-<section class="slide level2" id="home-field-bias2">
-<h1>Home field bias2</h1>
-<figure>
-<img src="figure/dim2.png"><figcaption></figcaption>
-</figure>
-</section>
 <section class="slide level2" id="called-strikes">
-<h1>Called Strikes</h1>
 <figure>
 <img src="figure/hex.png"><figcaption></figcaption>
 </figure>
 </section>
 <section class="slide level2" id="balls">
-<h1>Balls</h1>
 <figure>
 <img src="figure/hex2.png"><figcaption></figcaption>
 </figure>
@@ -247,9 +254,9 @@ data &lt;- <span class="kw">scrapeFX</span>(<span class="dt">start =</span> <spa
 <h1>Gaining insight with <code>animateFX()</code></h1>
 <ul class="incremental">
 <li><p>Produces a series of plots with each pitch’s location as it travels from the pitcher’s hand until they reach home plate.</p></li>
-<li><p>Plots take the viewpoint of umpire/catcher (pitcher is throwing towards us).</p></li>
+<li><p>Plot(s) take the viewpoint of umpire/catcher (pitcher is throwing towards us).</p></li>
 <li><p>As the animation progresses, the pitches get closer to home plate. Note that different pitches travel at different speeds. Thus, some pitches are closer (to the viewer) than others within each plot.</p></li>
-<li><p>Clearly, it would be infeasible (and uninteresting) to animate these many pitches.</p></li>
+<li><p>Clearly, it would be infeasible (and uninteresting) to animate <em>every</em> pitch. So consider a subset…</p></li>
 </ul>
 </section>
 <section class="slide level2" id="for-our-purposes">
@@ -273,8 +280,17 @@ pitches &lt;- <span class="kw">subset</span>(FX, pitch_type %in%
 
 
 </section>
-<section class="slide level2" id="and-flexible">
-<h1>And flexible!</h1>
+<section class="slide level2" id="real-time">
+<h1>Real Time!!!</h1>
+<div align = "center">
+ 
+<embed width="576" height="504" name="plugin" src="figure/animate2.swf" type="application/x-shockwave-flash">
+</div>
+
+
+</section>
+<section class="slide level2" id="facet-by-pitcher-and-batting-stance">
+<h1>Facet by pitcher and batting stance</h1>
 <div align = "center">
  
 <embed width="576" height="504" name="plugin" src="figure/animate3.swf" type="application/x-shockwave-flash">
@@ -282,8 +298,20 @@ pitches &lt;- <span class="kw">subset</span>(FX, pitch_type %in%
 
 
 </section>
-<section class="slide level2" id="commentssuggestionsquestions">
-<h1>Comments/Suggestions/Questions???</h1>
+<section class="slide level2" id="real-time-1">
+<h1>Real Time!!!</h1>
+<div align = "center">
+ 
+<embed width="576" height="504" name="plugin" src="figure/animate4.swf" type="application/x-shockwave-flash">
+</div>
+
+
+</section>
+<section class="slide level2" id="questions">
+<h1>Questions?</h1>
+<h3 id="comments">Comments??</h3>
+<h3 id="suggestions">Suggestions???</h3>
+<p><a href="&quot;http://github.com/cpsievert&quot;">Follow me on github!</a> - http://github.com/cpsievert</p>
 </section>
 <!-- {{{{ dzslides core
 #
