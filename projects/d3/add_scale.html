@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+		<title>Add scale</title>
+		<script type="text/javascript" src="d3.v2.js"></script>
+		<style type="text/css">
+
+			.bar {
+				fill: steelblue;
+				stroke: none;
+			}
+
+		</style>
+	</head>
+	<body>
+		<script type="text/javascript">
+
+			//Define our random-number generator function
+			var _id_ = 0;
+			function generate() {
+				return {
+					index: _id_++,
+					value: 1000 * Math.random()
+				};
+			}
+
+			//Generate random data to use for the chart
+			var data = d3.range(100).map(generate);
+			
+			
+			
+			//Set variables for desired size of chart
+			var w = 900,
+				h = 100,
+				bw = 9;
+
+
+
+			//Define a scale for y axis values
+			var yScale = d3.scale.linear()
+								 .domain([0, d3.max(data, function(d) { return d.value; })])
+								 .range([0, 100]);
+
+			//d3.max() takes an array and returns the highest value in the array.
+			//So, d3.max([1, 2, 3]) returns 3.
+			//
+			//But since 'data' is an array of objects, we have to tell d3.max() which
+			//value in each object to access for the purposes of comparison.
+			//So we specify an *accessor* function, which is passed 'd' in typical D3 fashion.
+			//
+			//	d3.max(data, function(d) { return d.value; })
+			//
+			//This accessor function tells d3.max() to look at each object's "value" value.
+
+
+
+			//Select the <body> and create a new SVG element
+			var svg = d3.select("body").append("svg")
+						.attr("width", w)
+						.attr("height", h);
+			
+
+
+			//Create a series of 'rect' elements within the SVG
+			svg.selectAll("rect.bar")
+				.data(data)
+				.enter()
+				.append("rect")
+				.attr("class", "bar")
+				.attr("x", function(d, i) {
+					return i * bw;
+				})
+				.attr("width", bw - 1)
+				.attr("y", function(d) {
+					return h - yScale(d.value);		// <-- Refine to use scale function
+				})
+				.attr("height", function(d) {
+					return yScale(d.value);			// <-- Refine to use scale function
+				});
+
+
+
+		</script>
+	</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+		<title>Data Simple</title>
+		<script type="text/javascript" src="d3.v2.js"></script>
+		<style type="text/css">
+			/* Any CSS style rules can go here */
+		</style>
+	</head>
+	<body>
+		<script type="text/javascript">
+
+			//A variable can store a single value
+			var value = 5;
+			
+			//Arrays can store multiple values
+			var arrayOfValues = [ 5, 6, 7, 8, 10, 12, 22 ];
+			
+			//Objects store arbitrary key/value pairs
+			var object = {
+				index:	0,
+				amount:	150,
+				color:	"purple"
+			};
+			
+			//These elements can all be mixed and matched,
+			//so you can make an array of objects, for example,
+			//by nesting objects {} within an array []
+			var arrayOfObjects = [
+				{ index: 0, animal: "tiger" },
+				{ index: 1, animal: "salmon" },
+				{ index: 2, animal: "platypus" }
+			];
+			
+			//This is a simple random data generator function,
+			//which generates an object with 'index' and 'value' keys.
+			var _id_ = 0;
+			function generate() {
+				return {
+					index: _id_++,
+					value: 5 + 95 * Math.random()
+				};
+			}
+
+			//d3.range() is a great helper function that generates 
+			//an array of numbers in sequence, e.g., 0, 1, 2, 3…
+			
+			//Here we use d3.range() and map() to quickly generate 
+			//and instantiate 100 random values, in an array of objects
+			var data = d3.range(100).map(generate);
+
+		</script>
+	</body>
+</html>

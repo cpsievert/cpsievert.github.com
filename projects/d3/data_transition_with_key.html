@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+		<title>Data transition with key</title>
+		<script type="text/javascript" src="d3.v2.js"></script>
+		<style type="text/css">
+
+			.bar {
+				fill: steelblue;
+				stroke: none;
+			}
+			
+			.highlight {
+				fill: red;
+			}
+
+		</style>
+	</head>
+	<body>
+		<script type="text/javascript">
+
+			//Define our random-number generator function
+			var _id_ = 0;
+			function generate() {
+				return {
+					index: _id_++,
+					value: 1000 * Math.random()
+				};
+			}
+
+			//Generate random data to use for the chart
+			var data = d3.range(100).map(generate);
+			
+			
+			
+			//Set variables for desired size of chart
+			var w = 900,
+				h = 100,
+				bw = 9;
+
+
+
+			//Define a scale for y axis values
+			var yScale = d3.scale.linear()
+								 .domain([0, d3.max(data, function(d) { return d.value; })])
+								 .range([0, 100]);
+
+
+
+			//Define a key function to uniquely identify data values
+			var key = function(d) {
+				return d.index;
+			};
+
+
+
+			//Select the <body> and create a new SVG element
+			var svg = d3.select("body").append("svg")
+						.attr("width", w)
+						.attr("height", h);
+			
+
+
+			//Create a series of 'rect' elements within the SVG
+			svg.selectAll("rect.bar")
+				.data(data, function(d) {
+					return d.index;				// <-- Reference key function within data join
+				})
+				.enter()
+				.append("rect")
+				.attr("class", "bar")
+				.attr("x", function(d, i) {
+					return i * bw;
+				})
+				.attr("width", bw - 1)
+				.attr("y", function(d) {
+					return h - yScale(d.value);
+				})
+				.attr("height", function(d) {
+					return yScale(d.value);
+				})
+				.on("mouseover", function(d) {
+					d3.select(this).classed("highlight", true);
+				})
+				.on("mouseout", function(d) {
+					d3.select(this).classed("highlight", false);
+				});
+
+
+
+			//Define a new function that updates all data
+			function update() {
+
+				data.shift();
+				data.push(generate());
+				
+			    //Re-select bars
+			    var bars = svg.selectAll("rect.bar")
+			        .data(data, key);				// <-- …while using key function!
+				
+				//Add a new rect for the incoming data (one new value)
+				bars.enter()
+					.append("rect")					//Note the the lines below are exactly the same as above
+					.attr("class", "bar")			//from when we first created all the bars initially.
+					.attr("x", w)					// <-- Put it just outside the frame of the SVG element
+					.attr("width", bw - 1)
+					.attr("y", function(d) {
+						return h - yScale(d.value);
+					})
+					.attr("height", function(d) {
+						return yScale(d.value);
+					})
+					.on("mouseover", function(d) {
+						d3.select(this).classed("highlight", true);
+					})
+					.on("mouseout", function(d) {
+						d3.select(this).classed("highlight", false);
+					});
+				
+				//Re-position bars along x-axis with animation
+				//'bars' now contains both the enter and update sets
+				bars.transition()
+					.duration(500)
+					.attr("x", function(d, i) {
+						return i * bw;
+					});
+			        
+			}
+			
+			//Execute this update function every two seconds
+			setInterval(update, 2000);
+			
+			
+			
+		</script>
+	</body>
+</html>
