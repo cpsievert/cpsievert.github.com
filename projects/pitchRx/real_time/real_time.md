@@ -1,6 +1,14 @@
-% Real Time MLB PITCHf/x Animations
-% Carson Sievert
-% `10/26/2012`
+---
+title       : Real Time MLB PITCHf/x Animations
+subtitle    : `11/15/2012`
+author      : Carson Sievert
+framework   : io2012        # {io2012, html5slides, shower, dzslides, ...}
+highlighter : highlight.js  # {highlight.js, prettify, highlight}
+hitheme     : tomorrow      # 
+widgets     : mathjax            # {mathjax, quiz, bootstrap}
+mode        : selfcontained # {standalone, draft}
+---
+
 
 
 
