@@ -1,5 +1,5 @@
 ---
-title       : A Beginner's Introduction to Shiny
+title       : Getting Started with Shiny
 subtitle    : ISU Graphics Group (1/30/13)
 author      : Carson Sievert
 job         : 
@@ -65,6 +65,10 @@ runExample("01_hello")
 * http://rstudio.github.com/shiny/tutorial/
 
 <iframe src="http://rstudio.github.com/shiny/tutorial/#hello-shiny"></iframe>
+
+
+
+
 
 
 
