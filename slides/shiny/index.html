@@ -79,11 +79,11 @@
   <h2>Run Shiny Examples From R Console</h2>
   <h3>(1) First install shiny (version 0.3.0) if you haven't yet</h3>
 
-<pre><code class="r">shiny.info &lt;- sessionInfo()$otherPkgs$shiny
-if (is.null(shiny.info)) {
+<pre><code class="r">if (!require(shiny)) {
   install.packages(&quot;shiny&quot;)
 } else {
-  update.packages(&quot;shiny&quot;)
+  version &lt;- sessionInfo()$otherPkgs$shiny$Version
+  if (version != &quot;0.3.0&quot;) update.packages(&quot;shiny&quot;)
 }
 library(shiny)
 </code></pre>
@@ -96,6 +96,7 @@ library(shiny)
 <h4>NOTE:</h4>
 
 <ul class = "build">
+<li><p>You may want to change your default browser to <a href="http://support.mozilla.org/en-US/kb/how-make-web-links-open-firefox-default">firefox</a> or <a href="http://support.google.com/chrome/bin/answer.py?hl=en&answer=95417">chrome</a>!</p></li>
 <li><p>R is occupied by to your local port</p></li>
 <li><p>Press &#39;esc&#39; (inside your R console) to quit app and return to R session...I&#39;m not sure how to do this gracefully on the command line</p></li>
 </ul>
@@ -204,7 +205,7 @@ runGist(3969102) #Neat ggplot2 example by Winston Chang
 <h4>Debugging Options</h4>
 
 <ul class = "build">
-<li>Available options are pretty crude. The &quot;shiny crew&quot; is working on better alternatives.</li>
+<li>Current options are pretty awful. The &quot;shiny crew&quot; is working on better alternatives.</li>
 </ul>
 
 </section>
@@ -224,7 +225,7 @@ runGist(3969102) #Neat ggplot2 example by Winston Chang
 </section>
     <section class="slide " id="nonFrame">
   <h2>Solution 1</h2>
-  <h3>You can access the appropriately modified app here:</h3>
+  <h3>Access the appropriately modified app:</h3>
 
 <pre><code class="r">runGitHub(&#39;shiny_apps&#39;, &#39;cpsievert&#39;, subdir=&#39;extend1&#39;)
 </code></pre>
@@ -249,7 +250,7 @@ runGist(3969102) #Neat ggplot2 example by Winston Chang
 </section>
     <section class="slide " id="nonFrame">
   <h2>Solution 2</h2>
-  <h3>You can access the appropriately modified app here:</h3>
+  <h3>Access the appropriately modified app:</h3>
 
 <pre><code class="r">runGitHub(&#39;shiny_apps&#39;, &#39;cpsievert&#39;, subdir=&#39;extend2&#39;)
 </code></pre>
@@ -265,7 +266,7 @@ runGist(3969102) #Neat ggplot2 example by Winston Chang
 </section>
     <section class="slide " id="nonFrame">
   <h2>Solution 3</h2>
-  <h3>You can access the appropriately modified app here:</h3>
+  <h3>Access the appropriately modified app:</h3>
 
 <pre><code class="r">runGitHub(&#39;shiny_apps&#39;, &#39;cpsievert&#39;, subdir=&#39;extend3&#39;)
 </code></pre>

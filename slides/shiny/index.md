@@ -54,11 +54,11 @@ mode        : selfcontained # {standalone, draft}
 
 
 ```r
-shiny.info <- sessionInfo()$otherPkgs$shiny
-if (is.null(shiny.info)) {
+if (!require(shiny)) {
   install.packages("shiny")
 } else {
-  update.packages("shiny")
+  version <- sessionInfo()$otherPkgs$shiny$Version
+  if (version != "0.3.0") update.packages("shiny")
 }
 library(shiny)
 ```
@@ -73,6 +73,8 @@ runExample("01_hello")
 
 
 <h4>NOTE:</h4>
+> - You may want to change your default browser to <a href="http://support.mozilla.org/en-US/kb/how-make-web-links-open-firefox-default">firefox</a> or <a href="http://support.google.com/chrome/bin/answer.py?hl=en&answer=95417">chrome</a>!
+
 > - R is occupied by to your local port
 
 > - Press 'esc' (inside your R console) to quit app and return to R session...I'm not sure how to do this gracefully on the command line
@@ -163,7 +165,7 @@ runGist(3969102) #Neat ggplot2 example by Winston Chang
 > - Convenient wrappers for creating options to alter inputs.
 
 #### Debugging Options
-> - Available options are pretty crude. The "shiny crew" is working on better alternatives.
+> - Current options are pretty awful. The "shiny crew" is working on better alternatives.
 
 --- #nonFrame
 ## Extending "Hello Shiny!"
@@ -179,7 +181,7 @@ runGist(3969102) #Neat ggplot2 example by Winston Chang
 --- #nonFrame
 ## Solution 1
 
-### You can access the appropriately modified app here:
+### Access the appropriately modified app:
 
 
 ```r
@@ -205,7 +207,7 @@ runGitHub('shiny_apps', 'cpsievert', subdir='extend1')
 --- #nonFrame
 ## Solution 2
 
-### You can access the appropriately modified app here:
+### Access the appropriately modified app:
 
 
 ```r
@@ -224,7 +226,7 @@ runGitHub('shiny_apps', 'cpsievert', subdir='extend2')
 --- #nonFrame
 ## Solution 3
 
-### You can access the appropriately modified app here:
+### Access the appropriately modified app:
 
 
 ```r
