@@ -48,7 +48,7 @@
 
 <p><img src="http://i.imgur.com/VClk4DS.png"></p>
 
-<div align="center"><h1>"Getting Started with Shiny"</h1></div>
+<div align="center"><h1>Getting Started with Shiny</h1></div>
 
 </section>
     <section class="slide " id="slide-2">
@@ -77,12 +77,15 @@
 </section>
     <section class="slide " id="nonFrame">
   <h2>Run Shiny Examples From R Console</h2>
-  <h3>(1) First install Shiny if you haven't yet</h3>
+  <h3>(1) First install shiny (version 0.3.0) if you haven't yet</h3>
 
-<pre><code class="r">if (!require(shiny)) {
+<pre><code class="r">shiny.info &lt;- sessionInfo()$otherPkgs$shiny
+if (is.null(shiny.info)) {
   install.packages(&quot;shiny&quot;)
-  library(shiny)
+} else {
+  update.packages(&quot;shiny&quot;)
 }
+library(shiny)
 </code></pre>
 
 <h3> (2) Use runExample() to run the shiny tutorial examples</h3>
@@ -105,10 +108,9 @@
 </section>
     <section class="slide " id="nonFrame">
   <h2>Running &quot;Hello Shiny!&quot; locally</h2>
-  <ol>
-<li><p>Place the ui.R and server.R files into the same local directory</p></li>
-<li><p>Execute the following into your R console:</p></li>
-</ol>
+  <h3>(1) Place the ui.R and server.R files into the same local directory</h3>
+
+<h3>(2) Execute the following into your R console:</h3>
 
 <pre><code class="r">setwd(&quot;My Shiny Directory&quot;)
 runApp()
@@ -117,7 +119,7 @@ runApp()
 <h3>Pros:</h3>
 
 <ul>
-<li>Preferred avenue for development and testing.</li>
+<li>Great way to develop and test your own apps.</li>
 </ul>
 
 <h3>Cons:</h3>
@@ -128,56 +130,86 @@ runApp()
 
 </section>
     <section class="slide " id="nonFrame">
-  <h2>Running apps via gist.github.com</h2>
-  <ol>
-<li><p>If you want to create one, you need a github account.</p></li>
-<li><p>&quot;Create a gist&quot;&quot; with the relevant ui.R and server.R files</p></li>
-<li><p>Use the relevant suffix on the url within runGist()</p></li>
-</ol>
+  <h2>Social shiny</h2>
+  <h3>There are now two convenient ways to run apps via github:</h3>
 
-<pre><code class="r">runGist(4638469) #Runs the &quot;Hello Shiny!&quot; code hosted on https://gist.github.com/4638469
+<ul>
+<li><p>To demonstrate, I&#39;ve copied the &quot;Hello Shiny!&quot; files onto my github page.</p></li>
+<li><p>You can run it as follows:</p></li>
+</ul>
+
+<pre><code class="r">runGitHub(&#39;shiny_apps&#39;, &#39;cpsievert&#39;, subdir=&#39;01_hello&#39;)
+</code></pre>
+
+<ul>
+<li>Or use runUrl() - achieves the same thing</li>
+</ul>
+
+<pre><code class="r">runUrl(&quot;https://github.com/cpsievert/shiny_apps/archive/master.tar.gz&quot;,
+  subdir = &quot;01_hello&quot;)
+</code></pre>
+
+<ul>
+<li>You can also run stuff on gist.github.com (this is older, but kinda convenient)</li>
+</ul>
+
+<pre><code class="r">runGist(4638469) #Runs the &quot;Hello Shiny!&quot; code hosted on gist.github.com/4638469
 runGist(4440099) #Runs my PITCHf/x app
 runGist(3969102) #Neat ggplot2 example by Winston Chang
 </code></pre>
 
 </section>
     <section class="slide " id="nonFrame">
-  <h2>Hosting via Shiny Server</h2>
-  <ol>
-<li><p>Just released on January 22nd. I don&#39;t know much about it...</p></li>
-<li><p>You can read more at: <a href="https://github.com/rstudio/shiny-server#shiny-server">https://github.com/rstudio/shiny-server#shiny-server</a></p></li>
-</ol>
+  <h2>Hosting on an actual Server</h2>
+  <h3>Two Options:</h3>
 
-</section>
-    <section class="slide " id="nonFrame">
-  <h2>Useful concepts for Shiny Development</h2>
-  <ul>
-<li><p>Inputs &amp; Outputs</p>
+<ul>
+<li>Apply for a free account with RStudio: <a href="http://www.rstudio.com/shiny/">http://www.rstudio.com/shiny/</a></li>
+</ul>
 
 <ul class = "build">
-<li>Inputs can be created via ui.R or server.R (doing this via server.R is kinda complicated)</li>
-<li>Outputs are generated via server.R, then passed back to ui.R for displaying purposes.</li>
-</ul></li>
-<li><p>Reactive Functions</p>
+<li>I haven&#39;t done this yet, but Yihui has!</li>
+</ul>
+
+<ul>
+<li>Create your own server: <a href="https://github.com/rstudio/shiny-server#shiny-server">https://github.com/rstudio/shiny-server#shiny-server</a></li>
+</ul>
 
 <ul class = "build">
-<li>Ensures new output is generated when any inputs are changed</li>
-</ul></li>
-<li><p>UI Widgets</p>
-
-<ul class = "build">
-<li>Convenient wrappers for creating options to alter inputs.</li>
-</ul></li>
-<li><p>Debugging Options</p>
-
-<ul class = "build">
-<li>Available options are pretty crude. The &quot;shiny crew&quot; is working on better alternatives.</li>
-</ul></li>
+<li>Just released on January 22nd. I don&#39;t know much about it. Any thoughts Yihui?</li>
 </ul>
 
 </section>
     <section class="slide " id="nonFrame">
-  <h2>Extending &quot;Hello Shiny!&quot; Example</h2>
+  <h2>Useful concepts for Shiny Development</h2>
+  <h4>Inputs &amp; Outputs</h4>
+
+<ul class = "build">
+<li>Inputs can be created via ui.R or server.R (doing this via server.R is kinda complicated)</li>
+<li>Outputs are generated via server.R, then passed back to ui.R for displaying purposes.</li>
+</ul>
+
+<h4>Reactive Functions</h4>
+
+<ul class = "build">
+<li>Ensures new output is generated when any inputs are changed</li>
+</ul>
+
+<h4>UI Widgets</h4>
+
+<ul class = "build">
+<li>Convenient wrappers for creating options to alter inputs.</li>
+</ul>
+
+<h4>Debugging Options</h4>
+
+<ul class = "build">
+<li>Available options are pretty crude. The &quot;shiny crew&quot; is working on better alternatives.</li>
+</ul>
+
+</section>
+    <section class="slide " id="nonFrame">
+  <h2>Extending &quot;Hello Shiny!&quot;</h2>
   <ul>
 <li><p><strong>Challenge</strong>: add options to change the mean and standard deviation.</p></li>
 <li><p>You could add either of these to ui.R:</p>
@@ -191,7 +223,15 @@ runGist(3969102) #Neat ggplot2 example by Winston Chang
 
 </section>
     <section class="slide " id="nonFrame">
-  <h2>Extending &quot;Hello Shiny!&quot; Example (part 2)</h2>
+  <h2>Solution 1</h2>
+  <h3>You can access the appropriately modified app here:</h3>
+
+<pre><code class="r">runGitHub(&#39;shiny_apps&#39;, &#39;cpsievert&#39;, subdir=&#39;extend1&#39;)
+</code></pre>
+
+</section>
+    <section class="slide " id="nonFrame">
+  <h2>Extending &quot;Hello Shiny!&quot; (part 2)</h2>
   <ul>
 <li><p><strong>Challenge</strong>: add options to plot either a normal or gamma distribution.</p></li>
 <li><p>You could add any of these to ui.R:</p>
@@ -208,7 +248,15 @@ runGist(3969102) #Neat ggplot2 example by Winston Chang
 
 </section>
     <section class="slide " id="nonFrame">
-  <h2>Extending &quot;Hello Shiny!&quot; Example (part 3)</h2>
+  <h2>Solution 2</h2>
+  <h3>You can access the appropriately modified app here:</h3>
+
+<pre><code class="r">runGitHub(&#39;shiny_apps&#39;, &#39;cpsievert&#39;, subdir=&#39;extend2&#39;)
+</code></pre>
+
+</section>
+    <section class="slide " id="nonFrame">
+  <h2>Extending &quot;Hello Shiny!&quot; (part 3)</h2>
   <ul>
 <li><p><strong>Challenge</strong>: Extend part 2 so that there are dynamic inputs according to the desired distribution. That is, display mean and std dev inputs for normal distribution and a shape input for gamma.</p></li>
 <li><p>You will need to use conditionalPanel() to check which distribution is desired.</p></li>
@@ -216,20 +264,27 @@ runGist(3969102) #Neat ggplot2 example by Winston Chang
 
 </section>
     <section class="slide " id="nonFrame">
+  <h2>Solution 3</h2>
+  <h3>You can access the appropriately modified app here:</h3>
+
+<pre><code class="r">runGitHub(&#39;shiny_apps&#39;, &#39;cpsievert&#39;, subdir=&#39;extend3&#39;)
+</code></pre>
+
+</section>
+    <section class="slide " id="nonFrame">
   <h2>Tips for Developing with Shiny</h2>
-  <ol>
-<li><p>Check out what others are doing for ideas/inspiration</p></li>
-<li><p>Use the Shiny Tutorial as your initial guide</p></li>
-<li><p>Join the Shiny google mailing list</p></li>
-<li><p>Read into HTML, CSS, Javascript, D3 for added customization</p></li>
-</ol>
+  <h4>(1) Check out what others are doing for ideas/inspiration</h4>
+
+<h4>(2) Use the Shiny Tutorial as your initial guide</h4>
+
+<h4>(3) Join the Shiny google mailing list</h4>
+
+<h4>(4) Read into HTML, CSS, Javascript, D3 for added customization</h4>
 
 </section>
     <section class="slide " id="nonFrame">
   <h2>Questions???</h2>
-  <ul>
-<li>Thanks to Joe Cheng for creating such a great product!!</li>
-</ul>
+  <h4>Thanks to Joe Cheng &amp; Winston Chang for creating/maintaining such a great product!!</h4>
 
 </section>
 </body>

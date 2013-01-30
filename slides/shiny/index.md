@@ -15,7 +15,7 @@ mode        : selfcontained # {standalone, draft}
 ---
 
 <img src="http://i.imgur.com/VClk4DS.png">
-<div align="center"><h1>"Getting Started with Shiny"</h1></div>
+<div align="center"><h1>Getting Started with Shiny</h1></div>
 
 
 ---
@@ -50,15 +50,17 @@ mode        : selfcontained # {standalone, draft}
 
 
 
-
-<h3>(1) First install Shiny if you haven't yet</h3>
+<h3>(1) First install shiny (version 0.3.0) if you haven't yet</h3>
 
 
 ```r
-if (!require(shiny)) {
+shiny.info <- sessionInfo()$otherPkgs$shiny
+if (is.null(shiny.info)) {
   install.packages("shiny")
-  library(shiny)
+} else {
+  update.packages("shiny")
 }
+library(shiny)
 ```
 
 
@@ -83,9 +85,9 @@ runExample("01_hello")
 --- #nonFrame
 ## Running "Hello Shiny!" locally
 
-1. Place the ui.R and server.R files into the same local directory
+### (1) Place the ui.R and server.R files into the same local directory
 
-2. Execute the following into your R console:
+### (2) Execute the following into your R console:
 
 
 ```r
@@ -95,53 +97,76 @@ runApp()
 
 
 ### Pros: 
-* Preferred avenue for development and testing.
+* Great way to develop and test your own apps.
 
 ### Cons: 
 * Can't share with your friends.
 
 --- #nonFrame
-## Running apps via gist.github.com
+## Social shiny
 
-1. If you want to create one, you need a github account.
+### There are now two convenient ways to run apps via github:
 
-2. "Create a gist"" with the relevant ui.R and server.R files
+* To demonstrate, I've copied the "Hello Shiny!" files onto my github page.
 
-3. Use the relevant suffix on the url within runGist()
+* You can run it as follows:
 
 
 ```r
-runGist(4638469) #Runs the "Hello Shiny!" code hosted on https://gist.github.com/4638469
+runGitHub('shiny_apps', 'cpsievert', subdir='01_hello')
+```
+
+
+* Or use runUrl() - achieves the same thing
+
+
+```r
+runUrl("https://github.com/cpsievert/shiny_apps/archive/master.tar.gz",
+  subdir = "01_hello")
+```
+
+
+* You can also run stuff on gist.github.com (this is older, but kinda convenient)
+
+
+```r
+runGist(4638469) #Runs the "Hello Shiny!" code hosted on gist.github.com/4638469
 runGist(4440099) #Runs my PITCHf/x app
 runGist(3969102) #Neat ggplot2 example by Winston Chang
 ```
 
 
 --- #nonFrame
-## Hosting via Shiny Server
+## Hosting on an actual Server
 
-1. Just released on January 22nd. I don't know much about it...
+### Two Options:
 
-2. You can read more at: https://github.com/rstudio/shiny-server#shiny-server
+* Apply for a free account with RStudio: http://www.rstudio.com/shiny/
+
+> - I haven't done this yet, but Yihui has!
+
+* Create your own server: https://github.com/rstudio/shiny-server#shiny-server
+
+> - Just released on January 22nd. I don't know much about it. Any thoughts Yihui?
 
 --- #nonFrame
 ## Useful concepts for Shiny Development
 
-* Inputs & Outputs
+#### Inputs & Outputs
 > - Inputs can be created via ui.R or server.R (doing this via server.R is kinda complicated)
 > - Outputs are generated via server.R, then passed back to ui.R for displaying purposes.
 
-* Reactive Functions
+#### Reactive Functions
 > - Ensures new output is generated when any inputs are changed
 
-* UI Widgets
+#### UI Widgets
 > - Convenient wrappers for creating options to alter inputs.
 
-* Debugging Options
+#### Debugging Options
 > - Available options are pretty crude. The "shiny crew" is working on better alternatives.
 
 --- #nonFrame
-## Extending "Hello Shiny!" Example
+## Extending "Hello Shiny!"
 
 * __Challenge__: add options to change the mean and standard deviation.
 
@@ -152,7 +177,19 @@ runGist(3969102) #Neat ggplot2 example by Winston Chang
 * Incorporate these new inputs appropriately in the server.R file.
 
 --- #nonFrame
-## Extending "Hello Shiny!" Example (part 2)
+## Solution 1
+
+### You can access the appropriately modified app here:
+
+
+```r
+runGitHub('shiny_apps', 'cpsievert', subdir='extend1')
+```
+
+
+
+--- #nonFrame
+## Extending "Hello Shiny!" (part 2)
 
 * __Challenge__: add options to plot either a normal or gamma distribution.
 
@@ -166,27 +203,49 @@ runGist(3969102) #Neat ggplot2 example by Winston Chang
 * Incorporate the new input appropriately in the server.R file.
 
 --- #nonFrame
-## Extending "Hello Shiny!" Example (part 3)
+## Solution 2
+
+### You can access the appropriately modified app here:
+
+
+```r
+runGitHub('shiny_apps', 'cpsievert', subdir='extend2')
+```
+
+
+
+--- #nonFrame
+## Extending "Hello Shiny!" (part 3)
 
 * __Challenge__: Extend part 2 so that there are dynamic inputs according to the desired distribution. That is, display mean and std dev inputs for normal distribution and a shape input for gamma.
 
 * You will need to use conditionalPanel() to check which distribution is desired.
 
+--- #nonFrame
+## Solution 3
+
+### You can access the appropriately modified app here:
+
+
+```r
+runGitHub('shiny_apps', 'cpsievert', subdir='extend3')
+```
+
 
 --- #nonFrame
 ## Tips for Developing with Shiny
 
-1. Check out what others are doing for ideas/inspiration
+#### (1) Check out what others are doing for ideas/inspiration
 
-2. Use the Shiny Tutorial as your initial guide
+#### (2) Use the Shiny Tutorial as your initial guide
 
-3. Join the Shiny google mailing list
+#### (3) Join the Shiny google mailing list
 
-4. Read into HTML, CSS, Javascript, D3 for added customization
+#### (4) Read into HTML, CSS, Javascript, D3 for added customization
 
 --- #nonFrame
 
 ## Questions???
 
-* Thanks to Joe Cheng for creating such a great product!!
+#### Thanks to Joe Cheng \& Winston Chang for creating/maintaining such a great product!!
 
