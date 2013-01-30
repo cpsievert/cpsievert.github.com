@@ -79,12 +79,9 @@
   <h2>Run Shiny Examples From R Console</h2>
   <h3>(1) First install shiny (version 0.3.0) if you haven't yet</h3>
 
-<pre><code class="r">if (!require(shiny)) {
-  install.packages(&quot;shiny&quot;)
-} else {
-  version &lt;- sessionInfo()$otherPkgs$shiny$Version
-  if (version != &quot;0.3.0&quot;) update.packages(&quot;shiny&quot;)
-}
+<pre><code class="r">require(shiny)
+version &lt;- sessionInfo()$otherPkgs$shiny$Version
+if (version != &quot;0.3.0&quot;) install.packages(&quot;shiny&quot;)
 library(shiny)
 </code></pre>
 
@@ -132,7 +129,7 @@ runApp()
 </section>
     <section class="slide " id="nonFrame">
   <h2>Social shiny</h2>
-  <h3>There are now two convenient ways to run apps via github:</h3>
+  <h3>Convenient functions for running and sharing apps:</h3>
 
 <ul>
 <li><p>To demonstrate, I&#39;ve copied the &quot;Hello Shiny!&quot; files onto my github page.</p></li>

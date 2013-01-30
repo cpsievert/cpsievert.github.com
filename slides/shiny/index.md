@@ -54,12 +54,9 @@ mode        : selfcontained # {standalone, draft}
 
 
 ```r
-if (!require(shiny)) {
-  install.packages("shiny")
-} else {
-  version <- sessionInfo()$otherPkgs$shiny$Version
-  if (version != "0.3.0") update.packages("shiny")
-}
+require(shiny)
+version <- sessionInfo()$otherPkgs$shiny$Version
+if (version != "0.3.0") install.packages("shiny")
 library(shiny)
 ```
 
@@ -107,7 +104,7 @@ runApp()
 --- #nonFrame
 ## Social shiny
 
-### There are now two convenient ways to run apps via github:
+### Convenient functions for running and sharing apps:
 
 * To demonstrate, I've copied the "Hello Shiny!" files onto my github page.
 
