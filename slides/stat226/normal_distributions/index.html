@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js ie6" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->  <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+	<title>Modeling Populations with Normal Distributions</title>
+	<meta name="description" content="Modeling Populations with Normal Distributions">
+	<meta name="author" content="Carson Sievert">
+	<meta name="generator" content="slidify" />
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=1024, user-scalable=no">
+	
+	<!-- Core and extension CSS files -->
+	<link rel="stylesheet" href="libraries/frameworks/deck.js/core/deck.core.css">
+	<link rel="stylesheet" href="libraries/frameworks/deck.js/extensions/goto/deck.goto.css">
+	<link rel="stylesheet" href="libraries/frameworks/deck.js/extensions/menu/deck.menu.css">
+	<link rel="stylesheet" href="libraries/frameworks/deck.js/extensions/navigation/deck.navigation.css">
+	<link rel="stylesheet" href="libraries/frameworks/deck.js/extensions/status/deck.status.css">
+	<link rel="stylesheet" href="libraries/frameworks/deck.js/extensions/hash/deck.hash.css">
+	<link rel="stylesheet" href="libraries/frameworks/deck.js/extensions/scale/deck.scale.css">
+	<link rel="stylesheet" href="libraries/frameworks/deck.js/extensions/codemirror/deck.codemirror.css">
+	<link rel="stylesheet" href="libraries/frameworks/deck.js/extensions/codemirror/themes/default.css">
+	<!-- Style theme. More available in /themes/style/ or create your own. -->
+	<link rel="stylesheet" href="libraries/frameworks/deck.js/themes/style/.css">
+	<!-- Transition theme. More available in /themes/transition/ or create your own. -->
+	<link rel="stylesheet" href="libraries/frameworks/deck.js/themes/transition/.css">
+	<script src="libraries/frameworks/deck.js/support/modernizr.custom.js"></script>
+	
+	<!-- LOAD STYLE SHEETS -->
+	<link rel="stylesheet" href="libraries/highlighters/highlight.js/css/tomorrow.css">  <link rel="stylesheet" href = "assets/css/ribbons.css">
+
+</head>
+
+<body class="deck-container">
+
+  <!-- Begin slides -->
+    <section class="slide " id="slide-1">
+  <h2>Modeling Populations with Normal Distributions</h2>
+  <div align="center"><img src="http://i.imgur.com/ljRDF8W.jpg"></div>
+
+</section>
+    <section class="slide " id="slide-2">
+  <h2>Random Variables</h2>
+  <h4>* Are used to model variability within a population (for now)</h4>
+
+<h4>* Stat 226 focuses on &quot;normal&quot; random variables \(X \sim N(\mu, \sigma^{2}\))</h4>
+
+<h4>* \(\mu\) represents the population mean</h4>
+
+<h4>* \(\sigma^{2}\) represents the population variance</h4>
+
+<h4>* \(\sigma\) represents the population standard deviation</h4>
+
+<h4>* For now, we assume \(\mu\) that \(\sigma\) are known. <strong>NOTE:</strong> this assumption is unrealistic and will be relaxed after Chapter 12.</h4>
+
+</section>
+    <section class="slide " id="slide-3">
+  <h2>Probability Distribution Functions</h2>
+  <h4>* PDF&#39;s assign probabilities to values of a random variable (\(X\))</h4>
+
+<h4>* Since &quot;normal&quot; random variables are continuous, we are interested in the probability that \(X\) is <strong>within a range of values</strong>.</h4>
+
+<ul class = "build">
+<li><p><strong>Example:</strong> Suppose I work on wall street. I might be interested in the probability that Apple&#39;s stock price rises tomorrow. If I define the r.v. \(X\) to be the change in Apple&#39;s stock price from today to tomorrow, <strong>what values of \(X\) do I want to assign a probability to?</strong></p></li>
+<li><p>\(X \geq 0\)</p></li>
+<li><p>Thus, I want to know \(P(X \geq 0)\).</p></li>
+</ul>
+
+</section>
+    <section class="slide " id="slide-4">
+  <h2>How can I think of the following expression - \(P(X \geq 0)\) - in English?</h2>
+  <ul class = "build">
+<li><p>In our example: The probability that Apple&#39;s stock price rises tomorrow.</p></li>
+<li><p>More generally (for any random variable):</p></li>
+<li><p>&quot;The probability that \(X\) is greater than (or equal to) 0.&quot;</p></li>
+<li><p>&quot;The area under the curve (or PDF) associated with X values greater than (or equal to) 0&quot;</p></li>
+<li><p>&quot;The proportion of the curve associated with X values greater than (or equal to) 0&quot;</p></li>
+</ul>
+
+</section>
+    <section class="slide " id="slide-5">
+  <h2>Notes on modeling</h2>
+  <h4>Suppose I have data on 2012 yearly profits for internet marketing firms (values reported in millions of dollars).</h4>
+
+<div align="center"><img src="http://www.statsdirect.com/help/image/stat0108_wmf.gif"></img></div>
+
+<ul class = "build">
+<li><p>\(P(X \geq 0)\) can now be thought of as &quot;the proportion of internet marketing firms with a positive profit&quot;.</p></li>
+<li><p>How would you provide an approximation of \(P(X \geq 0)\)?</p></li>
+</ul>
+
+</section>
+</body>
+  <!-- deck.navigation snippet -->
+  <a href="#" class="deck-prev-link" title="Previous">&#8592;</a>
+  <a href="#" class="deck-next-link" title="Next">&#8594;</a>
+  
+  <!-- deck.status snippet -->
+  <p class="deck-status">
+  <span class="deck-status-current"></span>
+    /
+  <span class="deck-status-total"></span>
+  </p>
+  
+  <!-- deck.goto snippet -->
+  <form action="." method="get" class="goto-form">
+  	<label for="goto-slide">Go to slide:</label>
+  	<input type="text" name="slidenum" id="goto-slide" list="goto-datalist">
+  	<datalist id="goto-datalist"></datalist>
+  	<input type="submit" value="Go">
+  </form>
+  
+  <!-- deck.hash snippet -->
+  <a href="." title="Permalink to this slide" class="deck-permalink">#</a>
+  
+  
+  <!-- Grab CDN jQuery, with a protocol relative URL; fall back to local if offline -->
+  <script src="//ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="libraries/frameworks/deck.js/support/jquery-1.7.min.js"><\/script>')</script>
+  
+  <!-- Add Slide Class to Build Elements -->
+  <script type='text/javascript'>
+  $('ol.build li').addClass('slide')
+  $('ul.build li').addClass('slide')
+  </script>
+  
+  <!-- Deck Core and extensions -->
+  <script src="libraries/frameworks/deck.js/core/deck.core.js"></script>
+  <script src="libraries/frameworks/deck.js/extensions/hash/deck.hash.js"></script>
+  <script src="libraries/frameworks/deck.js/extensions/menu/deck.menu.js"></script>
+  <script src="libraries/frameworks/deck.js/extensions/goto/deck.goto.js"></script>
+  <script src="libraries/frameworks/deck.js/extensions/status/deck.status.js"></script>
+  <script src="libraries/frameworks/deck.js/extensions/navigation/deck.navigation.js"></script>
+  <script src="libraries/frameworks/deck.js/extensions/scale/deck.scale.js"></script>
+  <script src="libraries/frameworks/deck.js/extensions/codemirror/codemirror.js"></script>
+  <script src="libraries/frameworks/deck.js/extensions/codemirror/mode/javascript/javascript.js"></script>
+  <script src="libraries/frameworks/deck.js/extensions/codemirror/deck.codemirror.js"></script>
+  
+  
+  <!-- Initialize the deck -->
+  <script>
+  $(function() {
+  	$.deck('.slide');
+  });
+  </script>  <!-- MathJax: Fall back to local if CDN offline but local image fonts are not supported (saves >100MB) -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      processEscapes: true
+    }
+  });
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/2.0-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<!-- <script src="https://c328740.ssl.cf1.rackcdn.com/mathjax/2.0-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script> -->
+<script>window.MathJax || document.write('<script type="text/x-mathjax-config">MathJax.Hub.Config({"HTML-CSS":{imageFont:null}});<\/script><script src="libraries/widgets/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"><\/script>')
+</script>
+<!-- LOAD HIGHLIGHTER JS FILES -->
+<script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<!-- DONE LOADING HIGHLIGHTER JS FILES -->
+
+</html>
