@@ -169,3 +169,4 @@ strikeFX(pitches, geom = "hex", density1 = list(des = "Called Strike"), density2
 ![plot of chunk strike5](figure/strike5.png) 
 
 
+#### Authored by <a href="http://cpsievert.github.com/home.html">Carson Sievert</a> via <a href="http://www.rstudio.com/ide/docs/authoring/using_markdown">R Markdown, knitr & RStudio</a>. Published by <a href="http://pages.github.com/">GitHub Pages</a>.
