@@ -1,0 +1,36 @@
+Interactive 3D Graphics of PITCHf/x Data
+=======================================
+
+<!--- view local page:
+browseURL(paste0('http://127.0.0.1:', tools:::httpdPort, '/library/pitchRx/doc/index.html'))
+-->
+
+Good thing I follow everything my current T.A. [Yihui Xie](http://yihui.name) does when he isn't grading my bayes homework. Otherwise, I wouldn't have known about the wonderful [rgl](http://cran.r-project.org/web/packages/rgl/index.html) package - and it's [seamless integration with knitr](https://twitter.com/xieyihui/status/302513617906044930).
+
+I am absolutely giddy over the features rgl will add to my recently released R package [pitchRx](http://cran.r-project.org/web/packages/pitchRx/). Here is a sneak peak of what's to come of the next pitchRx release. You can also try to reproduce these examples using the following code. Note that the example depends on developmental version of [pitchRx on github](https://github.com/cpsievert/), so if you're on windows, install [RTools](http://cran.rstudio.com/bin/windows/Rtools/) before installing [devtools](http://cran.r-project.org/web/packages/devtools/index.html).
+
+
+```{r load, message=FALSE}
+library(devtools) #must be installed first
+library(knitr) #I'm using version 1.1
+install_github('pitchRx', 'cpsievert')
+library(pitchRx)
+```
+
+```{r setup, echo=FALSE, message=FALSE}
+library(rgl)
+knit_hooks$set(webgl = hook_webgl)
+```
+
+After pitchRx is loaded, I can bring in the sample dataset and subset to restrict the graphic to Mariano Rivera's pitches.  Next, a simple call to `rglFX` automatically generates an interactive 3D scatterplot (hold and drag your mouse on the scatterplot below - you can also zoom in and out). **rgl** currently has no support for including legends, so `rglFX` also prints the appropriate hex color codes in your R console.
+
+```{r webgl1, webgl=TRUE, fig.align='center'}
+data(pitches)
+Rivera <- subset(pitches, pitcher_name=="Mariano Rivera")
+rglFX(Rivera)
+```
+
+This is a really great way to visualize PITCHf/x. With this tool, we can easily examine any sequence of pitches - from any angle. This particular graphic portrays the deception of Rivera's cut fastball compared to his four-seam.
+
+
+#### Authored by <a href="http://cpsievert.github.com/home.html">Carson Sievert</a> via <a href="http://www.rstudio.com/ide/docs/authoring/using_markdown">R Markdown, knitr & RStudio</a>. Published by <a href="http://pages.github.com/">GitHub Pages</a>.
