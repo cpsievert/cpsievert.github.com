@@ -7,7 +7,7 @@ browseURL(paste0('http://127.0.0.1:', tools:::httpdPort, '/library/pitchRx/doc/i
 
 Good thing I follow everything my current T.A. [Yihui Xie](http://yihui.name) does when he isn't grading my bayes homework. Otherwise, I wouldn't have known about the wonderful [rgl](http://cran.r-project.org/web/packages/rgl/index.html) package - and it's [seamless html integration via knitr](https://twitter.com/xieyihui/status/302513617906044930).
 
-I am absolutely giddy over the features rgl will add to my recently released R package [pitchRx](http://cran.r-project.org/web/packages/pitchRx/). Here is a sneak peak of what's to come of the next pitchRx release. You can also try to reproduce these examples using the following code. Note that the example depends on developmental version of [pitchRx on github](https://github.com/cpsievert/), so if you're on windows, install [RTools](http://cran.rstudio.com/bin/windows/Rtools/) before installing [devtools](http://cran.r-project.org/web/packages/devtools/index.html).
+I am absolutely giddy over the features rgl will add to my recently released R package [pitchRx](http://cran.r-project.org/web/packages/pitchRx/). Note that this example depends on developmental version of [pitchRx on github](https://github.com/cpsievert/), so if you're on windows, install [RTools](http://cran.rstudio.com/bin/windows/Rtools/) before installing [devtools](http://cran.r-project.org/web/packages/devtools/index.html).
 
 
 ```{r load, message=FALSE}
@@ -22,7 +22,7 @@ library(rgl)
 knit_hooks$set(webgl = hook_webgl)
 ```
 
-After pitchRx is loaded, I can bring in the sample dataset and subset to restrict the graphic to Mariano Rivera's pitches.  Next, a simple call to `rglFX` automatically generates an interactive 3D scatterplot (hold and drag your mouse on the scatterplot below - you can also zoom in and out). **rgl** currently has no support for including legends, so `rglFX` also prints the appropriate hex color codes in your R console.
+After pitchRx is loaded, I can bring in the sample dataset, then restrict to pitches thrown by Mariano Rivera's.  Next, a simple call to `rglFX` automatically generates an interactive 3D scatterplot (hold and drag your mouse on the scatterplot below - you can also zoom in and out). **rgl** currently has no support for including legends, so `rglFX` also prints the appropriate hex color codes in your R console.
 
 ```{r webgl1, webgl=TRUE, fig.align='center'}
 data(pitches)

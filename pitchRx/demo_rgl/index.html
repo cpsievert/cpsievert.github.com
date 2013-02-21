@@ -186,7 +186,7 @@ browseURL(paste0('http://127.0.0.1:', tools:::httpdPort, '/library/pitchRx/doc/i
 
 <p>Good thing I follow everything my current T.A. <a href="http://yihui.name">Yihui Xie</a> does when he isn&#39;t grading my bayes homework. Otherwise, I wouldn&#39;t have known about the wonderful <a href="http://cran.r-project.org/web/packages/rgl/index.html">rgl</a> package - and it&#39;s <a href="https://twitter.com/xieyihui/status/302513617906044930">seamless html integration via knitr</a>.</p>
 
-<p>I am absolutely giddy over the features rgl will add to my recently released R package <a href="http://cran.r-project.org/web/packages/pitchRx/">pitchRx</a>. Here is a sneak peak of what&#39;s to come of the next pitchRx release. You can also try to reproduce these examples using the following code. Note that the example depends on developmental version of <a href="https://github.com/cpsievert/">pitchRx on github</a>, so if you&#39;re on windows, install <a href="http://cran.rstudio.com/bin/windows/Rtools/">RTools</a> before installing <a href="http://cran.r-project.org/web/packages/devtools/index.html">devtools</a>.</p>
+<p>I am absolutely giddy over the features rgl will add to my recently released R package <a href="http://cran.r-project.org/web/packages/pitchRx/">pitchRx</a>. Note that this example depends on developmental version of <a href="https://github.com/cpsievert/">pitchRx on github</a>, so if you&#39;re on windows, install <a href="http://cran.rstudio.com/bin/windows/Rtools/">RTools</a> before installing <a href="http://cran.r-project.org/web/packages/devtools/index.html">devtools</a>.</p>
 
 <pre><code class="r">library(devtools)  #must be installed first
 library(knitr)  #I&#39;m using version 1.1
@@ -194,7 +194,7 @@ install_github(&quot;pitchRx&quot;, &quot;cpsievert&quot;)
 library(pitchRx)
 </code></pre>
 
-<p>After pitchRx is loaded, I can bring in the sample dataset and subset to restrict the graphic to Mariano Rivera&#39;s pitches.  Next, a simple call to <code>rglFX</code> automatically generates an interactive 3D scatterplot (hold and drag your mouse on the scatterplot below - you can also zoom in and out). <strong>rgl</strong> currently has no support for including legends, so <code>rglFX</code> also prints the appropriate hex color codes in your R console.</p>
+<p>After pitchRx is loaded, I can bring in the sample dataset, then restrict to pitches thrown by Mariano Rivera&#39;s.  Next, a simple call to <code>rglFX</code> automatically generates an interactive 3D scatterplot (hold and drag your mouse on the scatterplot below - you can also zoom in and out). <strong>rgl</strong> currently has no support for including legends, so <code>rglFX</code> also prints the appropriate hex color codes in your R console.</p>
 
 <pre><code class="r">data(pitches)
 Rivera &lt;- subset(pitches, pitcher_name == &quot;Mariano Rivera&quot;)
