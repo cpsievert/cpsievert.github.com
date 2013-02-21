@@ -5,7 +5,7 @@ Interactive 3D Graphics of PITCHf/x Data
 browseURL(paste0('http://127.0.0.1:', tools:::httpdPort, '/library/pitchRx/doc/index.html'))
 -->
 
-Good thing I follow everything my current T.A. [Yihui Xie](http://yihui.name) does when he isn't grading my bayes homework. Otherwise, I wouldn't have known about the wonderful [rgl](http://cran.r-project.org/web/packages/rgl/index.html) package - and it's [seamless integration with knitr](https://twitter.com/xieyihui/status/302513617906044930).
+Good thing I follow everything my current T.A. [Yihui Xie](http://yihui.name) does when he isn't grading my bayes homework. Otherwise, I wouldn't have known about the wonderful [rgl](http://cran.r-project.org/web/packages/rgl/index.html) package - and it's [seamless html integration via knitr](https://twitter.com/xieyihui/status/302513617906044930).
 
 I am absolutely giddy over the features rgl will add to my recently released R package [pitchRx](http://cran.r-project.org/web/packages/pitchRx/). Here is a sneak peak of what's to come of the next pitchRx release. You can also try to reproduce these examples using the following code. Note that the example depends on developmental version of [pitchRx on github](https://github.com/cpsievert/), so if you're on windows, install [RTools](http://cran.rstudio.com/bin/windows/Rtools/) before installing [devtools](http://cran.r-project.org/web/packages/devtools/index.html).
 
