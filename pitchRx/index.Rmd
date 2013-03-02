@@ -29,8 +29,11 @@ After pitchRx is loaded, I can bring in the sample dataset, then restrict to pit
 data(pitches)
 Rivera <- subset(pitches, pitcher_name=="Mariano Rivera")
 rglFX(Rivera, spheres=FALSE, alpha=.5)
-rglFX(Rivera, interval=.05) #interval between 'snapshots' is measured in seconds
-rglFX(Rivera, interval=.05, color="type")
+```
+
+```{r webgl2, webgl=TRUE, fig.align='center'}
+open3d()
+rglFX(Rivera, alpha=.5)
 ```
 
 This is a really great way to visualize PITCHf/x. With this tool, we can easily examine any sequence of pitches - from any angle. This particular graphic portrays the deception of Rivera's cut fastball compared to his four-seam.
