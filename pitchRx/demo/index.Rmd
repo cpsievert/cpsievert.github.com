@@ -8,7 +8,7 @@ browseURL(paste0('http://127.0.0.1:', tools:::httpdPort, '/library/pitchRx/doc/i
 The  **pitchRx** package provides tools for collecting and visualizing Major League Baseball (MLB) [PITCHf/x](http://en.wikipedia.org/wiki/PITCHf/x) data.
 
 ```{r setup, include=FALSE}
-opts_chunk$set(fig.path="figure/", cache.path="cache/", dev="CairoPNG", fig.align="center", warning=FALSE, message=FALSE, fig.height=7, fig.width=5)
+opts_chunk$set(fig.path="figure/", cache.path="cache/", fig.align="center", warning=FALSE, message=FALSE, fig.height=7, fig.width=5)
 opts_knit$set(animation.fun = hook_r2swf)
 require(pitchRx)
 ```
@@ -81,54 +81,85 @@ stats <- urlsToDataFrame(filenames,
 PITCHf/x Visualization
 --------------------
 
-### Animation
+### 2D animation
 
-I can use the `pitches` data frame created in the previous section to animate pitch trajectories.
+I can use the `pitches` data frame created in the previous section to demonstrate 2D animation of pitch trajectories.
 
-```{r load_pitches, echo=FALSE}
+```{r load_pitches, echo=FALSE, dev="CairoPNG"}
 data(pitches)
 ```
 
-```{r ani, fig.show="animate", interval=0.01, cache=TRUE}
+```{r ani, fig.show="animate", interval=0.01, cache=TRUE, dev="CairoPNG"}
 animateFX(pitches, point.size=5)
 ```
 
-The plotting options for **pitchRx** encompass the flexibility and syntax of the [ggplot2](http://ggplot2.org/) grammar of graphics. 
+`animateFX` also encompasses the [ggplot2](http://ggplot2.org/) layered grammar of graphics. This is quite convenient for comparing and contrasting pitching styles.
 
-```{r ani2, fig.show="animate", interval=0.01, cache=TRUE, fig.height=14, fig.width=10}
+```{r ani2, fig.show="animate", interval=0.01, cache=TRUE, fig.height=14, fig.width=10, dev="CairoPNG"}
 animateFX(pitches, point.size=5, layer=list(coord_equal(), facet_grid(pitcher_name~stand, labeller = label_both)))
+```
+
+### Interactive 3D plots
+
+**pitchRx** also makes use of **rgl** graphics. If I want a more revealing look as Mariano Rivera's pitches, I can subset the `pitches` data frame accordingly. Note that the plot below is interactive, so make sure you have javascript enabled (if you do, go ahead - click and drag)!
+
+```{r rglhook, echo=FALSE}
+require(devtools)
+library(knitr)
+knit_hooks$set(webgl = hook_webgl)
+```
+
+```{r demo, eval=FALSE}
+interactiveFX(Rivera, interval=.05, alpha=.75)
+```
+
+```{r webgl1, webgl=TRUE, echo=FALSE, fig.width=18, fig.height=10}
+#ugly workaround since knitr won't recognize interactiveFX
+Rivera <- subset(pitches, pitcher_name=="Mariano Rivera")
+install_github('pitchRx', 'cpsievert') #didn't export getSnapshots with v0.2
+snaps <- getSnapshots(Rivera, interval = 0.05)
+types <- as.character(Rivera[,"pitch_type"])
+ncolors <- length(unique(types))
+pal <- c(rgb(1, 0, 0), rgb(0, 0, 1))
+full.pal <- factor(types)
+levels(full.pal) <- pal
+open3d()
+spheres3d(x=as.vector(snaps[,,1]), y=as.vector(snaps[,,2]), z=as.vector(snaps[,,3]),
+           col=as.character(full.pal), radius=.12, alpha=.75)
+axes3d(c('x', 'y', 'z')) 
+title3d(xlab='Horizontal Axis', ylab='Distance from Home Plate', zlab='Height From Ground')
 ```
 
 ### Strikezone Densities
 
 I can also examine static pitch locations at the moment they cross the plate.
 
-```{r strike, fig.width=10}
+```{r strike, fig.width=10, dev="CairoPNG"}
 s <- strikeFX(pitches, layer=facet_grid(.~stand))
 s
 ```
 
 With `strikeFX`, ggplot2 arithmetic is preserved.
 
-```{r strike2, fig.width=10}
+```{r strike2, fig.width=10, dev="CairoPNG"}
 s+coord_equal()+facet_grid(.~stand)
 ```
 
 Unlike `animateFX`, `strikeFX` encompasses different geometries.
 
-```{r strike3, fig.height=14, fig.width=10}
+```{r strike3, fig.height=14, fig.width=10, dev="CairoPNG"}
 strikeFX(pitches, geom="tile", contour=TRUE, layer=facet_grid(pitch_types~stand))
 ```
 
 `strikeFX` allows one to easily manipulate the density of interest through two parameters: `density1` and `density2`. If these densities are identical, the density is defined accordingly. This is useful for avoiding repeative subsetting of data frames. For example, say I want the density of 'Called Strikes'.
 
-```{r strike4, fig.height=14, fig.width=10}
+```{r strike4, fig.height=14, fig.width=10, dev="CairoPNG"}
 strikeFX(pitches, geom="tile", density1=list(des="Called Strike"), density2=list(des="Called Strike"), layer=facet_grid(pitch_types~stand))
 ```
 
 If you specify two different densities, `strikeFX` will plot differenced bivariate density estimates. In this case, we are subtracting the "Ball" density from the previous "Called Strike" density.
 
-```{r strike5, fig.height=14, fig.width=10}
+```{r strike5, fig.height=14, fig.width=10, dev="CairoPNG"}
 strikeFX(pitches, geom="hex", density1=list(des="Called Strike"), density2=list(des="Ball"), layer=facet_grid(pitch_types~stand))
 ```
 
