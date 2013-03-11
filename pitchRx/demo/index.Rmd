@@ -140,10 +140,10 @@ s <- strikeFX(pitches, layer=facet_grid(.~stand))
 s
 ```
 
-With `strikeFX`, ggplot2 arithmetic is preserved.
+With `strikeFX`, ggplot2 arithmetic works as expected.
 
 ```{r strike2, fig.width=10, dev="CairoPNG"}
-s+coord_equal()+facet_grid(.~stand)
+s+coord_fixed()
 ```
 
 Unlike `animateFX`, `strikeFX` encompasses different geometries.

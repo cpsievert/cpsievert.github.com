@@ -4428,11 +4428,11 @@ s
 ![plot of chunk strike](figure/strike.png) 
 
 
-With `strikeFX`, ggplot2 arithmetic is preserved.
+With `strikeFX`, ggplot2 arithmetic works as expected.
 
 
 ```r
-s + coord_equal() + facet_grid(. ~ stand)
+s + coord_fixed()
 ```
 
 ![plot of chunk strike2](figure/strike2.png) 
