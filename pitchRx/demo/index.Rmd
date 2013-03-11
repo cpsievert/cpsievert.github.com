@@ -103,14 +103,15 @@ animateFX(pitches, point.size=5, layer=list(coord_equal(), facet_grid(pitcher_na
 
 **pitchRx** also makes use of **rgl** graphics. If I want a more revealing look as Mariano Rivera's pitches, I can subset the `pitches` data frame accordingly. Note that the plot below is interactive, so make sure you have javascript enabled (if you do, go ahead - click and drag)!
 
+```{r demo, eval=FALSE}
+Rivera <- subset(pitches, pitcher_name=="Mariano Rivera")
+interactiveFX(Rivera, interval=.05, alpha=.75)
+```
+
 ```{r rglhook, echo=FALSE}
 require(devtools)
 library(knitr)
 knit_hooks$set(webgl = hook_webgl)
-```
-
-```{r demo, eval=FALSE}
-interactiveFX(Rivera, interval=.05, alpha=.75)
 ```
 
 ```{r webgl1, webgl=TRUE, echo=FALSE, fig.width=18, fig.height=10}

@@ -266,7 +266,8 @@ stats &lt;- urlsToDataFrame(filenames, tables = list(Player = NULL), add.childre
 
 <p><strong>pitchRx</strong> also makes use of <strong>rgl</strong> graphics. If I want a more revealing look as Mariano Rivera&#39;s pitches, I can subset the <code>pitches</code> data frame accordingly. Note that the plot below is interactive, so make sure you have javascript enabled (if you do, go ahead - click and drag)!</p>
 
-<pre><code class="r">interactiveFX(Rivera, interval = 0.05, alpha = 0.75)
+<pre><code class="r">Rivera &lt;- subset(pitches, pitcher_name == &quot;Mariano Rivera&quot;)
+interactiveFX(Rivera, interval = 0.05, alpha = 0.75)
 </code></pre>
 
 <pre><code>## [1] 1
