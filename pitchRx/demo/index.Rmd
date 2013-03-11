@@ -105,7 +105,7 @@ animateFX(pitches, point.size=5, layer=list(coord_equal(), facet_grid(pitcher_na
 
 ```{r demo, eval=FALSE}
 Rivera <- subset(pitches, pitcher_name=="Mariano Rivera")
-interactiveFX(Rivera, interval=.05, alpha=.75)
+interactiveFX(Rivera, interval=.05)
 ```
 
 ```{r rglhook, echo=FALSE}
@@ -126,7 +126,7 @@ full.pal <- factor(types)
 levels(full.pal) <- pal
 open3d()
 spheres3d(x=as.vector(snaps[,,1]), y=as.vector(snaps[,,2]), z=as.vector(snaps[,,3]),
-           col=as.character(full.pal), radius=.12, alpha=.75)
+           col=as.character(full.pal), radius=.12)
 axes3d(c('x', 'y', 'z')) 
 title3d(xlab='Horizontal Axis', ylab='Distance from Home Plate', zlab='Height From Ground')
 ```
