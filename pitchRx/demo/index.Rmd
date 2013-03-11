@@ -121,7 +121,7 @@ install_github('pitchRx', 'cpsievert') #didn't export getSnapshots with v0.2
 snaps <- getSnapshots(Rivera, interval = 0.05)
 types <- as.character(Rivera[,"pitch_type"])
 ncolors <- length(unique(types))
-pal <- c(rgb(1, 0, 0), rgb(0, 0, 1))
+pal <- c(rgb(0, 0, 1), rgb(1, 0, 0))
 full.pal <- factor(types)
 levels(full.pal) <- pal
 open3d()
