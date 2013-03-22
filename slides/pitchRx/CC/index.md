@@ -27,15 +27,33 @@ mode        : selfcontained                   # {standalone, draft}
 ---
 ## Scraping made easy
 
-```{r ex1, cache=TRUE, results='hide'}
+
+```r
 library(pitchRx)
-data <- scrapeFX(start="2011-04-04", end="2011-04-04")
-str(data, list.len=5)
+data <- scrapeFX(start = "2011-04-04", end = "2011-04-04")
+str(data, list.len = 5)
 ```
 
-```{r head, echo=FALSE}
-str(data, list.len=5)
+
+
 ```
+## List of 2
+##  $ atbat:'data.frame':	477 obs. of  20 variables:
+##   ..$ away_team_runs: chr [1:477] "1" NA NA NA ...
+##   ..$ b             : chr [1:477] "2" "0" "0" "1" ...
+##   ..$ b_height      : chr [1:477] "5-11" "6-1" "6-2" "6-4" ...
+##   ..$ batter        : chr [1:477] "217100" "430637" "457708" "137140" ...
+##   ..$ des           : chr [1:477] "Willie Bloomquist homers (1) on a fly ball to left field.  " "Kelly Johnson singles on a ground ball to right fielder Kosuke Fukudome.  " "Justin Upton flies out to left fielder Alfonso Soriano.  " "Russell Branyan strikes out swinging.  " ...
+##   .. [list output truncated]
+##  $ pitch:'data.frame':	1636 obs. of  35 variables:
+##   ..$ ax             : chr [1:1636] "-8.087" "-11.429" "-8.23" "-5.117" ...
+##   ..$ ay             : chr [1:1636] "29.033" "23.352" "21.883" "25.5" ...
+##   ..$ az             : chr [1:1636] "-14.377" "-21.414" "-24.381" "-13.502" ...
+##   ..$ break_angle    : chr [1:1636] "22.7" "24.7" "17.0" "16.6" ...
+##   ..$ break_length   : chr [1:1636] "4.2" "6.4" "6.6" "3.8" ...
+##   .. [list output truncated]
+```
+
 
 
 ---
@@ -54,59 +72,53 @@ str(data, list.len=5)
 
 We'll focus on fastballs thrown by Mariano Rivera and Phil Hughes in 2011:
 
-```{r ex2, eval=FALSE}
+
+```r
 atbats <- subset(data$atbat, pitcher_name %in% c("Mariano Rivera", "Phil Hughes"))
-pitchFX <- join(atbats, data$pitch, by=c("num", "url"), type="inner")
+pitchFX <- join(atbats, data$pitch, by = c("num", "url"), type = "inner")
 pitches <- subset(pitchFX, pitch_type %in% c("FF", "FC"))
 ```
+
 
 ---
 ## Animation
 
-```{r setup, include=FALSE}
-opts_chunk$set(fig.path="figure/", cache.path="cache/", fig.align="center", warning=FALSE, message=FALSE, fig.height=10, fig.width=12)
-opts_knit$set(animation.fun = hook_r2swf)
-library(pitchRx)
-data(pitches)
-```
 
-```{r ani, fig.show="animate", interval=0.01, cache=TRUE, dev="CairoPNG", echo=FALSE}
-animateFX(pitches, point.size=5, layer=coord_equal())
-```
+
+
+<div align = "center">
+ <embed width="864" height="720" name="plugin" src="figure/ani.swf" type="application/x-shockwave-flash"> 
+</div>
+
 
 ---
 ## Easily add ggplot layers
 
-```{r ani3, fig.show="animate", interval=0.01, cache=TRUE, dev="CairoPNG", echo=FALSE}
-animateFX(pitches, point.size=5, layer=list(theme_bw(), coord_equal(), facet_grid(pitcher_name~stand, labeller = label_both)))
-```
+<div align = "center">
+ <embed width="864" height="720" name="plugin" src="figure/ani3.swf" type="application/x-shockwave-flash"> 
+</div>
+
 
 ---
 
 ## WebGL graphics
 
-```{r demo, echo=FALSE, eval=FALSE}
-Rivera <- subset(pitches, pitcher_name=="Mariano Rivera")
-interactiveFX(Rivera, interval=.05)
-```
+
+
 
 <iframe src="http://cpsievert.github.com/pitchRx/rgl1"></iframe>
 
 ---
-
 ## More WebGL
 
-```{r demo2, echo=FALSE, eval=FALSE}
-Rivera <- subset(pitches, pitcher_name=="Mariano Rivera")
-interactiveFX(Rivera, color="type", alpha=.2)
-```
+
+
 
 <iframe src="http://cpsievert.github.com/pitchRx/rgl2"></iframe>
 
 ---
-## Shiny
 
-<iframe src="http://glimmer.rstudio.com/cpsievert/pitchRx"></iframe>
+<iframe src="http://glimmer.rstudio.com/cpsievert/pitchRx" height="950" width="1000"></iframe>
 
 ---
 ## Biased umpires?
@@ -147,4 +159,24 @@ interactiveFX(Rivera, color="type", alpha=.2)
 ## Away balls minus home balls
 
 <div align="center"><img src="http://i.imgur.com/Fe4Monz.png" height="550" width="1000"/></div>
+
+---
+## Wrapping up
+
+> - pitchRx makes it painless to get your hands dirty with PITCHf/x
+
+> - It also simplifies general XML parsing into data frames
+
+
+
+---
+## Special Thanks to:
+
+### This project wouldn't be possible without the help of these people/organizations. Thank you for your great work!!!
+
+* Dr. Heike Hofmann (my major professor) [@heike_hh](https://twitter.com/heike_hh)
+* RStudio [@rstudioapp](https://twitter.com/rstudioapp)
+* MLB Advanced Media [@mlbdotcom](https://twitter.com/mlbdotcom)
+* Alan Nathan [@pobguy](https://twitter.com/pobguy)
+* Mike Fast [@fastballs](https://twitter.com/fastballs)
 
