@@ -1,182 +1,263 @@
----
-title       : pitchRx 
-subtitle    : Tools for Collecting and Visualizing MLB PITCHf/x Data
-author      : Carson Sievert
-job         : Department of Statistics, Iowa State University
-framework   : io2012                          # {io2012, html5slides, shower, dzslides, ...}
-highlighter : highlight.js                    # {highlight.js, prettify, highlight}
-hitheme     : github                        # 
-widgets     : [mathjax, bootstrap]            # {mathjax, quiz, bootstrap}
-mode        : selfcontained                   # {standalone, draft}
----
+% pitchRx: Tools for Collecting and Analyzing Major League Baseball's PITCHf/x Data
+% Carson Sievert
+% 3/29/2013
 
-## What is PITCHf/x?
+## Biography
 
-<iframe src="http://www.sportvision.com/media/pitchfx"></iframe>
+* B.A. in Math & Econ from Saint John's University (MN)
+* Data Analyst at a College Enrollment & Financial Aid Consulting Firm
+* Second Year Statistics Graduate Student at ISU
+* Soon to be Summer Intern at AT&T (mentors: Kenny Shirley & Chris Volinsky)
+* PhD Interest: web based statistical graphics
 
----
+## Outline
+
+1. What is PITCHf/x?
+  * Camera based motion tracking system placed in every MLB stadium
+  * Tracks every baseball thrown by a pitcher to home plate
+  * PITCHf/x parameters that explain the ball's path
+2. PITCHf/x data format & structure
+  * XML formatting
+  * Hierarchal layout
+  * Issues with data collection
+  
+## Outline continued
+  
+3. Visualizing PITCHf/x
+  * 2D Animation for comparing pitcher tendencies
+  * 3D interactive graphics for a closer look
+  * Strikezone plots to evaluate umpire bias towards the home team
+
+## Problem Statement
+
+1. Existing methods for collecting PITCHf/x require running Perl scripts and other Web stack technologies. This presents hurdles that prevent many people from obtaining the data. Furthermore, these scripts are very hard to customize or extend.
+
+2. There is no automated process for creating popular PITCHf/x visuals. Furthermore, most are restricted to static 2D plots of PITCHf/x data, even though this data can be used to create three-dimensional flight paths dependent upon time.
+
+## The Solution: `pitchRx`
+
+* Available on CRAN and github.
+
+1. Easily collect PITCHf/x and related information from the web source.
+  * Simplifies parsing of many XML files into data frame(s). `pitchRx` has functionality for general XML scraping, but I will focus on PITCHf/x.
+  
+2. Provides an automated process for producing strikezone plots (bivariate scatterplot densities), 2D animation of pitch locations over time, and 3D interactive graphics.
+
+## pat1
+
+![](patent2.png)
+
+## pat2
+
+![](patent1.png)
+
+## PITCHf/x parameters
+
+* A best fitting curve is fit to the following equations of motion:
+
+1. $x(t) = x0 + vx0*t + ax*t^2$
+2. $y(t) = y0 + vy0*t + ay*t^2$
+3. $z(t) = z0 + vz0*t + az*t^2$
+
+* The fitted coefficients are saved as: $x0, y0, z0, vx0, vy0, vz0, ax, ay, az$
+* With this equation, the 3D location of the pitch can recreated for any time point.
+
+## game
+
+![](gameday.png)
+
 ## PITCHf/x data format
 
-<iframe src="http://gd2.mlb.com/components/game/mlb/year_2011/month_04/day_04/gid_2011_04_04_minmlb_nyamlb_1/inning/inning_all.xml"></iframe>
+![](pitch_XML.png)
 
----
-## My initial attempt at scraping PITCHf/x
+## XML Hierarchy
 
-<div align="center"><img src="http://i.imgur.com/Wum3mpD.png" height="550" width="800"/></div>
+![](XML.png)
 
----
+## Data Issues & Solutions
+
+1. Information across different tags are inconsistent.
+ * `pitchRx` fills NAs where appropriate
+2. Players are identified by ID.
+ * `pitchRx` creates columns to identify the pitcher and batter by name.
+3. Source data doesn't explicitly record things like the pitch count.
+ * `pitchRx` derives such columns to help compliment an analysis.
+
 ## Scraping made easy
+
+
+
 
 
 ```r
 library(pitchRx)
-data <- scrapeFX(start = "2011-04-04", end = "2011-04-04")
-str(data, list.len = 5)
+data <- scrapeFX(start="2011-01-01",
+                end="2011-12-31",
+            tables=list(atbat=NULL, pitch=NULL))
 ```
 
 
+* This function call scrapes all 2011 information at the atbat and pitch level into two data frames: `data$atbat` and `data$pitch`.
 
-```
-## List of 2
-##  $ atbat:'data.frame':	477 obs. of  20 variables:
-##   ..$ away_team_runs: chr [1:477] "1" NA NA NA ...
-##   ..$ b             : chr [1:477] "2" "0" "0" "1" ...
-##   ..$ b_height      : chr [1:477] "5-11" "6-1" "6-2" "6-4" ...
-##   ..$ batter        : chr [1:477] "217100" "430637" "457708" "137140" ...
-##   ..$ des           : chr [1:477] "Willie Bloomquist homers (1) on a fly ball to left field.  " "Kelly Johnson singles on a ground ball to right fielder Kosuke Fukudome.  " "Justin Upton flies out to left fielder Alfonso Soriano.  " "Russell Branyan strikes out swinging.  " ...
-##   .. [list output truncated]
-##  $ pitch:'data.frame':	1636 obs. of  35 variables:
-##   ..$ ax             : chr [1:1636] "-8.087" "-11.429" "-8.23" "-5.117" ...
-##   ..$ ay             : chr [1:1636] "29.033" "23.352" "21.883" "25.5" ...
-##   ..$ az             : chr [1:1636] "-14.377" "-21.414" "-24.381" "-13.502" ...
-##   ..$ break_angle    : chr [1:1636] "22.7" "24.7" "17.0" "16.6" ...
-##   ..$ break_length   : chr [1:1636] "4.2" "6.4" "6.6" "3.8" ...
-##   .. [list output truncated]
-```
+* By setting the value of each tables element to `NULL`, `scrapeFX` finds the most complete set of fields (and fills `NA` appropriately).
 
+* One can pass a character vector, for example `c("x0", "y0", "z0")`, for the value and this will set the "master" list of fields.
 
-
----
-## Devil's in the details
-
-* Among many other things, this website hosts data on almost every pitch thrown since 2008.
-* That's a lot of data! Since 2008, there was:
-  * Over 14,000 games
-  * Over 5,000 players (each player has a unique file for each game)
-  * Over 1M atbats
-  * Over 3.5M pitches
-* Data is stored on multiple levels. The connections aren't always intuitive.
-
----
-## Example data
-
-We'll focus on fastballs thrown by Mariano Rivera and Phil Hughes in 2011:
+## Scraping PITCHf/x and related data
 
 
 ```r
-atbats <- subset(data$atbat, pitcher_name %in% c("Mariano Rivera", "Phil Hughes"))
-pitchFX <- join(atbats, data$pitch, by = c("num", "url"), type = "inner")
-pitches <- subset(pitchFX, pitch_type %in% c("FF", "FC"))
+data <- scrapeFX(tables=list(coach=NULL,
+          runner=NULL, umpire=NULL,
+          atbat=fields$atbat, 
+          pitch=fields$pitch, 
+          player=fields$player,  
+          game=fields$game))
 ```
 
 
----
-## Animation
+* Useful for examining differences in umpire strikezones, for instance.
+
+## Mariano Rivera and Phil Hughes fastballs from 2011.
 
 
+```r
+atbats <- subset(data$atbat, pitcher_name %in% 
+                c("Mariano Rivera", "Phil Hughes"))
+pitchFX <- join(atbats, data$pitch, 
+                by=c("num", "url"), type="inner")
+pitches <- subset(pitchFX, pitch_type %in% 
+                  c("FF", "FC"))
+```
 
 
-<div align = "center">
+* I will use `pitches` to demonstrate the animation features of `pitchRx`
+
+
+## Animation and batter stance
+
+* By default, `pitchRx` calculates two aggregated strikezones. One for left handed batters and one for right handed batters.
+
+* For this reason, it usually makes sense to facet plots by batter stance.
+
+* The next slide is output from:
+
+
+```r
+animateFX(pitches, layer=list(theme_bw(),
+                    coord_equal(),
+                    facet_grid(.~stand, 
+                      labeller = label_both)))
+```
+
+
+* Note that as the animation progresses, the pitches are being thrown directly towards you.
+
+## `pitches` by stance (real time)
+
+<div align = "left">
  <embed width="864" height="720" name="plugin" src="figure/ani.swf" type="application/x-shockwave-flash"> 
 </div>
 
 
----
-## Easily add ggplot layers
+## And pitcher
 
-<div align = "center">
+<div align = "left">
  <embed width="864" height="720" name="plugin" src="figure/ani3.swf" type="application/x-shockwave-flash"> 
 </div>
 
 
----
+## Slower
 
-## WebGL graphics
-
-
-
-
-<iframe src="http://cpsievert.github.com/pitchRx/rgl1"></iframe>
-
----
-## More WebGL
+<div align = "left">
+ <embed width="864" height="720" name="plugin" src="figure/ani4.swf" type="application/x-shockwave-flash"> 
+</div>
 
 
 
+## WebGL Graphics
 
-<iframe src="http://cpsievert.github.com/pitchRx/rgl2"></iframe>
 
----
+```r
+Rivera <- subset(pitches, pitcher_name==
+                   "Mariano Rivera")
+interactiveFX(Rivera)
+```
 
-<iframe src="http://glimmer.rstudio.com/cpsievert/pitchRx" height="950" width="1000"></iframe>
 
----
+* Output can be viewed here:
+
+[http://cpsievert.github.com/pitchRx/rgl1](http://cpsievert.github.com/pitchRx/rgl1)
+
+
+## Shiny Demo
+
+* Great for creating strikezone density plots (horizontal and vertical location as they crossed home plate).
+
+* Encompasses all the bells and whistles of the `pitchRx::strikeFX`.
+
+* You can run the local version by:
+
+
+```r
+library(shiny)
+runGitHub('pitchRx', 'cpsievert', 
+          subdir='inst/shiny')
+```
+
+
+* Or the version hosted by glimmer:
+
+[http://glimmer.rstudio.com/cpsievert/pitchRx](http://glimmer.rstudio.com/cpsievert/pitchRx)
+
+
 ## Biased umpires?
 
-* In many sports, people like to blame stuff on bad referees/umpires.
+* In many sports, people like to speculate whether umpires make decisions in favor of the home team.
 
-* In baseball, people love to speculate that umpires make decisions in favor of the home team.
-
-* With PITCHf/x, we can examine evidence of any 'strikezone bias'.
+* With PITCHf/x, we can examine evidence of 'strikezone bias'.
 
 <div align="center"><img src="http://i.imgur.com/0lNvqM8.jpg" height="450" width="800"/></div>
 
----
-## Called strike
-
-* A __called strike__ is a case where the batter does not swing and the umpire declares the pitch is within the strikezone (and thus, a strike). If the batter reaches three strikes during an atbat, he is out.
-
-<div align="center"><img src="http://i.imgur.com/QfHfDM2.png" height="450" width="800"/></div>
-
----
 ## Every called strike!
 
-<div align="center"><img src="http://i.imgur.com/bOa0gun.png" height="550" width="1000"/></div>
+<div align="center"><img src="http://i.imgur.com/bOa0gun.png" height="550" width="800"/></div>
 
----
-## Away called strikes minus home strikes
+## Home vs Away Called Strikes
 
-<div align="center"><img src="http://i.imgur.com/EMstIPZ.png" height="550" width="1000"/></div>
+<div align="center"><img src="http://i.imgur.com/cjd9Tu8.png" height="550" width="800"/></div>
 
----
-## Balls
+## Home vs Away Balls
 
-* A __ball__ is an instance where the batter doesn't swing and the umpire declares the pitch is outside of the strikezone (and thus, a ball). If four balls are thrown during an atbat, the batter gets to freely reach base.
+<div align="center"><img src="http://i.imgur.com/INNs6Rc.png" height="550" width="800"/></div>
 
-<div align="center"><img src="http://i.imgur.com/iodOiLM.jpg" height="450" width="800"/></div>
+## My Conributions
 
----
-## Away balls minus home balls
+1. R package pitchRx:
+ * Easily collect PITCHf/x data directly from the `R` console.
+ * Simplifies general XML parsing into data frames.
+ * Provides a framework (and shortcuts) for PITCHf/x visualizations
 
-<div align="center"><img src="http://i.imgur.com/Fe4Monz.png" height="550" width="1000"/></div>
+2. [pitchRx demo page](http://cpsievert.github.com/pitchRx/demo/)
 
----
-## Wrapping up
+3. Web application (on top of `pitchRx`) that helps engage the code illiterate
 
-> - pitchRx makes it painless to get your hands dirty with PITCHf/x
+4. Paper currently under review for the `R` Journal
 
-> - It also simplifies general XML parsing into data frames
-
-
-
----
 ## Special Thanks to:
 
-### This project wouldn't be possible without the help of these people/organizations. Thank you for your great work!!!
+#### This project wouldn't be possible without the help of these people/organizations. Thank you for your help and/or great work!!!
 
-* Dr. Heike Hofmann (my major professor) [@heike_hh](https://twitter.com/heike_hh)
+* Heike Hofmann (my major professor) [@heike_hh](https://twitter.com/heike_hh)
+* Di Cook [@visnut](https://twitter.com/visnut/)
+* Yihui Xie [@xieyihui](https://twitter.com/xieyihui)
+* Ramnath Vaidyanathan [@ramnath_vaidya](https://twitter.com/ramnath_vaidya)
 * RStudio [@rstudioapp](https://twitter.com/rstudioapp)
+* Hadley Wickham [@hadleywickham](https://twitter.com/hadleywickham)
+* Joe Cheng [@jcheng](https://twitter.com/jcheng)
+* Winston Chang [@winston_chang](https://twitter.com/winston_chang)
 * MLB Advanced Media [@mlbdotcom](https://twitter.com/mlbdotcom)
 * Alan Nathan [@pobguy](https://twitter.com/pobguy)
 * Mike Fast [@fastballs](https://twitter.com/fastballs)
 
+## Questions???
