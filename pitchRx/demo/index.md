@@ -1,9 +1,10 @@
-Introduction to pitchRx package
-=======================================
-
-<!--- view local page:
-browseURL(paste0('http://127.0.0.1:', tools:::httpdPort, '/library/pitchRx/doc/index.html'))
+<!--
+%\VignetteEngine{knitr}
+%\VignetteIndexEntry{A Markdown Vignette with knitr}
 -->
+
+Introduction to pitchRx package
+====================================
 
 The  **pitchRx** package provides tools for collecting and visualizing Major League Baseball (MLB) [PITCHf/x](http://en.wikipedia.org/wiki/PITCHf/x) data.
 
@@ -17,7 +18,7 @@ Data Collection
 
 **pitchRx** makes it easy to collect PITCHf/x data directly from the source. Since its establishment in 2008, Major League Baseball Advanced Media (MLBAM) has made PITCHf/x data available in XML format.  MLBAM provides this service for free. To keep it that way, please be mindful when using this library to query their website.
 
-One should collect PITCHf/x on a yearly basis (or shorter - since this is large amount of data). After storing your data appropriately, the collection process can then be repeated for subsequent years (or other timelines).
+One should collect PITCHf/x on a yearly basis (or shorter - since this is large amount of data). While waiting for `scrapeFX` to collect data, you might want to set up a SQL-like database. If you are storing data via MySQL, you may find these <a href="https://github.com/cpsievert/pitchFX/blob/master/tables.sql">table formats</a> helpful. After storing your data appropriately, the collection process can then be repeated for other years.
 
 
 ```r
@@ -33,7 +34,7 @@ rm(data)  #clear workspace so you can repeat for other year(s)
 ```
 
 
-If you are storing data via MySQL, you may want to append to these <a href="https://github.com/cpsievert/pitchFX/blob/master/tables.sql">table formats</a>. By default, two data frames are returned. One contains data on the 'pitch' level and the other on the 'atbat' level. If you're interested in having a deeper level of information at your disposal. You can scrape for other data to supplement the core PITCHf/x tables.
+By default, `scrapeFX` returns two data frames: `data$atbat` and `data$pitch`. One contains data on the 'pitch' level and the other on the 'atbat' level. If you're interested in having a deeper level of information at your disposal, you can use `scrapeFX` to collect other information to supplement this core PITCHf/x data. By using the command below, you will collect seven different data frames. For example, `data$umpire` will contain information on umpires for each game in 2011. 
 
 
 ```r
@@ -43,7 +44,7 @@ data <- scrapeFX(start = "2011-01-01", end = "2011-12-31", tables = list(atbat =
 ```
 
 
-No matter how you're storing your data, you will want to join the 'atbat' and 'pitch' table at some point. If you're interested in a subset of data, consider subsetting the 'atbat' table before joining with pitches. For instance, if want all 'four-seam' and 'cutting' fastballs thrown by Mariano Rivera nad Phil Hughes during the 2011 season:
+No matter how you're storing your data, you will want to join `data$atbat` with `data$pitch` at some point. For instance, lets combine all information on the 'atbat and 'pitch' level for every 'four-seam' and 'cutting' fastball thrown by Mariano Rivera nad Phil Hughes during the 2011 season:
 
 
 ```r
@@ -54,17 +55,17 @@ pitches <- subset(pitchFX, pitch_type == c("FF", "FC"))
 ```
 
 
-If you're storing your data with MySQL, you could save a bit of time with the following. Note that you want to add criteria for the year of interest (if you have multiple years in your database).
+This isn't an optimal method for querying data if you are planning on working with it frequently. For this reason, I often use **RMySQL** to grab chunks of data. This way I can manage my machine's working memory more efficiently. The SQL query below will also give you `pitches` object of interest (if you have multiple years in your database, you'll want to add criteria for the year of interest).
 
 
 ```r
-Rivera <- dbGetQuery(MLB, "SELECT * FROM atbat INNER JOIN pitch ON (atbat.num = pitch.num AND atbat.url = pitch.url) WHERE atbat.pitcher_name = 'Mariano Rivera' or atbat.pitcher_name = 'Phil Hughes'")
+pitches <- dbGetQuery(MLB, "SELECT * FROM atbat INNER JOIN pitch ON (atbat.num = pitch.num AND atbat.url = pitch.url) WHERE atbat.pitcher_name = 'Mariano Rivera' or atbat.pitcher_name = 'Phil Hughes'")
 ```
 
 
-### Collecting XML data
+### Collecting XML data in general
 
-**pitchRx** has convenient functionality for extracting XML data from multiple files into appropriate data frame(s). One has to simply create the XML file names and specify XML nodes/attributes of interest. Keeping with the baseball theme, we can extract various statistics for batters entering a particular game.
+**pitchRx** has convenient functionality for extracting XML data from multiple files into appropriate data frame(s). One has to simply create the XML file names and specify XML nodes/attributes of interest in the function `urlsToDataFrame`. Keeping with the baseball theme, we can extract various statistics for batters entering a particular game.
 
 
 ```r
@@ -85,37 +86,38 @@ PITCHf/x Visualization
 
 ### 2D animation
 
-I can use the `pitches` data frame created in the previous section to demonstrate 2D animation of pitch trajectories.
+Let's animate the `pitches` data frame created in the previous section on a series of 2D scatterplots. The viewer should notice that as the animation progresses, pitches coming closer to them (that is, imagine you are the umpire/catcher - watching the pitcher throw directly at you). In the animation below, the horizontal and vertical location of `pitches` is plotted every tenth of a second until they reach home plate (in real time). Since looking at animations in real time can be painful, the subsequent animation (with four panels) delays the time between each frame to a half a second.
 
 
 
 
 
 ```r
-animateFX(pitches, point.size = 5)
+animateFX(pitches, point.size = 5, interval = 0.1, layer = facet_grid(. ~ stand, 
+    labeller = label_both))
 ```
 
 <div align = "center">
- <embed width="360" height="504" name="plugin" src="figure/ani.swf" type="application/x-shockwave-flash"> 
+ <embed width="720" height="504" name="plugin" src="figure/ani.swf" type="application/x-shockwave-flash"> 
 </div>
 
 
-`animateFX` also encompasses the [ggplot2](http://ggplot2.org/) layered grammar of graphics. This is quite convenient for comparing and contrasting pitching styles.
+`animateFX` utilizes the [ggplot2](http://ggplot2.org/) layered grammar of graphics. This is useful for comparing and contrasting pitching styles (among other things). In the next animation, we use several layers at once to fix the aspect ratio, change the plotting theme and facet by pitcher. 
 
 
 ```r
-animateFX(pitches, point.size = 5, layer = list(coord_equal(), facet_grid(pitcher_name ~ 
-    stand, labeller = label_both)))
+animateFX(pitches, point.size = 5, interval = 0.1, layer = list(facet_grid(pitcher_name ~ 
+    stand, labeller = label_both), coord_fixed(), theme_bw()))
 ```
 
 <div align = "center">
- <embed width="720" height="1008" name="plugin" src="figure/ani2.swf" type="application/x-shockwave-flash"> 
+ <embed width="1008" height="1008" name="plugin" src="figure/ani2.swf" type="application/x-shockwave-flash"> 
 </div>
 
 
 ### Interactive 3D plots
 
-**pitchRx** also makes use of **rgl** graphics. If I want a more revealing look as Mariano Rivera's pitches, I can subset the `pitches` data frame accordingly. Note that the plot below is interactive, so make sure you have javascript enabled (if you do, go ahead - click and drag)!
+**pitchRx** also makes use of **rgl** graphics. If I want a more revealing look as Mariano Rivera's pitches, I can subset the `pitches` data frame accordingly. Note that the plot below is interactive, so make sure you have javascript & [WebGL](http://get.webgl.org/) enabled (if you do, go ahead - click and drag)!
 
 
 ```r
@@ -133,11 +135,11 @@ interactiveFX(Rivera, interval = 0.05)
 ```
 
 <script src="CanvasMatrix.js" type="text/javascript"></script>
-<canvas id="webgl1textureCanvas" style="display: none;" width="256" height="256">
-<img src="webgl1snapshot.png" alt="webgl1snapshot" width=1297/><br>
+<canvas id="textureCanvas" style="display: none;" width="256" height="256">
+<img src="snapshot.png" alt="snapshot" width=1297/><br>
 	Your browser does not support the HTML5 canvas element.</canvas>
 <!-- ****** spheres object 6 ****** -->
-<script id="webgl1vshader6" type="x-shader/x-vertex">
+<script id="vshader6" type="x-shader/x-vertex">
 	attribute vec3 aPos;
 	attribute vec4 aCol;
 	uniform mat4 mvMatrix;
@@ -153,7 +155,7 @@ interactiveFX(Rivera, interval = 0.05)
 	  vNormal = normalize((normMatrix * vec4(aNorm, 1.)).xyz);
 	}
 </script>
-<script id="webgl1fshader6" type="x-shader/x-fragment"> 
+<script id="fshader6" type="x-shader/x-fragment"> 
 	#ifdef GL_ES
 	precision highp float;
 	#endif
@@ -178,7 +180,7 @@ interactiveFX(Rivera, interval = 0.05)
 	}
 </script> 
 <!-- ****** lines object 7 ****** -->
-<script id="webgl1vshader7" type="x-shader/x-vertex">
+<script id="vshader7" type="x-shader/x-vertex">
 	attribute vec3 aPos;
 	attribute vec4 aCol;
 	uniform mat4 mvMatrix;
@@ -189,7 +191,7 @@ interactiveFX(Rivera, interval = 0.05)
 	  vDiffuse = aCol;
 	}
 </script>
-<script id="webgl1fshader7" type="x-shader/x-fragment"> 
+<script id="fshader7" type="x-shader/x-fragment"> 
 	#ifdef GL_ES
 	precision highp float;
 	#endif
@@ -201,7 +203,7 @@ interactiveFX(Rivera, interval = 0.05)
 	}
 </script> 
 <!-- ****** text object 8 ****** -->
-<script id="webgl1vshader8" type="x-shader/x-vertex">
+<script id="vshader8" type="x-shader/x-vertex">
 	attribute vec3 aPos;
 	attribute vec4 aCol;
 	uniform mat4 mvMatrix;
@@ -218,7 +220,7 @@ interactiveFX(Rivera, interval = 0.05)
 	  gl_Position = pos + vec4(aOfs, 0.,0.);
 	}
 </script>
-<script id="webgl1fshader8" type="x-shader/x-fragment"> 
+<script id="fshader8" type="x-shader/x-fragment"> 
 	#ifdef GL_ES
 	precision highp float;
 	#endif
@@ -236,7 +238,7 @@ interactiveFX(Rivera, interval = 0.05)
 	}
 </script> 
 <!-- ****** lines object 9 ****** -->
-<script id="webgl1vshader9" type="x-shader/x-vertex">
+<script id="vshader9" type="x-shader/x-vertex">
 	attribute vec3 aPos;
 	attribute vec4 aCol;
 	uniform mat4 mvMatrix;
@@ -247,7 +249,7 @@ interactiveFX(Rivera, interval = 0.05)
 	  vDiffuse = aCol;
 	}
 </script>
-<script id="webgl1fshader9" type="x-shader/x-fragment"> 
+<script id="fshader9" type="x-shader/x-fragment"> 
 	#ifdef GL_ES
 	precision highp float;
 	#endif
@@ -259,7 +261,7 @@ interactiveFX(Rivera, interval = 0.05)
 	}
 </script> 
 <!-- ****** text object 10 ****** -->
-<script id="webgl1vshader10" type="x-shader/x-vertex">
+<script id="vshader10" type="x-shader/x-vertex">
 	attribute vec3 aPos;
 	attribute vec4 aCol;
 	uniform mat4 mvMatrix;
@@ -276,7 +278,7 @@ interactiveFX(Rivera, interval = 0.05)
 	  gl_Position = pos + vec4(aOfs, 0.,0.);
 	}
 </script>
-<script id="webgl1fshader10" type="x-shader/x-fragment"> 
+<script id="fshader10" type="x-shader/x-fragment"> 
 	#ifdef GL_ES
 	precision highp float;
 	#endif
@@ -294,7 +296,7 @@ interactiveFX(Rivera, interval = 0.05)
 	}
 </script> 
 <!-- ****** lines object 11 ****** -->
-<script id="webgl1vshader11" type="x-shader/x-vertex">
+<script id="vshader11" type="x-shader/x-vertex">
 	attribute vec3 aPos;
 	attribute vec4 aCol;
 	uniform mat4 mvMatrix;
@@ -305,7 +307,7 @@ interactiveFX(Rivera, interval = 0.05)
 	  vDiffuse = aCol;
 	}
 </script>
-<script id="webgl1fshader11" type="x-shader/x-fragment"> 
+<script id="fshader11" type="x-shader/x-fragment"> 
 	#ifdef GL_ES
 	precision highp float;
 	#endif
@@ -317,7 +319,7 @@ interactiveFX(Rivera, interval = 0.05)
 	}
 </script> 
 <!-- ****** text object 12 ****** -->
-<script id="webgl1vshader12" type="x-shader/x-vertex">
+<script id="vshader12" type="x-shader/x-vertex">
 	attribute vec3 aPos;
 	attribute vec4 aCol;
 	uniform mat4 mvMatrix;
@@ -334,7 +336,7 @@ interactiveFX(Rivera, interval = 0.05)
 	  gl_Position = pos + vec4(aOfs, 0.,0.);
 	}
 </script>
-<script id="webgl1fshader12" type="x-shader/x-fragment"> 
+<script id="fshader12" type="x-shader/x-fragment"> 
 	#ifdef GL_ES
 	precision highp float;
 	#endif
@@ -352,7 +354,7 @@ interactiveFX(Rivera, interval = 0.05)
 	}
 </script> 
 <!-- ****** text object 13 ****** -->
-<script id="webgl1vshader13" type="x-shader/x-vertex">
+<script id="vshader13" type="x-shader/x-vertex">
 	attribute vec3 aPos;
 	attribute vec4 aCol;
 	uniform mat4 mvMatrix;
@@ -369,7 +371,7 @@ interactiveFX(Rivera, interval = 0.05)
 	  gl_Position = pos + vec4(aOfs, 0.,0.);
 	}
 </script>
-<script id="webgl1fshader13" type="x-shader/x-fragment"> 
+<script id="fshader13" type="x-shader/x-fragment"> 
 	#ifdef GL_ES
 	precision highp float;
 	#endif
@@ -387,7 +389,7 @@ interactiveFX(Rivera, interval = 0.05)
 	}
 </script> 
 <!-- ****** text object 14 ****** -->
-<script id="webgl1vshader14" type="x-shader/x-vertex">
+<script id="vshader14" type="x-shader/x-vertex">
 	attribute vec3 aPos;
 	attribute vec4 aCol;
 	uniform mat4 mvMatrix;
@@ -404,7 +406,7 @@ interactiveFX(Rivera, interval = 0.05)
 	  gl_Position = pos + vec4(aOfs, 0.,0.);
 	}
 </script>
-<script id="webgl1fshader14" type="x-shader/x-fragment"> 
+<script id="fshader14" type="x-shader/x-fragment"> 
 	#ifdef GL_ES
 	precision highp float;
 	#endif
@@ -422,7 +424,7 @@ interactiveFX(Rivera, interval = 0.05)
 	}
 </script> 
 <!-- ****** text object 15 ****** -->
-<script id="webgl1vshader15" type="x-shader/x-vertex">
+<script id="vshader15" type="x-shader/x-vertex">
 	attribute vec3 aPos;
 	attribute vec4 aCol;
 	uniform mat4 mvMatrix;
@@ -439,7 +441,7 @@ interactiveFX(Rivera, interval = 0.05)
 	  gl_Position = pos + vec4(aOfs, 0.,0.);
 	}
 </script>
-<script id="webgl1fshader15" type="x-shader/x-fragment"> 
+<script id="fshader15" type="x-shader/x-fragment"> 
 	#ifdef GL_ES
 	precision highp float;
 	#endif
@@ -487,14 +489,14 @@ interactiveFX(Rivera, interval = 0.05)
 	var PI = Math.PI;
 	var log = Math.log;
 	var exp = Math.exp;
-	function webgl1webGLStart() {
+	function webGLStart() {
 	   var debug = function(msg) {
-	     document.getElementById("webgl1debug").innerHTML = msg;
+	     document.getElementById("debug").innerHTML = msg;
 	   }
 	   debug("");
-	   var canvas = document.getElementById("webgl1canvas");
+	   var canvas = document.getElementById("canvas");
 	   if (!window.WebGLRenderingContext){
-	     debug("<img src=\"webgl1snapshot.png\" alt=\"webgl1snapshot\" width=1297/><br> Your browser does not support WebGL. See <a href=\"http://get.webgl.org\">http://get.webgl.org</a>");
+	     debug("<img src=\"snapshot.png\" alt=\"snapshot\" width=1297/><br> Your browser does not support WebGL. See <a href=\"http://get.webgl.org\">http://get.webgl.org</a>");
 	     return;
 	   }
 	   var gl;
@@ -505,7 +507,7 @@ interactiveFX(Rivera, interval = 0.05)
 	   }
 	   catch(e) {}
 	   if ( !gl ) {
-	     debug("<img src=\"webgl1snapshot.png\" alt=\"webgl1snapshot\" width=1297/><br> Your browser appears to support WebGL, but did not create a WebGL context.  See <a href=\"http://get.webgl.org\">http://get.webgl.org</a>");
+	     debug("<img src=\"snapshot.png\" alt=\"snapshot\" width=1297/><br> Your browser appears to support WebGL, but did not create a WebGL context.  See <a href=\"http://get.webgl.org\">http://get.webgl.org</a>");
 	     return;
 	   }
 	   var width = 1297;  var height = 721;
@@ -543,7 +545,7 @@ interactiveFX(Rivera, interval = 0.05)
 	     gl.bindTexture(gl.TEXTURE_2D, null);
 	   }
 	   function loadImageToTexture(filename, texture) {   
-	     var canvas = document.getElementById("webgl1textureCanvas");
+	     var canvas = document.getElementById("textureCanvas");
 	     var ctx = canvas.getContext("2d");
 	     var image = new Image();
 	     image.onload = function() {
@@ -567,7 +569,7 @@ interactiveFX(Rivera, interval = 0.05)
 	     var textColour = "white";
 	     var fontFamily = "Arial";
 	     var backgroundColour = "rgba(0,0,0,0)";
-	     var canvas = document.getElementById("webgl1textureCanvas");
+	     var canvas = document.getElementById("textureCanvas");
 	     var ctx = canvas.getContext("2d");
 	     ctx.font = textHeight+"px "+fontFamily;
              canvasX = 1;
@@ -803,8 +805,8 @@ interactiveFX(Rivera, interval = 0.05)
 	   gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, f, gl.STATIC_DRAW);
 	   // ****** spheres object 6 ******
 	   var prog6  = gl.createProgram();
-	   gl.attachShader(prog6, getShader( gl, "webgl1vshader6" ));
-	   gl.attachShader(prog6, getShader( gl, "webgl1fshader6" ));
+	   gl.attachShader(prog6, getShader( gl, "vshader6" ));
+	   gl.attachShader(prog6, getShader( gl, "fshader6" ));
 	   gl.linkProgram(prog6);
 	   var v=new Float32Array([
 	    -2.141, 50, 5.927, 0, 0, 1, 1, 0.12,
@@ -3652,8 +3654,8 @@ interactiveFX(Rivera, interval = 0.05)
 	   var normMatLoc6 = gl.getUniformLocation(prog6,"normMatrix");
 	   // ****** lines object 7 ******
 	   var prog7  = gl.createProgram();
-	   gl.attachShader(prog7, getShader( gl, "webgl1vshader7" ));
-	   gl.attachShader(prog7, getShader( gl, "webgl1fshader7" ));
+	   gl.attachShader(prog7, getShader( gl, "vshader7" ));
+	   gl.attachShader(prog7, getShader( gl, "fshader7" ));
 	   gl.linkProgram(prog7);
 	   var v=new Float32Array([
 	    -3, 0.5646551, 0.5248276,
@@ -3680,8 +3682,8 @@ interactiveFX(Rivera, interval = 0.05)
 	   var prMatLoc7 = gl.getUniformLocation(prog7,"prMatrix");
 	   // ****** text object 8 ******
 	   var prog8  = gl.createProgram();
-	   gl.attachShader(prog8, getShader( gl, "webgl1vshader8" ));
-	   gl.attachShader(prog8, getShader( gl, "webgl1fshader8" ));
+	   gl.attachShader(prog8, getShader( gl, "vshader8" ));
+	   gl.attachShader(prog8, getShader( gl, "fshader8" ));
 	   gl.linkProgram(prog8);
 	   var texts = [
 	    "-3",
@@ -3698,7 +3700,7 @@ interactiveFX(Rivera, interval = 0.05)
 	   var texture8 = gl.createTexture();
 	   var texLoc8 = gl.getAttribLocation(prog8, "aTexcoord");
 	   var sampler8 = gl.getUniformLocation(prog8,"uSampler");
-    	   handleLoadedTexture(texture8, document.getElementById("webgl1textureCanvas"));
+    	   handleLoadedTexture(texture8, document.getElementById("textureCanvas"));
 	   var v=new Float32Array([
 	    -3, -3.206922, 0.07585121, 0, -0.5, 0.5, 0.5,
 	    -3, -3.206922, 0.07585121, 1, -0.5, 0.5, 0.5,
@@ -3754,8 +3756,8 @@ interactiveFX(Rivera, interval = 0.05)
 	   var prMatLoc8 = gl.getUniformLocation(prog8,"prMatrix");
 	   // ****** lines object 9 ******
 	   var prog9  = gl.createProgram();
-	   gl.attachShader(prog9, getShader( gl, "webgl1vshader9" ));
-	   gl.attachShader(prog9, getShader( gl, "webgl1fshader9" ));
+	   gl.attachShader(prog9, getShader( gl, "vshader9" ));
+	   gl.attachShader(prog9, getShader( gl, "fshader9" ));
 	   gl.linkProgram(prog9);
 	   var v=new Float32Array([
 	    -3.140012, 10, 0.5248276,
@@ -3780,8 +3782,8 @@ interactiveFX(Rivera, interval = 0.05)
 	   var prMatLoc9 = gl.getUniformLocation(prog9,"prMatrix");
 	   // ****** text object 10 ******
 	   var prog10  = gl.createProgram();
-	   gl.attachShader(prog10, getShader( gl, "webgl1vshader10" ));
-	   gl.attachShader(prog10, getShader( gl, "webgl1fshader10" ));
+	   gl.attachShader(prog10, getShader( gl, "vshader10" ));
+	   gl.attachShader(prog10, getShader( gl, "fshader10" ));
 	   gl.linkProgram(prog10);
 	   var texts = [
 	    "10",
@@ -3797,7 +3799,7 @@ interactiveFX(Rivera, interval = 0.05)
 	   var texture10 = gl.createTexture();
 	   var texLoc10 = gl.getAttribLocation(prog10, "aTexcoord");
 	   var sampler10 = gl.getUniformLocation(prog10,"uSampler");
-    	   handleLoadedTexture(texture10, document.getElementById("webgl1textureCanvas"));
+    	   handleLoadedTexture(texture10, document.getElementById("textureCanvas"));
 	   var v=new Float32Array([
 	    -3.546921, 10, 0.07585121, 0, -0.5, 0.5, 0.5,
 	    -3.546921, 10, 0.07585121, 1, -0.5, 0.5, 0.5,
@@ -3848,8 +3850,8 @@ interactiveFX(Rivera, interval = 0.05)
 	   var prMatLoc10 = gl.getUniformLocation(prog10,"prMatrix");
 	   // ****** lines object 11 ******
 	   var prog11  = gl.createProgram();
-	   gl.attachShader(prog11, getShader( gl, "webgl1vshader11" ));
-	   gl.attachShader(prog11, getShader( gl, "webgl1fshader11" ));
+	   gl.attachShader(prog11, getShader( gl, "vshader11" ));
+	   gl.attachShader(prog11, getShader( gl, "fshader11" ));
 	   gl.linkProgram(prog11);
 	   var v=new Float32Array([
 	    -3.140012, 0.5646551, 1,
@@ -3876,8 +3878,8 @@ interactiveFX(Rivera, interval = 0.05)
 	   var prMatLoc11 = gl.getUniformLocation(prog11,"prMatrix");
 	   // ****** text object 12 ******
 	   var prog12  = gl.createProgram();
-	   gl.attachShader(prog12, getShader( gl, "webgl1vshader12" ));
-	   gl.attachShader(prog12, getShader( gl, "webgl1fshader12" ));
+	   gl.attachShader(prog12, getShader( gl, "vshader12" ));
+	   gl.attachShader(prog12, getShader( gl, "fshader12" ));
 	   gl.linkProgram(prog12);
 	   var texts = [
 	    "1",
@@ -3894,7 +3896,7 @@ interactiveFX(Rivera, interval = 0.05)
 	   var texture12 = gl.createTexture();
 	   var texLoc12 = gl.getAttribLocation(prog12, "aTexcoord");
 	   var sampler12 = gl.getUniformLocation(prog12,"uSampler");
-    	   handleLoadedTexture(texture12, document.getElementById("webgl1textureCanvas"));
+    	   handleLoadedTexture(texture12, document.getElementById("textureCanvas"));
 	   var v=new Float32Array([
 	    -3.546921, -3.206922, 1, 0, -0.5, 0.5, 0.5,
 	    -3.546921, -3.206922, 1, 1, -0.5, 0.5, 0.5,
@@ -3950,8 +3952,8 @@ interactiveFX(Rivera, interval = 0.05)
 	   var prMatLoc12 = gl.getUniformLocation(prog12,"prMatrix");
 	   // ****** text object 13 ******
 	   var prog13  = gl.createProgram();
-	   gl.attachShader(prog13, getShader( gl, "webgl1vshader13" ));
-	   gl.attachShader(prog13, getShader( gl, "webgl1fshader13" ));
+	   gl.attachShader(prog13, getShader( gl, "vshader13" ));
+	   gl.attachShader(prog13, getShader( gl, "fshader13" ));
 	   gl.linkProgram(prog13);
 	   var texts = [
 	    "Horizontal Axis"
@@ -3963,7 +3965,7 @@ interactiveFX(Rivera, interval = 0.05)
 	   var texture13 = gl.createTexture();
 	   var texLoc13 = gl.getAttribLocation(prog13, "aTexcoord");
 	   var sampler13 = gl.getUniformLocation(prog13,"uSampler");
-    	   handleLoadedTexture(texture13, document.getElementById("webgl1textureCanvas"));
+    	   handleLoadedTexture(texture13, document.getElementById("textureCanvas"));
 	   var v=new Float32Array([
 	    -0.4272778, -6.978498, -0.3731252, 0, -0.5, 0.5, 0.5,
 	    -0.4272778, -6.978498, -0.3731252, 1, -0.5, 0.5, 0.5,
@@ -3994,8 +3996,8 @@ interactiveFX(Rivera, interval = 0.05)
 	   var prMatLoc13 = gl.getUniformLocation(prog13,"prMatrix");
 	   // ****** text object 14 ******
 	   var prog14  = gl.createProgram();
-	   gl.attachShader(prog14, getShader( gl, "webgl1vshader14" ));
-	   gl.attachShader(prog14, getShader( gl, "webgl1fshader14" ));
+	   gl.attachShader(prog14, getShader( gl, "vshader14" ));
+	   gl.attachShader(prog14, getShader( gl, "fshader14" ));
 	   gl.linkProgram(prog14);
 	   var texts = [
 	    "Distance from Home Plate"
@@ -4007,7 +4009,7 @@ interactiveFX(Rivera, interval = 0.05)
 	   var texture14 = gl.createTexture();
 	   var texLoc14 = gl.getAttribLocation(prog14, "aTexcoord");
 	   var sampler14 = gl.getUniformLocation(prog14,"uSampler");
-    	   handleLoadedTexture(texture14, document.getElementById("webgl1textureCanvas"));
+    	   handleLoadedTexture(texture14, document.getElementById("textureCanvas"));
 	   var v=new Float32Array([
 	    -3.953832, 25.7085, -0.3731252, 0, -0.5, 0.5, 0.5,
 	    -3.953832, 25.7085, -0.3731252, 1, -0.5, 0.5, 0.5,
@@ -4038,8 +4040,8 @@ interactiveFX(Rivera, interval = 0.05)
 	   var prMatLoc14 = gl.getUniformLocation(prog14,"prMatrix");
 	   // ****** text object 15 ******
 	   var prog15  = gl.createProgram();
-	   gl.attachShader(prog15, getShader( gl, "webgl1vshader15" ));
-	   gl.attachShader(prog15, getShader( gl, "webgl1fshader15" ));
+	   gl.attachShader(prog15, getShader( gl, "vshader15" ));
+	   gl.attachShader(prog15, getShader( gl, "fshader15" ));
 	   gl.linkProgram(prog15);
 	   var texts = [
 	    "Height From Ground"
@@ -4051,7 +4053,7 @@ interactiveFX(Rivera, interval = 0.05)
 	   var texture15 = gl.createTexture();
 	   var texLoc15 = gl.getAttribLocation(prog15, "aTexcoord");
 	   var sampler15 = gl.getUniformLocation(prog15,"uSampler");
-    	   handleLoadedTexture(texture15, document.getElementById("webgl1textureCanvas"));
+    	   handleLoadedTexture(texture15, document.getElementById("textureCanvas"));
 	   var v=new Float32Array([
 	    -3.953832, -6.978498, 3.518004, 0, -0.5, 0.5, 0.5,
 	    -3.953832, -6.978498, 3.518004, 1, -0.5, 0.5, 0.5,
@@ -4408,67 +4410,46 @@ interactiveFX(Rivera, interval = 0.05)
 	   canvas.addEventListener("mousewheel", wheelHandler, false);
 	}
 </script>
-<canvas id="webgl1canvas" width="1" height="1"></canvas> 
-<p id="webgl1debug">
-<img src="webgl1snapshot.png" alt="webgl1snapshot" width=1297/><br>
+<canvas id="canvas" width="1" height="1"></canvas> 
+<p id="debug">
+<img src="snapshot.png" alt="snapshot" width=1297/><br>
 	You must enable Javascript to view this page properly.</p>
-<script>webgl1webGLStart();</script>
+<script>webGLStart();</script>
 
 
 ### Strikezone Densities
 
-I can also examine static pitch locations at the moment they cross the plate.
+I can also examine pitch locations at the moment they cross the plate. Unlike `animateFX`, `strikeFX` encompasses different geometries and **ggplot2** arithmetic.
 
 
 ```r
-s <- strikeFX(pitches, layer = facet_grid(. ~ stand))
-s
+facets <- facet_grid(pitcher_name ~ stand)
+strikeFX(pitches, geom = "tile") + facets
 ```
 
 ![plot of chunk strike](figure/strike.png) 
-
-
-With `strikeFX`, ggplot2 arithmetic works as expected.
-
-
-```r
-s + coord_fixed()
-```
-
-![plot of chunk strike2](figure/strike2.png) 
-
-
-Unlike `animateFX`, `strikeFX` encompasses different geometries.
-
-
-```r
-strikeFX(pitches, geom = "tile", contour = TRUE, layer = facet_grid(pitch_types ~ 
-    stand))
-```
-
-![plot of chunk strike3](figure/strike3.png) 
 
 
 `strikeFX` allows one to easily manipulate the density of interest through two parameters: `density1` and `density2`. If these densities are identical, the density is defined accordingly. This is useful for avoiding repeative subsetting of data frames. For example, say I want the density of 'Called Strikes'.
 
 
 ```r
-strikeFX(pitches, geom = "tile", density1 = list(des = "Called Strike"), density2 = list(des = "Called Strike"), 
-    layer = facet_grid(pitch_types ~ stand))
+strikeFX(pitches, geom = "tile", density1 = list(des = "Called Strike"), density2 = list(des = "Called Strike")) + 
+    facets
 ```
 
-![plot of chunk strike4](figure/strike4.png) 
+![plot of chunk strike2](figure/strike2.png) 
 
 
 If you specify two different densities, `strikeFX` will plot differenced bivariate density estimates. In this case, we are subtracting the "Ball" density from the previous "Called Strike" density.
 
 
 ```r
-strikeFX(pitches, geom = "hex", density1 = list(des = "Called Strike"), density2 = list(des = "Ball"), 
-    layer = facet_grid(pitch_types ~ stand))
+strikeFX(pitches, geom = "hex", contour = TRUE, density1 = list(des = "Called Strike"), 
+    density2 = list(des = "Ball"), layer = facet_grid(pitcher_name ~ stand))
 ```
 
-![plot of chunk strike5](figure/strike5.png) 
+![plot of chunk strike3](figure/strike3.png) 
 
 
 #### Authored by <a href="http://cpsievert.github.com/home.html">Carson Sievert</a> via <a href="http://www.rstudio.com/ide/docs/authoring/using_markdown">R Markdown, knitr & RStudio</a>. Published by <a href="http://pages.github.com/">GitHub Pages</a>.

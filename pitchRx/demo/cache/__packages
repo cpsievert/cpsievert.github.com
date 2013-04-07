@@ -1,6 +1,10 @@
-R2SWF
 Cairo
+R2SWF
+rgl
 pitchRx
+hexbin
+lattice
+grid
 stringr
 lubridate
 reshape
@@ -8,6 +12,7 @@ plyr
 ggplot2
 XML
 MASS
+devtools
 knitr
 stats
 graphics
