@@ -9,10 +9,10 @@ Introduction to pitchRx package
 The  **pitchRx** package provides tools for collecting and visualizing Major League Baseball (MLB) [PITCHf/x](http://en.wikipedia.org/wiki/PITCHf/x) data.
 
 ```{r setup, include=FALSE}
+options(CBoundsCheck=TRUE)
+library(knitr)
 opts_chunk$set(fig.path="figure/", cache.path="cache/", fig.align="center", warning=FALSE, message=FALSE, fig.height=7, fig.width=5)
 opts_knit$set(animation.fun = hook_r2swf)
-library(devtools)
-install_github('pitchRx', 'cpsievert')
 library(pitchRx)
 ```
 
@@ -108,30 +108,10 @@ animateFX(pitches, point.size=5, interval=0.1, layer=list(facet_grid(pitcher_nam
 
 ```{r demo, eval=FALSE}
 Rivera <- subset(pitches, pitcher_name=="Mariano Rivera")
-interactiveFX(Rivera, interval=.05)
+interactiveFX(Rivera)
 ```
 
-```{r rglhook, echo=FALSE}
-require(devtools)
-library(knitr)
-knit_hooks$set(webgl = hook_webgl)
-```
-
-```{r webgl1, webgl=TRUE, echo=FALSE, fig.width=18, fig.height=10}
-#ugly workaround since knitr won't recognize interactiveFX
-Rivera <- subset(pitches, pitcher_name=="Mariano Rivera")
-snaps <- getSnapshots(Rivera, interval = 0.05)
-types <- as.character(Rivera[,"pitch_type"])
-ncolors <- length(unique(types))
-pal <- c(rgb(0, 0, 1), rgb(1, 0, 0))
-full.pal <- factor(types)
-levels(full.pal) <- pal
-open3d()
-spheres3d(x=as.vector(snaps[,,1]), y=as.vector(snaps[,,2]), z=as.vector(snaps[,,3]),
-           col=as.character(full.pal), radius=.12)
-axes3d(c('x', 'y', 'z')) 
-title3d(xlab='Horizontal Axis', ylab='Distance from Home Plate', zlab='Height From Ground')
-```
+<iframe src="http://cpsievert.github.io/pitchRx/rgl1/" height="600" width="1200"></iframe>
 
 ### Strikezone Densities
 
@@ -154,4 +134,14 @@ If you specify two different densities, `strikeFX` will plot differenced bivaria
 strikeFX(pitches, geom="hex", contour=TRUE, density1=list(des="Called Strike"), density2=list(des="Ball"), layer=facet_grid(pitcher_name~stand))
 ```
 
-#### Authored by <a href="http://cpsievert.github.com/home.html">Carson Sievert</a> via <a href="http://www.rstudio.com/ide/docs/authoring/using_markdown">R Markdown, knitr & RStudio</a>. Published by <a href="http://pages.github.com/">GitHub Pages</a>.
+`strikeFX` also has the capability to plot tiled bar charts via the option `geom="subplot2d"`. Each grid (or subregion) of the plot below has a distribution of outcomes among Rivera's pitches to right handed batters. The three outcomes are "S" for strike, "X" for a ball hit into play and "B" for a ball. 
+
+```{r sub, echo=FALSE}
+Rivera <- subset(pitches, pitcher_name=="Mariano Rivera")
+```
+
+```{r strike4, fig.height=10, fig.width=8, dev="CairoPNG"}
+library(ggsubplot) #required for subplot2d option
+Rivera.R <- subset(Rivera, stand=="R")
+strikeFX(Rivera.R, geom="subplot2d", fill="type")
+```
