@@ -10,7 +10,6 @@ Cool, huh? Well, I will show you how to 'recreate' a similar 'gif' with publicly
 
 ```r
 library(pitchRx)
-library(plyr)
 dat <- scrapeFX(start = "2013-04-24", end = "2013-04-24")
 atbats <- subset(dat$atbat, pitcher_name == "Yu Darvish" & batter_name == "Albert Pujols")
 pitches <- plyr::join(atbats, dat$pitch, by = c("num", "url"), type = "inner")

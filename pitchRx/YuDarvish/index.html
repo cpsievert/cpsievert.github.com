@@ -187,7 +187,6 @@ hljs.initHighlightingOnLoad();
 <p>Cool, huh? Well, I will show you how to &#39;recreate&#39; a similar &#39;gif&#39; with publicly available PITCHf/x data using the <a href="http://cran.r-project.org/web/packages/pitchRx/">pitchRx</a> <a href="http://cran.r-project.org">R</a> package. First, we collect all the pitches thrown by Darvish to Albert Pujols on April 24th:</p>
 
 <pre><code class="r">library(pitchRx)
-library(plyr)
 dat &lt;- scrapeFX(start = &quot;2013-04-24&quot;, end = &quot;2013-04-24&quot;)
 atbats &lt;- subset(dat$atbat, pitcher_name == &quot;Yu Darvish&quot; &amp; batter_name == &quot;Albert Pujols&quot;)
 pitches &lt;- plyr::join(atbats, dat$pitch, by = c(&quot;num&quot;, &quot;url&quot;), type = &quot;inner&quot;)
