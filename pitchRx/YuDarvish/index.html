@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-<title>Animating PITCHf/x Data (using pitchRx)</title>
+<title>A case study of Yu Darvish&#39;s deception factor</title>
 
 <style type="text/css">
 body, td {
@@ -178,9 +178,7 @@ hljs.initHighlightingOnLoad();
 </head>
 
 <body>
-<h1>Animating PITCHf/x Data (using pitchRx)</h1>
-
-<h2>A case study of Yu Darvish&#39;s deception factor</h2>
+<h1>A case study of Yu Darvish&#39;s deception factor</h1>
 
 <p>On April 2nd, 2013 Yu Darvish <a href="http://sports.yahoo.com/news/yu-darvish-loses-perfect-game-030913556--mlb.html">flirted with pitching perfection</a>. To demonstrate his ability to deceive batters with a consistent delivery over different pitch types, <a href="http://www.reddit.com/r/baseball/comments/1d2z6d/all_of_darvishs_primary_pitches_at_once/">redditor DShep created this gif</a>, which layers video of five different pitches thrown by Darvish on April 24th:</p>
 
@@ -204,9 +202,9 @@ pitches &lt;- plyr::join(atbats, dat$pitch, by = c(&quot;num&quot;, &quot;url&qu
 
 <p>According to the PITCHf/x data, Darvish had quite different release points (especially for his slider). Furthermore, Darvish didn&#39;t even throw a curveball to Pujols. If you look closer at the original gif, you can actually see a different batter (than Pujols) in the batter&#39;s box (look for a white bat). </p>
 
-<p>I think it would be awesome to have a similar tool in <a href="http://cran.r-project.org/web/packages/pitchRx/">pitchRx</a> for creating &#39;gifs&#39; with actual video. If anybody has ideas on how we can connect PITCHf/x data with actual video, leave a comment or mention me on twitter <a href="http://twitter.com/cpsievert">@cpsievert</a>.</p>
+<p>I think it would be awesome to have a similar tool in <a href="http://cran.r-project.org/web/packages/pitchRx/">pitchRx</a> for creating &#39;gifs&#39; with actual video. If anybody has ideas on how we can connect PITCHf/x data with actual video, leave a comment or message me on twitter <a href="http://twitter.com/cpsievert">@cpsievert</a>.</p>
 
-<p>If you&#39;re still reading, you may be wondering, how can I take these animations and embed them on my own web page/blog? To create this page - and <a href="http://cpsievert.github.io/pitchRx/demo/">many</a> <a href="http://cpsievert.github.io/pitchRx/rgl1">others</a>, I use <a href="http://yihui.name/knitr/">knitr</a>. I&#39;ve written this specific post in <a href="http://www.rstudio.com/ide/docs/authoring/using_markdown">Markdown and published via RStudio</a>. Here is the source code to the page:</p>
+<p>If you&#39;re still reading, you may be wondering, how can I take these animations and embed them on my own web page/blog? If you&#39;re curious, I&#39;ve made the <a href="https://github.com/cpsievert/cpsievert.github.com/blob/master/pitchRx/YuDarvish/index.Rmd">source code</a> to this post available. Note that <a href="http://www.rstudio.com/ide/docs/authoring/using_markdown">knitr, Markdown and RStudio</a> makes the publishing process quite painless.</p>
 
 </body>
 

@@ -1,8 +1,5 @@
-Animating PITCHf/x Data (using pitchRx)
-========================================================
-
 A case study of Yu Darvish's deception factor
----------------------------------------------------
+========================================================
 
 On April 2nd, 2013 Yu Darvish [flirted with pitching perfection](http://sports.yahoo.com/news/yu-darvish-loses-perfect-game-030913556--mlb.html). To demonstrate his ability to deceive batters with a consistent delivery over different pitch types, [redditor DShep created this gif](http://www.reddit.com/r/baseball/comments/1d2z6d/all_of_darvishs_primary_pitches_at_once/), which layers video of five different pitches thrown by Darvish on April 24th:
 
@@ -35,8 +32,9 @@ animateFX(pitches)
 
 According to the PITCHf/x data, Darvish had quite different release points (especially for his slider). Furthermore, Darvish didn't even throw a curveball to Pujols. If you look closer at the original gif, you can actually see a different batter (than Pujols) in the batter's box (look for a white bat). 
 
-I think it would be awesome to have a similar tool in [pitchRx](http://cran.r-project.org/web/packages/pitchRx/) for creating 'gifs' with actual video. If anybody has ideas on how we can connect PITCHf/x data with actual video, leave a comment or mention me on twitter [@cpsievert](http://twitter.com/cpsievert).
+I think it would be awesome to have a similar tool in [pitchRx](http://cran.r-project.org/web/packages/pitchRx/) for creating 'gifs' with actual video. If anybody has ideas on how we can connect PITCHf/x data with actual video, leave a comment or message me on twitter [@cpsievert](http://twitter.com/cpsievert).
 
-If you're still reading, you may be wondering, how can I take these animations and embed them on my own web page/blog? To create this page - and [many](http://cpsievert.github.io/pitchRx/demo/) [others](http://cpsievert.github.io/pitchRx/rgl1), I use [knitr](http://yihui.name/knitr/). I've written this specific post in [Markdown and published via RStudio](http://www.rstudio.com/ide/docs/authoring/using_markdown). Here is the source code to the page:
+If you're still reading, you may be wondering, how can I take these animations and embed them on my own web page/blog? If you're curious, I've made the [source code](https://github.com/cpsievert/cpsievert.github.com/blob/master/pitchRx/YuDarvish/index.Rmd) to this post available. Note that [knitr, Markdown and RStudio](http://www.rstudio.com/ide/docs/authoring/using_markdown) makes the publishing process quite painless.
+
 
 
