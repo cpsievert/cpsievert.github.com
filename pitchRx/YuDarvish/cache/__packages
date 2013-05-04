@@ -1,0 +1,14 @@
+base
+Cairo
+ggplot2
+hexbin
+knitr
+lattice
+lubridate
+MASS
+pitchRx
+plyr
+R2SWF
+reshape
+stringr
+XML
