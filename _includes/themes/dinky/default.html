@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="author" content="{{ site.author.name }}" />
+    {% if page.date %}<meta name="citation_title" content="{{ page.title }}">{% for p in page.author %}{% assign author=site.authors[p] %}
+    <meta name="citation_author" content="{{ author.name }}">{% endfor %}
+    <meta name="citation_publication_date" content="{{ page.date | date:'%Y/%m/%d' }}">
+    <meta name="citation_journal_title" content="{{ site.author.name }}">{% endif %}
+    <title>{{ page.title }} | Vistat</title>
+
+    <link href="/feed/" rel="alternate" title="{{ site.author.name }}" type="application/atom+xml" />
+    <link rel="stylesheet" href="{{ ASSET_PATH }}/css/styles.css">
+    <link rel="stylesheet" href="{{ ASSET_PATH }}/css/pygment_trac.css">
+    <script src="{{ ASSET_PATH }}/js/scale.fix.js"></script>
+    {% if page.animation %}
+    <link rel="stylesheet" href="{{ ASSET_PATH }}/css/scianimator.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="{{ ASSET_PATH }}/js/jquery.scianimator.min.js"></script>
+    {% endif %}
+    {% if page.d3 %}
+    <script src="http://d3js.org/d3.v2.min.js"></script>
+    {% endif %}
+    <script src="https://c328740.ssl.cf1.rackcdn.com/mathjax/2.0-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        processEscapes: true
+      }
+    });
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    {% include JB/analytics %}
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1 class="header"><a href="{{ HOME_PATH }}">{{ site.title }}</a></h1>
+        <p class="header">{{ site.tagline }}</p>
+        <ul>
+          {% assign pages_list = site.pages %}
+          {% assign group = 'navigation' %}
+          {% include JB/pages_list %}
+          <li><a href="/feed/">RSS</a></li>
+        </ul>
+        {% if site.ads.google %}
+        <div class="misc ad">
+          <script type="text/javascript"><!--
+            google_ad_client = "{{ site.ads.google.client }}";
+            google_ad_slot = "{{ site.ads.google.slot }}";
+            google_ad_width = {{ site.ads.google.width }};
+            google_ad_height = {{ site.ads.google.height }};
+            //-->
+          </script>
+          <script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+        </div>
+        {% endif %}
+        {% if site.author %}
+        <div class="misc vcard">
+          <h4>contact</h4>
+          <ul>
+            {% if site.author.email %}
+            <li class="contact"><address><span class="fn email">{{ site.author.email }}</span></address></li>
+            {% endif %}
+            {% if site.author.github %}
+            <li class="github"><a href="http://github.com/{{ site.author.github }}/" rel="me">github.com/{{ site.author.github }}</a></li>
+            {% endif %}
+            {% if site.author.twitter %}
+            <li class="twitter"><a href="http://twitter.com/{{ site.author.twitter }}/" rel="me">twitter.com/{{ site.author.twitter }}</a></li>
+            {% endif %}
+            {% if site.author.weibo %}
+            <li class="weibo"><a href="http://weibo.com/{{ site.author.weibo }}/" rel="me">weibo.com/{{ site.author.weibo }}</a></li>
+            {% endif %}
+          </ul>
+        </div><!-- misc -->
+        {% endif %}
+      </header>
+
+      <section>
+      {{ content }}
+      </section>
+      <div class="banner"><a href="https://github.com/supstat/vistat"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub"></a></div>
+
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
+  </body>
+</html>

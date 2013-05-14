@@ -1,0 +1,35 @@
+A case study of Yu Darvish's deception factor
+========================================================
+
+On April 2nd, 2013 Yu Darvish [flirted with pitching perfection](http://sports.yahoo.com/news/yu-darvish-loses-perfect-game-030913556--mlb.html). To demonstrate his ability to deceive batters with a consistent delivery over different pitch types, [redditor DShep created this gif](http://www.reddit.com/r/baseball/comments/1d2z6d/all_of_darvishs_primary_pitches_at_once/), which layers video of five different pitches thrown by Darvish on April 24th:
+
+<img class="decoded" src="http://i.minus.com/i3SXAH4AAxtWS.gif" alt="http://i.minus.com/i3SXAH4AAxtWS.gif"></img>
+
+Cool, huh? Well, I will show you how to 'recreate' a similar 'gif' with publicly available PITCHf/x data using the [pitchRx](http://cran.r-project.org/web/packages/pitchRx/) [R](http://cran.r-project.org) package. First, we collect all the pitches thrown by Darvish to Albert Pujols on April 24th:
+
+```{r scrape, results='hide', message=FALSE, cache=TRUE}
+library(pitchRx)
+dat <- scrapeFX(start="2013-04-24", end="2013-04-24")
+atbats <- subset(dat$atbat, pitcher_name=="Yu Darvish" & batter_name=="Albert Pujols")
+pitches <- plyr::join(atbats, dat$pitch, by=c("num", "url"), type="inner")
+```
+
+Then we animate these pitches using `animateFX`. 
+
+```{r set_hook, echo=FALSE}
+library(knitr)
+opts_knit$set(animation.fun = hook_r2swf)
+```
+
+```{r ani, fig.show='animate', interval=0.05, dev="CairoPNG", cache=TRUE, warning=FALSE}
+animateFX(pitches)
+```
+
+According to the PITCHf/x data, Darvish had quite different release points (especially for his slider). Furthermore, Darvish didn't even throw a curveball to Pujols. If you look closer at the original gif, you can actually see a different batter (than Pujols) in the batter's box (look for a white bat). 
+
+I think it would be awesome to have a similar tool in [pitchRx](http://cran.r-project.org/web/packages/pitchRx/) for creating 'gifs' with actual video. If anybody has ideas on how we can connect PITCHf/x data with actual video, leave a comment or message me on twitter [@cpsievert](http://twitter.com/cpsievert).
+
+If you're still reading, you may be wondering, how can I take these animations and embed them on my own web page/blog? If you're curious, I've made the [source code](https://github.com/cpsievert/cpsievert.github.com/blob/master/pitchRx/YuDarvish/index.Rmd) to this post available. Note that [knitr, Markdown and RStudio](http://www.rstudio.com/ide/docs/authoring/using_markdown) makes the publishing process quite painless.
+
+
+

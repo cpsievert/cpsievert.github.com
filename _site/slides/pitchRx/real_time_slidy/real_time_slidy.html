@@ -1,0 +1,42 @@
+<p><code>{r setup, include=FALSE, message=FALSE, cache=FALSE}
+require(devtools)
+install_github('pitchRx', 'cpsievert')
+library(pitchRx)
+if (!require(knitr)) install_github('knitr', 'yihui')
+require(R2SWF) #required for animation to use hook_r2swf function
+opts_knit$set(animation.fun = hook_r2swf)
+opts_chunk$set(fig.path="figure/", cache.path="cache/", dev='CairoPNG', fig.show='animate', interval=0.01, fig.align='center', fig.width=8, fig.height=7, fig.cap='', warning=FALSE, message=FALSE, echo=FALSE) #NOTE: interval=0.01 makes the animation real-time!
+</code></p>
+
+<p><code>{r getData, include=FALSE, cache=TRUE}
+data &lt;- scrapeFX(start="2011-01-01",
+  end="2012-01-01", type="pitcher",
+  player=c("Mariano Rivera", "Phil Hughes"))
+FX &lt;- join(data$pitch, data$atbat, 
+  by = c("num", "url"), type = "inner")
+pitches &lt;- subset(FX, pitch_type %in% 
+  c("FF", "FC"))
+</code></p>
+
+<h2 id="default-plot">Default Plot</h2>
+
+<p><code>{r animate1}
+animateFX(pitches)
+</code></p>
+
+<hr />
+
+<h2 id="facet-by-batter-stance">Facet by batter stance</h2>
+
+<p><code>{r animate2}
+animateFX(pitches, layer = facet_grid(.~stand))
+</code></p>
+
+<hr />
+
+<h2 id="facet-by-batter-stance-and-pitchers-name">Facet by batter stance and pitcher&#8217;s name</h2>
+
+<p><code>{r animate3}
+animateFX(pitches, facet_grid(pitcher_name~stand))
+</code></p>
+
