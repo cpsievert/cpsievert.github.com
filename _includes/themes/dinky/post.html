@@ -1,0 +1,56 @@
+<section>
+  <h1>{{ page.title }}</h1>
+  <ul class="author">
+  {% for id in page.author %}{% assign author = site.authors[id] %}
+    <li>{% if author %}
+    <a href="{{ author.homepage }}">{{ author.name }}</a>
+      ({{ author.email | replace:'@','<span>@</span>' }}{% if author.github %} / <a href="https://github.com/{{ author.github }}">GitHub</a>{% endif %}
+      {% if author.twitter %} / <a href="http://twitter.com/{{ author.twitter }}">Twitter</a>{% endif %}) {{ author.bio | markdownify | replace:'<p>','' | replace:'</p>','' }}
+    {% else %}
+    Please specify author information for {{ id }} in <a href="https://github.com/supstat/vistat/blob/gh-pages/_config.yml">_config.yml</a>.
+    {% endif %}</li>
+  {% endfor %}
+  </ul>
+  {{ content }}
+  <div class="meta">
+    <h3>Meta</h3>
+    Keywords:
+    <ul class="tag_box inline">
+      {% assign tags_list = page.tags %}  
+      {% include JB/tags_list %}
+    </ul>
+    Categories:
+    <ul class="tag_box inline">
+      {% assign categories_list = page.categories %}
+      {% include JB/categories_list %}
+    </ul>
+    {% if page.reviewer != empty %}
+    Reviewer:
+    <ul class="tag_box inline">
+    {% for id in page.reviewer %}{% assign reviewer = site.authors[id] %}
+      <li><a href="{{ reviewer.homepage }}">{{ reviewer.name }}</a></li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+    You can find the R Markdown source document in the <a href="https://github.com/supstat/vistat/tree/gh-pages/_source/{{ page.date | date:'%Y-%m-%d'}}-{{ page.url | split:'/' | last }}.Rmd">vistat repository</a> on GitHub.
+  </div>
+  {% include JB/comments %}
+</section>
+<script type="text/javascript">
+document.onkeydown = function(e) {
+  if (e.target.nodeName.toUpperCase() != 'BODY') return;
+  var url = false;
+  if (e.which == 37 || e.which == 74) {  // Left arrow and J
+  {% if page.previous %}
+  url = '{{ site.url }}{{ page.previous.url }}';
+  {% endif %}
+  } else if (e.which == 39 || e.which == 75) {  // Right arrow and K
+  {% if page.next %}
+  url = '{{ site.url }}{{ page.next.url }}';
+  {% endif %}
+  }
+  if (url) {
+      window.location = url;
+  }
+};
+</script>

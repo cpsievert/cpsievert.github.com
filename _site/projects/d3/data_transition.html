@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+		<title>Data transition</title>
+		<script type="text/javascript" src="d3.v2.js"></script>
+		<style type="text/css">
+
+			.bar {
+				fill: steelblue;
+				stroke: none;
+			}
+			
+			.highlight {
+				fill: red;
+			}
+
+		</style>
+	</head>
+	<body>
+		<script type="text/javascript">
+
+			//Define our random-number generator function
+			var _id_ = 0;
+			function generate() {
+				return {
+					index: _id_++,
+					value: 1000 * Math.random()
+				};
+			}
+
+			//Generate random data to use for the chart
+			var data = d3.range(100).map(generate);
+			
+			
+			
+			//Set variables for desired size of chart
+			var w = 900,
+				h = 100,
+				bw = 9;
+
+
+
+			//Define a scale for y axis values
+			var yScale = d3.scale.linear()
+								 .domain([0, d3.max(data, function(d) { return d.value; })])
+								 .range([0, 100]);
+
+
+
+			//Select the <body> and create a new SVG element
+			var svg = d3.select("body").append("svg")
+						.attr("width", w)
+						.attr("height", h);
+			
+
+
+			//Create a series of 'rect' elements within the SVG
+			svg.selectAll("rect.bar")
+				.data(data)
+				.enter()
+				.append("rect")
+				.attr("class", "bar")
+				.attr("x", function(d, i) {
+					return i * bw;
+				})
+				.attr("width", bw - 1)
+				.attr("y", function(d) {
+					return h - yScale(d.value);
+				})
+				.attr("height", function(d) {
+					return yScale(d.value);
+				})
+				.on("mouseover", function(d) {
+					d3.select(this).classed("highlight", true);
+				})
+				.on("mouseout", function(d) {
+					d3.select(this).classed("highlight", false);
+				});
+
+
+
+			//Define a new function that updates all data
+			function update() {
+
+				data.shift();
+				data.push(generate());
+				
+			    //Re-select bars
+			    var bars = svg.selectAll("rect.bar")
+			        .data(data);
+			
+			    //Update x, y, and height attributes for all bars based on newly bound data
+			    bars.transition()					// <-- Added transition and duration here!
+			    	.duration(500)
+        			.attr("x", function(d, i) {
+			    		return i * bw;
+			    	})
+			        .attr("y", function(d) {
+			        	return h - yScale(d.value);
+			        })
+			        .attr("height", function(d) {
+			        	return yScale(d.value);
+			        });
+			}
+			
+			//Execute this update function every two seconds
+			setInterval(update, 2000);
+			
+			
+			
+		</script>
+	</body>
+</html>

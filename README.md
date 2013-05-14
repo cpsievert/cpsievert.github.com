@@ -1,4 +1,5 @@
-cpsievert.github.com
-====================
+# Carson's Personal Blog
 
-Personal Homepage
+<http://cpsievert.github.com>
+
+

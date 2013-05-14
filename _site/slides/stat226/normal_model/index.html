@@ -1,0 +1,96 @@
+<h2 id="modeling-populations-with-normal-distributions">Modeling Populations with Normal Distributions</h2>
+
+<div align="center"><img src="http://i.imgur.com/ljRDF8W.jpg" /></div>
+
+<hr />
+<p>## Random Variables</p>
+
+<h4 id="are-used-to-model-variability-within-a-population-for-now">* Are used to model variability within a population (for now)</h4>
+
+<h4 id="stat-226-focuses-on-normal-random-variables-x-sim-nmu-sigma2">* Stat 226 focuses on &#8220;normal&#8221; random variables $X \sim N(\mu, \sigma^{2}$)</h4>
+
+<h4 id="mu-represents-the-population-mean">* $\mu$ represents the population mean</h4>
+
+<h4 id="sigma2-represents-the-population-variance">* $\sigma^{2}$ represents the population variance</h4>
+
+<h4 id="sigma-represents-the-population-standard-deviation">* $\sigma$ represents the population standard deviation</h4>
+
+<h4 id="for-now-we-assume-mu-that-sigma-are-known-note-this-assumption-is-unrealistic-and-will-be-relaxed-after-chapter-12">* For now, we assume $\mu$ that $\sigma$ are known. <strong>NOTE:</strong> this assumption is unrealistic and will be relaxed after Chapter 12.</h4>
+
+<hr />
+<p>## Probability Distribution Functions</p>
+
+<h4 id="pdfs-assign-probabilities-to-values-of-a-random-variable-x">* PDF&#8217;s assign probabilities to values of a random variable ($X$)</h4>
+
+<h4 id="since-normal-random-variables-are-continuous-we-are-interested-in-the-probability-that-x-is-within-a-range-of-values">* Since &#8220;normal&#8221; random variables are continuous, we are interested in the probability that $X$ is <strong>within a range of values</strong>.</h4>
+
+<blockquote>
+  <ul>
+    <li><strong>Example:</strong> Suppose I work on wall street. I might be interested in the probability that Apple&#8217;s stock price rises tomorrow. If I define the r.v. $X$ to be the change in Apple&#8217;s stock price from today to tomorrow, <strong>what values of $X$ do I want to assign a probability to?</strong></li>
+  </ul>
+</blockquote>
+
+<blockquote>
+  <ul>
+    <li>$X \geq 0$</li>
+  </ul>
+</blockquote>
+
+<blockquote>
+  <ul>
+    <li>Thus, I want to know $P(X \geq 0)$.</li>
+  </ul>
+</blockquote>
+
+<hr />
+<p>## How can I think of the following expression - $P(X \geq 0)$ - in English?</p>
+
+<blockquote>
+  <ul>
+    <li>In our example: The probability that Apple&#8217;s stock price rises tomorrow.</li>
+  </ul>
+</blockquote>
+
+<blockquote>
+  <ul>
+    <li>More generally (for any random variable):</li>
+  </ul>
+</blockquote>
+
+<blockquote>
+  <ul>
+    <li>&#8220;The probability that $X$ is greater than (or equal to) 0.&#8221;</li>
+  </ul>
+</blockquote>
+
+<blockquote>
+  <ul>
+    <li>&#8220;The area under the curve (or PDF) associated with X values greater than (or equal to) 0&#8221;</li>
+  </ul>
+</blockquote>
+
+<blockquote>
+  <ul>
+    <li>&#8220;The proportion of the curve associated with X values greater than (or equal to) 0&#8221;</li>
+  </ul>
+</blockquote>
+
+<hr />
+<p>## Notes on modeling</p>
+
+<h4 id="suppose-i-have-data-on-2012-yearly-profits-for-internet-marketing-firms-values-reported-in-millions-of-dollars">Suppose I have data on 2012 yearly profits for internet marketing firms (values reported in millions of dollars).</h4>
+
+<div align="center"><img src="http://www.statsdirect.com/help/image/stat0108_wmf.gif" /></div>
+
+<blockquote>
+  <ul>
+    <li>$P(X \geq 0)$ can now be thought of as &#8220;the proportion of internet marketing firms with a positive profit&#8221;.</li>
+  </ul>
+</blockquote>
+
+<blockquote>
+  <ul>
+    <li>How would you provide an approximation of $P(X \geq 0)$?</li>
+  </ul>
+</blockquote>
+

@@ -1,0 +1,286 @@
+<!---CSS to fix resolution--->
+<style>#iFrame { width:100%; height:90%; }</style>
+
+<style>#nonFrame { width:100%; height:90%; }</style>
+
+<hr />
+
+<p><img src="http://i.imgur.com/VClk4DS.png" />
+&lt;div align="center"&gt;&lt;h1&gt;Getting Started with Shiny&lt;/h1&gt;&lt;/div&gt;</p>
+
+<hr />
+<p>## Motivating Example by Winston Chang</p>
+
+<!---Height and weight of schoolchildren. Credits go to Winston Chang.-->
+
+<iframe src="http://glimmer.rstudio.com/winston/heightweight/" id="iFrame"></iframe>
+
+<hr />
+<p>## Motivating Example by Jeff Allen</p>
+
+<!---Gene reconstruction networks. Credits go to Jeff Allen.-->
+
+<iframe src="http://glimmer.rstudio.com/qbrc/grn/" id="iFrame"></iframe>
+
+<hr />
+<p>## Motivating Example by Yihui Xie</p>
+
+<iframe src="http://glimmer.rstudio.com/yihui/knitr/" id="iFrame"></iframe>
+
+<p>&#8212; #nonFrame
+## Do I have your attention???</p>
+
+<div align="center"><img src="http://i.imgur.com/ljRDF8W.jpg" /></div>
+
+<p>&#8212; #nonFrame
+## Run Shiny Examples From R Console</p>
+
+<p><code>{r setup, include=FALSE, message=FALSE}
+opts_chunk$set(fig.path="figure/", cache.path="cache/", fig.width=14.5, fig.height=8, fig.cap='', warning=FALSE, message=FALSE, tidy=FALSE)
+require(shiny)
+</code></p>
+
+<h3>(1) First install shiny (version 0.3.0) if you haven't yet</h3>
+
+<p><code>{r install, eval=FALSE}
+require(shiny)
+version &lt;- sessionInfo()$otherPkgs$shiny$Version
+if (version != "0.3.0") install.packages("shiny")
+library(shiny)
+</code></p>
+
+<h3> (2) Use runExample() to run the shiny tutorial examples</h3>
+
+<p><code>{r ex1, eval=FALSE}
+runExample("01_hello")
+</code></p>
+
+<h4>NOTE:</h4>
+<blockquote>
+  <ul>
+    <li>You may want to change your default browser to <a href="http://support.mozilla.org/en-US/kb/how-make-web-links-open-firefox-default">firefox</a> or <a href="http://support.google.com/chrome/bin/answer.py?hl=en&amp;answer=95417">chrome</a>!</li>
+  </ul>
+</blockquote>
+
+<blockquote>
+  <ul>
+    <li>R is occupied by to your local port</li>
+  </ul>
+</blockquote>
+
+<blockquote>
+  <ul>
+    <li>Press &#8216;esc&#8217; (inside your R console) to quit app and return to R session&#8230;I&#8217;m not sure how to do this gracefully on the command line</li>
+  </ul>
+</blockquote>
+
+<p>&#8212; #nonFrame
+## Shiny Tutorial Page</p>
+
+<iframe src="http://rstudio.github.com/shiny/tutorial/#hello-shiny" id="iFrame"></iframe>
+
+<p>&#8212; #nonFrame
+## Running &#8220;Hello Shiny!&#8221; locally</p>
+
+<h3 id="place-the-uir-and-serverr-files-into-the-same-local-directory">(1) Place the ui.R and server.R files into the same local directory</h3>
+
+<h3 id="execute-the-following-into-your-r-console">(2) Execute the following into your R console:</h3>
+
+<p><code>{r local, eval=FALSE}
+setwd("My Shiny Directory")
+runApp()
+</code></p>
+
+<h3 id="pros">Pros:</h3>
+<ul>
+  <li>Great way to develop and test your own apps.</li>
+</ul>
+
+<h3 id="cons">Cons:</h3>
+<ul>
+  <li>Can&#8217;t share with your friends.</li>
+</ul>
+
+<p>&#8212; #nonFrame
+## Social shiny</p>
+
+<h3 id="convenient-functions-for-running-and-sharing-apps">Convenient functions for running and sharing apps:</h3>
+
+<ul>
+  <li>
+    <p>To demonstrate, I&#8217;ve copied the &#8220;Hello Shiny!&#8221; files onto my github page.</p>
+  </li>
+  <li>
+    <p>You can run it as follows:</p>
+  </li>
+</ul>
+
+<p><code>{r github, eval=FALSE}
+runGitHub('shiny_apps', 'cpsievert', subdir='01_hello')
+</code></p>
+
+<ul>
+  <li>Or use runUrl() - achieves the same thing</li>
+</ul>
+
+<p><code>{r url, eval=FALSE}
+runUrl("https://github.com/cpsievert/shiny_apps/archive/master.tar.gz",
+  subdir = "01_hello")
+</code></p>
+
+<ul>
+  <li>You can also run stuff on gist.github.com (this is older, but kinda convenient)</li>
+</ul>
+
+<p><code>{r gist, eval=FALSE}
+runGist(4638469) #Runs the "Hello Shiny!" code hosted on gist.github.com/4638469
+runGist(4440099) #Runs my PITCHf/x app
+runGist(3969102) #Neat ggplot2 example by Winston Chang
+</code></p>
+
+<p>&#8212; #nonFrame
+## Hosting on an actual Server</p>
+
+<h3 id="two-options">Two Options:</h3>
+
+<ul>
+  <li>Apply for a free account with RStudio: http://www.rstudio.com/shiny/</li>
+</ul>
+
+<blockquote>
+  <ul>
+    <li>I haven&#8217;t done this yet, but Yihui has!</li>
+  </ul>
+</blockquote>
+
+<ul>
+  <li>Create your own server: https://github.com/rstudio/shiny-server#shiny-server</li>
+</ul>
+
+<blockquote>
+  <ul>
+    <li>Just released on January 22nd. I don&#8217;t know much about it. Any thoughts Yihui?</li>
+  </ul>
+</blockquote>
+
+<p>&#8212; #nonFrame
+## Useful concepts for Shiny Development</p>
+
+<h4 id="inputs--outputs">Inputs &amp; Outputs</h4>
+<blockquote>
+  <ul>
+    <li>Inputs can be created via ui.R or server.R (doing this via server.R is kinda complicated)</li>
+    <li>Outputs are generated via server.R, then passed back to ui.R for displaying purposes.</li>
+  </ul>
+</blockquote>
+
+<h4 id="reactive-functions">Reactive Functions</h4>
+<blockquote>
+  <ul>
+    <li>Ensures new output is generated when any inputs are changed</li>
+  </ul>
+</blockquote>
+
+<h4 id="ui-widgets">UI Widgets</h4>
+<blockquote>
+  <ul>
+    <li>Convenient wrappers for creating options to alter inputs.</li>
+  </ul>
+</blockquote>
+
+<h4 id="debugging-options">Debugging Options</h4>
+<blockquote>
+  <ul>
+    <li>Current options are pretty awful. The &#8220;shiny crew&#8221; is working on better alternatives.</li>
+  </ul>
+</blockquote>
+
+<p>&#8212; #nonFrame
+## Extending &#8220;Hello Shiny!&#8221;</p>
+
+<ul>
+  <li>
+    <p><strong>Challenge</strong>: add options to change the mean and standard deviation.</p>
+  </li>
+  <li>You could add either of these to ui.R:</li>
+  <li>sliderInput()</li>
+  <li>
+    <p>numericInput()</p>
+  </li>
+  <li>Incorporate these new inputs appropriately in the server.R file.</li>
+</ul>
+
+<p>&#8212; #nonFrame
+## Solution 1</p>
+
+<h3 id="access-the-appropriately-modified-app">Access the appropriately modified app:</h3>
+
+<p><code>{r sol1, eval=FALSE}
+runGitHub('shiny_apps', 'cpsievert', subdir='extend1')
+</code></p>
+
+<p>&#8212; #nonFrame
+## Extending &#8220;Hello Shiny!&#8221; (part 2)</p>
+
+<ul>
+  <li>
+    <p><strong>Challenge</strong>: add options to plot either a normal or gamma distribution.</p>
+  </li>
+  <li>You could add any of these to ui.R:</li>
+  <li>selectInput()</li>
+  <li>textInput()</li>
+  <li>radioButtions()</li>
+  <li>checkboxInput()</li>
+  <li>
+    <p>checkboxGroupInput()</p>
+  </li>
+  <li>Incorporate the new input appropriately in the server.R file.</li>
+</ul>
+
+<p>&#8212; #nonFrame
+## Solution 2</p>
+
+<h3 id="access-the-appropriately-modified-app-1">Access the appropriately modified app:</h3>
+
+<p><code>{r sol2, eval=FALSE}
+runGitHub('shiny_apps', 'cpsievert', subdir='extend2')
+</code></p>
+
+<p>&#8212; #nonFrame
+## Extending &#8220;Hello Shiny!&#8221; (part 3)</p>
+
+<ul>
+  <li>
+    <p><strong>Challenge</strong>: Extend part 2 so that there are dynamic inputs according to the desired distribution. That is, display mean and std dev inputs for normal distribution and a shape input for gamma.</p>
+  </li>
+  <li>
+    <p>You will need to use conditionalPanel() to check which distribution is desired.</p>
+  </li>
+</ul>
+
+<p>&#8212; #nonFrame
+## Solution 3</p>
+
+<h3 id="access-the-appropriately-modified-app-2">Access the appropriately modified app:</h3>
+
+<p><code>{r sol3, eval=FALSE}
+runGitHub('shiny_apps', 'cpsievert', subdir='extend3')
+</code></p>
+
+<p>&#8212; #nonFrame
+## Tips for Developing with Shiny</p>
+
+<h4 id="check-out-what-others-are-doing-for-ideasinspiration">(1) Check out what others are doing for ideas/inspiration</h4>
+
+<h4 id="use-the-shiny-tutorial-as-your-initial-guide">(2) Use the Shiny Tutorial as your initial guide</h4>
+
+<h4 id="join-the-shiny-google-mailing-list">(3) Join the Shiny google mailing list</h4>
+
+<h4 id="read-into-html-css-javascript-d3-for-added-customization">(4) Read into HTML, CSS, Javascript, D3 for added customization</h4>
+
+<p>&#8212; #nonFrame</p>
+
+<h2 id="questions">Questions???</h2>
+
+<h4 id="thanks-to-joe-cheng--winston-chang-for-creatingmaintaining-such-a-great-product">Thanks to Joe Cheng \&amp; Winston Chang for creating/maintaining such a great product!!</h4>
+
