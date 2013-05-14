@@ -41,8 +41,8 @@ invisible(local({
   # issue with animations under Google Chrome for some reason - SciAnimator
   # keeps on fetching images from Dropbox
   # opts_knit$set(base.url = 'http://dl.dropbox.com/u/56809970/blog/')
-  # Y NOT GITHUB?
-  # opts_knit$set(base.url = 'http://github.com/cpsievert/cpsievert.github.com/')
+  # Y NOT GITHUB? See https://github.com/jfisher-usgs/jfisher-usgs.github.com/blob/master/R/KnitPost.R
+  opts_knit$set(base.url='/')
   message(f)
   wrap_rmd(f, width = 100)  # reflow long lines in Rmd
   knit(f, paste('_posts/', base, '.md', sep = ''), envir = globalenv(), quiet = TRUE)
