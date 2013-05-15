@@ -1,5 +1,4 @@
 base
-Cairo
 ggplot2
 hexbin
 knitr
@@ -8,7 +7,7 @@ lubridate
 MASS
 pitchRx
 plyr
-R2SWF
 reshape
+rgl
 stringr
 XML
