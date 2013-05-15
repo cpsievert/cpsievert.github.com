@@ -3,9 +3,7 @@ layout: post
 title: "Yu Darvish's deception factor"
 author: [cpsievert]
 categories: [WebGL, Animation, Baseball]
-tags: [MLB, PITCHfx, pitchRx, rgl]
-reviewer: []
-animation: true
+tags: [MLB, PITCHfx, pitchRx, animation, rgl]
 ---
 {% include JB/setup %}
 
@@ -35,7 +33,7 @@ pitches <- plyr::join(atbats, dat$pitch, by = c("num", "url"), type = "inner")
 {% endhighlight %}
 
 
-Then we animate these `pitches` using `animateFX`. Note that we take a different perspective from
+Lets animate these `pitches` using `animateFX`. Note that we take a different perspective from
 above by imagining the pitches coming closer as time progresses.
 
 
@@ -69,9 +67,9 @@ qplot(data = Darvish, x = as.numeric(x0), y = as.numeric(z0), color = pitch_type
 ![center](/figs/2013-05-15-yu-darvishs-deception-factor/release.png) 
 
 
-As you can see, Darvish has quite different release points according to pitch type. For example, he
-tends to throw a bit more side-arm for his slider compared to his four-seam fastball. Now, whether
-that difference is distinguishable to the human-eye is another question...
+As you can see, Darvish has quite different release points according to pitch type. For example,
+his slider tends to be more 'side-arm' compared to his four-seam fastball. Now, whether that
+difference is distinguishable to the human-eye is another question...
 
 Lastly, just for fun, let's take an interactive look at Darvish's pitches to Pujols. If your
 browser has [WebGL enabled](http://get.webgl.org/), go ahead and play with the object below!
