@@ -17,7 +17,6 @@ options(reindent.spaces = 2, KNITR_WIDTH = 65)
 
 library(knitr)
 stopifnot('_source' %in% list.files()) # run me from the root directory
-render_jekyll()
 
 opts_chunk$set(
   pars = list(mar = c(4, 4, .1, .1), mgp = c(2, 1, 0), bg = 'white'),
@@ -33,7 +32,7 @@ invisible(local({
   f = commandArgs(TRUE)
   base = sub('\\.[Rr]md$', '', basename(f))
   message(base)
-  opts_knit$set(base.url='/')
+ 
   # each source file corresponds to a separate fig.path and cache.path
   opts_chunk$set(cache.path = paste('cache', base, '', sep = '/'),
                  fig.path = paste('figs', base, '', sep = '/'))
@@ -43,8 +42,10 @@ invisible(local({
   # keeps on fetching images from Dropbox
   # opts_knit$set(base.url = 'http://dl.dropbox.com/u/56809970/blog/')
   # Y NOT GITHUB? See https://github.com/jfisher-usgs/jfisher-usgs.github.com/blob/master/R/KnitPost.R
-  
+  opts_knit$set(base.url='http://raw.github.com/cpsievert/cpsievert.github.com/master/')
+  render_jekyll()
   message(f)
   wrap_rmd(f, width = 100)  # reflow long lines in Rmd
+  
   knit(f, paste('_posts/', base, '.md', sep = ''), envir = globalenv(), quiet = TRUE)
 }))

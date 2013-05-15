@@ -71,9 +71,8 @@ summary(mtcars)
 
 {% highlight r %}
 library(ggplot2)
-qplot(mpg, wt, color = factor(cyl), data = mtcars) + facet_grid(. ~ 
-  gear, margins = TRUE)
+qplot(mpg, wt, color = factor(cyl), data = mtcars) + facet_grid(. ~ gear, margins = TRUE)
 {% endhighlight %}
 
-![plot of chunk test2](figs/2013-05-15-hello-jekyll/test2.png) 
+![center](/figs/2013-05-15-hello-jekyll/test2.png) 
 
