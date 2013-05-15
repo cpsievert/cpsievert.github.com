@@ -1,6 +1,8 @@
 ada
 adabag
+animation
 base
+Cairo
 caret
 class
 cluster
@@ -11,6 +13,7 @@ ggplot2
 gridExtra
 hexbin
 kernlab
+knitPost
 knitr
 lattice
 lubridate
@@ -19,6 +22,7 @@ mlbench
 pitchRx
 plyr
 proxy
+R2SWF
 randomForest
 rCharts
 RColorBrewer

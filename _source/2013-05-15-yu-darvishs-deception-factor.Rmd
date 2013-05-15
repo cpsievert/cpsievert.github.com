@@ -25,44 +25,49 @@ data using the [pitchRx](http://cran.r-project.org/web/packages/pitchRx/)
 [R](http://cran.r-project.org) package. First, we collect all the pitches thrown by Darvish to
 Albert Pujols on April 24th:
 
-
-{% highlight r %}
+```{r scrape, results='hide', message=FALSE, cache=TRUE}
 library(pitchRx)
-dat <- scrapeFX(start = "2013-04-24", end = "2013-04-24")
-atbats <- subset(dat$atbat, pitcher_name == "Yu Darvish" & batter_name == "Albert Pujols")
-pitches <- plyr::join(atbats, dat$pitch, by = c("num", "url"), type = "inner")
-{% endhighlight %}
-
+dat <- scrapeFX(start="2013-04-24", end="2013-04-24")
+atbats <- subset(dat$atbat, pitcher_name=="Yu Darvish" & batter_name=="Albert Pujols")
+pitches <- plyr::join(atbats, dat$pitch, by=c("num", "url"), type="inner")
+```
 
 Then we animate these `pitches` using `animateFX`.
 
+```{r set_hook, echo=FALSE}
+library(knitr)
+opts_knit$set(animation.fun = hook_r2swf, webgl = hook_webgl)
+```
 
-
-
-
-{% highlight r %}
+```{r ani, fig.show='animate', fig.align='center', interval=0.05, dev="CairoPNG", cache=TRUE, warning=FALSE}
 animateFX(pitches)
-{% endhighlight %}
-
-<div align = "center">
- <embed width="504" height="504" name="plugin" src="figs/2013-05-15-yu-darvishs-deception-factor/ani.swf" type="application/x-shockwave-flash"> 
-</div>
-
+```
 
 According to the PITCHf/x data, Darvish had quite different release points (especially for his
 slider). Furthermore, Darvish didn't even throw a curveball to Pujols. If you look closer at the
 original gif, you can actually see a different batter (than Pujols) in the batter's box (look for a
 white bat).
 
-
-{% highlight r %}
+```{r lies, eval=FALSE}
 library(rgl)
 interactiveFX(pitches)
-{% endhighlight %}
+```
 
-
-
-
+```{r webgl1, webgl=TRUE, echo=FALSE}
+#reproduction of interactiveFX output since knitr won't recognize interactiveFX (but does recognize spheres3d)
+library(rgl)
+snaps <- getSnapshots(pitches, interval = 0.01)
+types <- as.character(pitches[,"pitch_type"])
+ncolors <- length(unique(types))
+pal <- terrain.colors(ncolors)
+full.pal <- factor(types)
+levels(full.pal) <- pal
+spheres3d(x=as.vector(snaps[,,1]), y=as.vector(snaps[,,2]), z=as.vector(snaps[,,3]),
+           xlab="Horizontal Axis", ylab="Distance from Home Plate", zlab="Height From Ground",
+           col=as.character(full.pal), radius=.12)
+axes3d(c('x', 'y', 'z'))
+title3d(xlab='Horizontal Axis', ylab='Distance from Home Plate', zlab='Height From Ground')
+```
 
 I think it would be awesome to have a similar tool in
 [pitchRx](http://cran.r-project.org/web/packages/pitchRx/) for creating 'gifs' with actual video.
