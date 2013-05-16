@@ -33,7 +33,7 @@ library(pitchRx)
 idx <- c("x0", "y0", "z0", "vx0", "vy0", "vz0", "ax", "ay", "az")
 for (i in idx) Darvish[,i] <- as.numeric(Darvish[,i])
 agDarvish <- ddply(Darvish, c("pitch_type", "stand"), summarize,
-                    x0=mean(x0), y0=mean(y0), z0=mean(z0), vx0=mean(vx0), vy0=mean(vy0), vz0=mean(vz0),
+                    x0=mean(x0), y0=55, z0=mean(z0), vx0=mean(vx0), vy0=mean(vy0), vz0=mean(vz0),
                     ax=mean(ax), ay=mean(ay), az=mean(az))
 agDarvish$b_height <- "6-1" #estimate average batter height (for strikezones)
 animateFX(agDarvish, layer=facet_wrap(~stand))
