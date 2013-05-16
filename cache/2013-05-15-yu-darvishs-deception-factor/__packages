@@ -1,5 +1,7 @@
 base
 Cairo
+clickme
+devtools
 ggplot2
 hexbin
 knitr
@@ -9,6 +11,8 @@ MASS
 pitchRx
 plyr
 R2SWF
+rCharts
 reshape
+slidify
 stringr
 XML

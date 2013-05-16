@@ -60,6 +60,17 @@ As you can see, Darvish has quite different release points according to pitch ty
 his slider tends to be more 'side-arm' compared to his four-seam fastball. Now, whether that
 difference is distinguishable to the human-eye is another question...
 
+EDIT: Thanks to a recommendation by [@sky_kalman](https://twitter.com/Sky_Kalkman), normalizing
+release points should make it easier to make visual comparison of flight paths across the pitch
+types. Here is one way to go about that:
+
+```{r normalized, fig.show='animate', fig.align='center', interval=0.05, dev="CairoPNG", cache=TRUE, warning=FALSE}
+pitches$x0 <- mean(as.numeric(pitches$x0))
+pitches$z0 <- mean(as.numeric(pitches$z0))
+animateFX(pitches)
+```
+
+
 Lastly, just for fun, let's take an interactive look at Darvish's pitches to Pujols. If your
 browser has [WebGL enabled](http://get.webgl.org/), go ahead and play with the object below!
 
