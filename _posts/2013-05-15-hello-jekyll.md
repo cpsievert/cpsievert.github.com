@@ -1,10 +1,8 @@
 ---
 layout: post
 title: "Hello Jekyll"
-author: []
+author: [cpsievert]
 categories: [test]
-tags: []
-reviewer: []
 ---
 {% include JB/setup %}
 
@@ -13,11 +11,11 @@ Jekyll-Bootstrap blog. The main motivation is local file management and producin
 examples of my work to share with others. Here are a few links that motivated and helped complete
 the switch:
 
-http://vis.supstat.com/
+* [http://vis.supstat.com](http://vis.supstat.com)
 
-http://jfisher-usgs.github.io/
+* [http://jfisher-usgs.github.io](http://jfisher-usgs.github.io)
 
-http://ramnathv.github.io/poirotBlog/posts/polychart.html
+* [http://ramnathv.github.io/poirotBlog/posts/polychart.html](http://ramnathv.github.io/poirotBlog/posts/polychart.html)
 
 For my own sanity, this post will serve as a reminder of how to post to my own blog:
 
@@ -26,12 +24,11 @@ Title"`
 
 2. Open the file `_source/yyyy-mm-dd-title.Rmd`, add content and save it!
 
-3. To compile into html: `$ ./_bin/knit _source/yyyy-mm-dd-title.Rmd`
+3. To compile into html: `$ library(knitPost); knitPost("yyyy-mm-dd-title.Rmd")`. Then, if
+animations are present, add the 'http://cpsievert.github.com/' prefix to src attribute in the
+markdown file.
 
-<!-- 4. Copy figures to public Dropbox folder: `$ cp -r
-~/Desktop/github/local/blog/_site/figures/yyyy-mm-dd-title ~/Dropbox/Public/blog` -->
-
-5. Preview in all its glory! `$ rake preview`
+4. Preview in all its glory! `$ rake preview`
 
 The output will consist of pretty stuff like this:
 
