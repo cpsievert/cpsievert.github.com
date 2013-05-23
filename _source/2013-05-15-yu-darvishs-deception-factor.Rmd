@@ -60,7 +60,7 @@ As you can see, Darvish has quite different release points according to pitch ty
 his slider tends to be more 'side-arm' compared to his four-seam fastball. Now, whether that
 difference is distinguishable to the human-eye is another question...
 
-EDIT: Thanks to a recommendation by [@sky_kalman](https://twitter.com/Sky_Kalkman), normalizing
+EDIT: Thanks to a recommendation by [@Sky_Kalman](https://twitter.com/Sky_Kalkman), normalizing
 release points should make it easier to make visual comparison of flight paths across the pitch
 types. Here is one way to go about that:
 

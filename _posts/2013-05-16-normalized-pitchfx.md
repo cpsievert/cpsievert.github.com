@@ -8,7 +8,7 @@ tags: [MLB, animation]
 {% include JB/setup %}
 
 After [my most recent post](http://cpsievert.github.io/2013/05/yu-darvishs-deception-factor/),
-[@sky_kalman](http://twitter.com/sky_kalman) threw out the idea of forcing release points to a
+[@Sky_Kalkman](http://twitter.com/Sky_Kalkman) threw out the idea of forcing release points to a
 central point in the animation - to ease the visual comparison of flight paths across pitch types.
 I implemented his idea by just using average release points; but that can be deceptive, since it
 the alters the entire path of each pitch.
