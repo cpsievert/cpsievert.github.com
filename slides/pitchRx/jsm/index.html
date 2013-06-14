@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<head>
+<meta charset="utf-8">
+  <meta name="author" content="Carson Sievert" />
+  <title>pitchRx: Tools for Collecting and Analyzing Major League Baseball’s (MLB) PITCHf/x Data</title>
+  <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+  </style>
+<style>
+  html { background-color: black; }
+  body { background-color: white; border-radius: 12px}
+  /* A section is a slide. It's size is 800x600, and this will never change */
+  section {
+      font-family: Arial, serif;
+      font-size: 20pt;
+    }
+  address, blockquote, dl, fieldset, form, h1, h2, h3, h4, h5, h6, hr, ol, p, pre, table, ul, dl { padding: 10px 20px 10px 20px; }
+  h1, h2, h3 {
+    text-align: center;
+    margin: 10pt 10pt 20pt 10pt;
+  }
+  ul, ol {
+    margin: 10px 10px 10px 50px;
+  }
+  section.titleslide h1 { margin-top: 200px; }
+  h1.title { margin-top: 150px; }
+  h1 { font-size: 180%; }
+  h2 { font-size: 120%; }
+  h3 { font-size: 100%; }
+  q { quotes: "“" "”" "‘" "’"; }
+  blockquote { font-style: italic }
+  /* Figures are displayed full-page, with the caption on
+     top of the image/video */
+  figure {
+    background-color: black;
+  }
+  figcaption {
+    margin: 70px;
+  }
+  footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: 40px;
+    text-align: right;
+    background-color: #F3F4F8;
+    border-top: 1px solid #CCC;
+  }
+
+  /* Transition effect */
+  /* Feel free to change the transition effect for original
+     animations. See here:
+     https://developer.mozilla.org/en/CSS/CSS_transitions
+     How to use CSS3 Transitions: */
+  section {
+      -moz-transition: left 400ms linear 0s;
+      -webkit-transition: left 400ms linear 0s;
+      -ms-transition: left 400ms linear 0s;
+      transition: left 400ms linear 0s;
+  }
+
+  /* Before */
+  section { left: -150%; }
+  /* Now */
+  section[aria-selected] { left: 0; }
+  /* After */
+  section[aria-selected] ~ section { left: +150%; }
+
+  /* Incremental elements */
+
+  /* By default, visible */
+  .incremental > * { opacity: 1; }
+
+  /* The current item */
+  .incremental > *[aria-selected] { color: red; opacity: 1; }
+
+  /* The items to-be-selected */
+  .incremental > *[aria-selected] ~ * { opacity: 0.2; }
+</style>
+</head>
+<body>
+<section>
+  <h1 class="title">pitchRx: Tools for Collecting and Analyzing Major League Baseball’s (MLB) PITCHf/x Data</h1>
+  <h2 class="author">Carson Sievert</h2>
+  <h3 class="date">5/23/2013</h3>
+</section>
+<section class="slide level2" id="yu-vishnu-darvish">
+<h1>Yu <q>Vishnu</q> Darvish</h1>
+<div align="center">
+  
+<img class="decoded" src="http://i.minus.com/i3SXAH4AAxtWS.gif" alt="http://i.minus.com/i3SXAH4AAxtWS.gif">
+</div>
+
+</section>
+<section class="slide level2" id="automate-all-the-things">
+<h1>Automate all the things!</h1>
+<ul class="incremental">
+<li><p><strong>Goal</strong>: dynamically recreate similar video snippets for <em>any</em> MLB situation.</p></li>
+<li><strong>Partial Solution</strong>: use my R package <code>pitchRx</code>!</li>
+</ul>
+<ol class="incremental" type="1">
+<li>Easily collect PITCHf/x data via <code>R</code> console</li>
+<li>Convenient functionality for PITCHf/x animation (as well as other visualizations)</li>
+</ol>
+<ul class="incremental">
+<li><strong>Full Solution</strong>: Somehow connect PITCHf/x data to MLB video?!?</li>
+</ul>
+</section>
+<section class="slide level2" id="easy-access-to-pitchfx-data">
+<h1>Easy access to PITCHf/x data</h1>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(pitchRx)
+dat &lt;- <span class="kw">scrapeFX</span>(<span class="dt">start=</span><span class="st">&quot;2013-04-24&quot;</span>, 
+                <span class="dt">end=</span><span class="st">&quot;2013-04-24&quot;</span>)
+atbats &lt;- <span class="kw">subset</span>(dat$atbat, 
+                 pitcher_name == <span class="st">&quot;Yu Darvish&quot;</span>)
+pitches &lt;- plyr::<span class="kw">join</span>(atbats, dat$pitch, 
+                <span class="dt">by=</span><span class="kw">c</span>(<span class="st">&quot;num&quot;</span>, <span class="st">&quot;url&quot;</span>), <span class="dt">type=</span><span class="st">&quot;inner&quot;</span>)</code></pre>
+<ul class="incremental">
+<li><p><code>dat</code> is a list of two data.frames - <code>dat$atbat</code> and <code>dat$pitch</code> - that contain information on every atbat and pitch thrown on April 24th, 2013.</p></li>
+<li><p><code>pitches</code> contains info on every pitch thrown by Yu Darvish on April 24th, 2013.</p></li>
+</ul>
+</section>
+<section class="slide level2" id="animation-and-batter-stance">
+<h1>Animation and batter stance</h1>
+<ul class="incremental">
+<li><p>By default, <code>pitchRx</code> calculates two aggregated strikezones. One for left handed batters and one for right handed batters.</p></li>
+<li><p>For this reason, it usually makes sense to facet plots by batter stance.</p></li>
+<li><p>The next slide is output from:</p></li>
+</ul>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">animateFX</span>(pitches, <span class="dt">layer=</span><span class="kw">list</span>(<span class="kw">theme_bw</span>(),
+                    <span class="kw">coord_equal</span>(),
+                    <span class="kw">facet_grid</span>(.~stand)))</code></pre>
+<ul class="incremental">
+<li>Note that as the animation progresses, the pitches are being thrown directly towards you.</li>
+</ul>
+</section>
+<section class="slide level2" id="pitches-by-stance-real-time">
+<h1><code>pitches</code> by stance (real time)</h1>
+<div align = "left">
+ 
+<embed width="864" height="720" name="plugin" src="figure/ani.swf" type="application/x-shockwave-flash">
+</div>
+
+
+</section>
+<section class="slide level2" id="whoa-nelly">
+<h1>Whoa, nelly!!!</h1>
+<div align="center">
+  
+<img src="http://farm7.staticflickr.com/6097/6342191137_7a5ce30805.jpg">
+</div>
+
+<ul class="incremental">
+<li><p>Real time animations are <strong>hard to digest</strong>!</p></li>
+<li><p>Same with that many pitches…</p></li>
+</ul>
+</section>
+<section class="slide level2" id="normalized-pitchfx">
+<h1><q>Normalized</q> PITCHf/x</h1>
+<ul class="incremental">
+<li>Let’s average over pitch types (to get a <q>typical</q> flight path)</li>
+</ul>
+<pre class="sourceCode r"><code class="sourceCode r">ps&lt;-<span class="kw">ddply</span>(pitches, <span class="kw">c</span>(<span class="st">&quot;pitch_type&quot;</span>, <span class="st">&quot;stand&quot;</span>), 
+          summarize, <span class="dt">x0=</span><span class="kw">mean</span>(x0), <span class="dt">y0=</span><span class="dv">55</span>, 
+          <span class="dt">z0=</span><span class="kw">mean</span>(z0), <span class="dt">vx0=</span><span class="kw">mean</span>(vx0), 
+          <span class="dt">vy0=</span><span class="kw">mean</span>(vy0), <span class="dt">vz0=</span><span class="kw">mean</span>(vz0),
+          <span class="dt">ax=</span><span class="kw">mean</span>(ax), <span class="dt">ay=</span><span class="kw">mean</span>(ay), <span class="dt">az=</span><span class="kw">mean</span>(az))
+ps$b_height &lt;- <span class="st">&quot;6-1&quot;</span> <span class="co">#estimate average batter height (for strikezones)</span>
+<span class="kw">animateFX</span>(ps, <span class="dt">layer=</span><span class="kw">list</span>(<span class="kw">theme_bw</span>(), 
+                         <span class="kw">coord_equal</span>(), 
+                         <span class="kw">facet_grid</span>(.~stand)))</code></pre>
+</section>
+<section class="slide level2" id="normalized-animation">
+<h1><q>Normalized</q> animation</h1>
+<div align = "left">
+ 
+<embed width="864" height="720" name="plugin" src="figure/ani-norm.swf" type="application/x-shockwave-flash">
+</div>
+
+
+</section>
+<section class="slide level2" id="webgl-graphics">
+<h1>WebGL Graphics</h1>
+<pre class="sourceCode r"><code class="sourceCode r">RH &lt;- <span class="kw">subset</span>(ps, stand==<span class="st">&quot;R&quot;</span>)
+<span class="kw">interactiveFX</span>(RH)</code></pre>
+<ul class="incremental">
+<li>Output can be viewed <a href="http://cpsievert.github.com/pitchRx/YuDarvishNorm">here</a>:</li>
+</ul>
+</section>
+<section class="slide level2" id="strike-zone-densities">
+<h1>Strike-zone Densities</h1>
+<ul class="incremental">
+<li>Strike-zone densities are essentially the final frame of an animation. That is, they portray the horizontal and vertical location of the baseball as it crosses home plate.</li>
+<li><code>strikeFX</code> provides a flexible framework for visualizing strike-zone densities.</li>
+</ul>
+</section>
+<section class="slide level2" id="remove-me">
+<h1>Remove Me!</h1>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">strikeFX</span>(pitches, <span class="dt">layer=</span><span class="kw">facet_wrap</span>(~stand))</code></pre>
+<figure>
+<img src="figure/scatter.png"><figcaption></figcaption>
+</figure>
+</section>
+<section class="slide level2" id="remove-me-1">
+<h1>Remove Me!</h1>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">strikeFX</span>(pitches, <span class="dt">geom=</span><span class="st">&quot;tile&quot;</span>, <span class="dt">contour=</span><span class="ot">TRUE</span>, 
+         <span class="dt">layer=</span><span class="kw">facet_wrap</span>(~stand))</code></pre>
+<figure>
+<img src="figure/tiles.png"><figcaption></figcaption>
+</figure>
+</section>
+<section class="slide level2" id="remove-me-2">
+<h1>Remove Me!</h1>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">strikeFX</span>(pitches, <span class="dt">geom=</span><span class="st">&quot;tile&quot;</span>, <span class="dt">density1=</span><span class="kw">list</span>(<span class="dt">des=</span><span class="st">&quot;Called Strike&quot;</span>), 
+    <span class="dt">density2=</span><span class="kw">list</span>(<span class="dt">des=</span><span class="st">&quot;Ball&quot;</span>), <span class="dt">layer=</span><span class="kw">facet_wrap</span>(~stand))</code></pre>
+<figure>
+<img src="figure/diff.png"><figcaption></figcaption>
+</figure>
+</section>
+<section class="slide level2" id="remove-me-3">
+<h1>Remove Me!</h1>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">strikeFX</span>(pitches, <span class="dt">geom=</span><span class="st">&quot;subplot2d&quot;</span>, <span class="dt">fill=</span><span class="st">&quot;des&quot;</span>)</code></pre>
+<figure>
+<img src="figure/sub.png"><figcaption></figcaption>
+</figure>
+</section>
+<section class="slide level2" id="want-more">
+<h1>Want more??</h1>
+<ol class="incremental" type="1">
+<li><p><a href="http://cpsievert.github.com/pitchRx/demo/">Comprehensive pitchRx demo page</a> (now included with CRAN package as R Markdown vignette)</p></li>
+<li><a href="http://glimmer.rstudio.com/cpsievert/pitchRx/">Shiny web application</a></li>
+</ol>
+<ul class="incremental">
+<li>Slick user interface to <code>strikeFX</code> and <code>animateFX</code></li>
+<li>Upload your own csv files!</li>
+</ul>
+<ol class="incremental" start="3" type="1">
+<li>I <a href="http://cpsievert.wordpress.com/">occasionally</a> <a href="http://cpsievert.github.io/">blog</a> about <code>pitchRx</code>.</li>
+</ol>
+</section>
+<section class="slide level2" id="special-thanks-to">
+<h1>Special Thanks to:</h1>
+<h4 id="this-project-wouldnt-be-possible-without-the-help-of-these-peopleorganizations.-thank-you-for-your-help-andor-great-work">This project wouldn’t be possible without the help of these people/organizations. Thank you for your help and/or great work!!!</h4>
+<ul class="incremental">
+<li>Heike Hofmann (my major professor) <a href="https://twitter.com/heike_hh">@heike_hh</a></li>
+<li>Di Cook <a href="https://twitter.com/visnut/">@visnut</a></li>
+<li>Yihui Xie <a href="https://twitter.com/xieyihui">@xieyihui</a></li>
+<li>Ramnath Vaidyanathan <a href="https://twitter.com/ramnath_vaidya">@ramnath_vaidya</a></li>
+<li>RStudio <a href="https://twitter.com/rstudioapp">@rstudioapp</a></li>
+<li>Hadley Wickham <a href="https://twitter.com/hadleywickham">@hadleywickham</a></li>
+<li>Joe Cheng <a href="https://twitter.com/jcheng">@jcheng</a></li>
+<li>Winston Chang <a href="https://twitter.com/winston_chang">@winston_chang</a></li>
+<li>MLB Advanced Media <a href="https://twitter.com/mlbdotcom">@mlbdotcom</a></li>
+<li>Alan Nathan <a href="https://twitter.com/pobguy">@pobguy</a></li>
+<li>Mike Fast <a href="https://twitter.com/fastballs">@fastballs</a></li>
+</ul>
+</section>
+<section class="slide level2" id="questions">
+<h1>Questions???</h1>
+</section>
+<!-- {{{{ dzslides core
+#
+#
+#     __  __  __       .  __   ___  __
+#    |  \  / /__` |    | |  \ |__  /__`
+#    |__/ /_ .__/ |___ | |__/ |___ .__/ core :€
+#
+#
+# The following block of code is not supposed to be edited.
+# But if you want to change the behavior of these slides,
+# feel free to hack it!
+#
+-->
+
+<div id="progress-bar"></div>
+
+<!-- Default Style -->
+<style>
+  * { margin: 0; padding: 0; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }
+  details { display: none; }
+  body {
+    width: 800px; height: 600px;
+    margin-left: -400px; margin-top: -300px;
+    position: absolute; top: 50%; left: 50%;
+    overflow: hidden;
+  }
+  section {
+    position: absolute;
+    pointer-events: none;
+    width: 100%; height: 100%;
+  }
+  section[aria-selected] { pointer-events: auto; }
+  html { overflow: hidden; }
+  body { display: none; }
+  body.loaded { display: block; }
+  .incremental {visibility: hidden; }
+  .incremental[active] {visibility: visible; }
+  #progress-bar{
+    bottom: 0;
+    position: absolute;
+    -moz-transition: width 400ms linear 0s;
+    -webkit-transition: width 400ms linear 0s;
+    -ms-transition: width 400ms linear 0s;
+    transition: width 400ms linear 0s;
+  }
+  figure {
+    width: 100%;
+    height: 100%;
+  }
+  figure > * {
+    position: absolute;
+  }
+  figure > img, figure > video {
+    width: 100%; height: 100%;
+  }
+</style>
+
+<script>
+  var Dz = {
+    remoteWindows: [],
+    idx: -1,
+    step: 0,
+    slides: null,
+    progressBar : null,
+    params: {
+      autoplay: "1"
+    }
+  };
+
+  Dz.init = function() {
+    document.body.className = "loaded";
+    this.slides = $$("body > section");
+    this.progressBar = $("#progress-bar");
+    this.setupParams();
+    this.onhashchange();
+    this.setupTouchEvents();
+    this.onresize();
+  }
+  
+  Dz.setupParams = function() {
+    var p = window.location.search.substr(1).split('&');
+    p.forEach(function(e, i, a) {
+      var keyVal = e.split('=');
+      Dz.params[keyVal[0]] = decodeURIComponent(keyVal[1]);
+    });
+  // Specific params handling
+    if (!+this.params.autoplay)
+      $$.forEach($$("video"), function(v){ v.controls = true });
+  }
+
+  Dz.onkeydown = function(aEvent) {
+    // Don't intercept keyboard shortcuts
+    if (aEvent.altKey
+      || aEvent.ctrlKey
+      || aEvent.metaKey
+      || aEvent.shiftKey) {
+      return;
+    }
+    if ( aEvent.keyCode == 37 // left arrow
+      || aEvent.keyCode == 38 // up arrow
+      || aEvent.keyCode == 33 // page up
+    ) {
+      aEvent.preventDefault();
+      this.back();
+    }
+    if ( aEvent.keyCode == 39 // right arrow
+      || aEvent.keyCode == 40 // down arrow
+      || aEvent.keyCode == 34 // page down
+    ) {
+      aEvent.preventDefault();
+      this.forward();
+    }
+    if (aEvent.keyCode == 35) { // end
+      aEvent.preventDefault();
+      this.goEnd();
+    }
+    if (aEvent.keyCode == 36) { // home
+      aEvent.preventDefault();
+      this.goStart();
+    }
+    if (aEvent.keyCode == 32) { // space
+      aEvent.preventDefault();
+      this.toggleContent();
+    }
+    if (aEvent.keyCode == 70) { // f
+      aEvent.preventDefault();
+      this.goFullscreen();
+    }
+  }
+
+  /* Touch Events */
+
+  Dz.setupTouchEvents = function() {
+    var orgX, newX;
+    var tracking = false;
+
+    var db = document.body;
+    db.addEventListener("touchstart", start.bind(this), false);
+    db.addEventListener("touchmove", move.bind(this), false);
+
+    function start(aEvent) {
+      aEvent.preventDefault();
+      tracking = true;
+      orgX = aEvent.changedTouches[0].pageX;
+    }
+
+    function move(aEvent) {
+      if (!tracking) return;
+      newX = aEvent.changedTouches[0].pageX;
+      if (orgX - newX > 100) {
+        tracking = false;
+        this.forward();
+      } else {
+        if (orgX - newX < -100) {
+          tracking = false;
+          this.back();
+        }
+      }
+    }
+  }
+
+  /* Adapt the size of the slides to the window */
+
+  Dz.onresize = function() {
+    var db = document.body;
+    var sx = db.clientWidth / window.innerWidth;
+    var sy = db.clientHeight / window.innerHeight;
+    var transform = "scale(" + (1/Math.max(sx, sy)) + ")";
+
+    db.style.MozTransform = transform;
+    db.style.WebkitTransform = transform;
+    db.style.OTransform = transform;
+    db.style.msTransform = transform;
+    db.style.transform = transform;
+  }
+
+
+  Dz.getDetails = function(aIdx) {
+    var s = $("section:nth-of-type(" + aIdx + ")");
+    var d = s.$("details");
+    return d ? d.innerHTML : "";
+  }
+
+  Dz.onmessage = function(aEvent) {
+    var argv = aEvent.data.split(" "), argc = argv.length;
+    argv.forEach(function(e, i, a) { a[i] = decodeURIComponent(e) });
+    var win = aEvent.source;
+    if (argv[0] === "REGISTER" && argc === 1) {
+      this.remoteWindows.push(win);
+      this.postMsg(win, "REGISTERED", document.title, this.slides.length);
+      this.postMsg(win, "CURSOR", this.idx + "." + this.step);
+      return;
+    }
+    if (argv[0] === "BACK" && argc === 1)
+      this.back();
+    if (argv[0] === "FORWARD" && argc === 1)
+      this.forward();
+    if (argv[0] === "START" && argc === 1)
+      this.goStart();
+    if (argv[0] === "END" && argc === 1)
+      this.goEnd();
+    if (argv[0] === "TOGGLE_CONTENT" && argc === 1)
+      this.toggleContent();
+    if (argv[0] === "SET_CURSOR" && argc === 2)
+      window.location.hash = "#" + argv[1];
+    if (argv[0] === "GET_CURSOR" && argc === 1)
+      this.postMsg(win, "CURSOR", this.idx + "." + this.step);
+    if (argv[0] === "GET_NOTES" && argc === 1)
+      this.postMsg(win, "NOTES", this.getDetails(this.idx));
+  }
+
+  Dz.toggleContent = function() {
+    // If a Video is present in this new slide, play it.
+    // If a Video is present in the previous slide, stop it.
+    var s = $("section[aria-selected]");
+    if (s) {
+      var video = s.$("video");
+      if (video) {
+        if (video.ended || video.paused) {
+          video.play();
+        } else {
+          video.pause();
+        }
+      }
+    }
+  }
+
+  Dz.setCursor = function(aIdx, aStep) {
+    // If the user change the slide number in the URL bar, jump
+    // to this slide.
+    aStep = (aStep != 0 && typeof aStep !== "undefined") ? "." + aStep : ".0";
+    window.location.hash = "#" + aIdx + aStep;
+  }
+
+  Dz.onhashchange = function() {
+    var cursor = window.location.hash.split("#"),
+        newidx = 1,
+        newstep = 0;
+    if (cursor.length == 2) {
+      newidx = ~~cursor[1].split(".")[0];
+      newstep = ~~cursor[1].split(".")[1];
+      if (newstep > Dz.slides[newidx - 1].$$('.incremental > *').length) {
+        newstep = 0;
+        newidx++;
+      }
+    }
+    this.setProgress(newidx, newstep);
+    if (newidx != this.idx) {
+      this.setSlide(newidx);
+    }
+    if (newstep != this.step) {
+      this.setIncremental(newstep);
+    }
+    for (var i = 0; i < this.remoteWindows.length; i++) {
+      this.postMsg(this.remoteWindows[i], "CURSOR", this.idx + "." + this.step);
+    }
+  }
+
+  Dz.back = function() {
+    if (this.idx == 1 && this.step == 0) {
+      return;
+    }
+    if (this.step == 0) {
+      this.setCursor(this.idx - 1,
+                     this.slides[this.idx - 2].$$('.incremental > *').length);
+    } else {
+      this.setCursor(this.idx, this.step - 1);
+    }
+  }
+
+  Dz.forward = function() {
+    if (this.idx >= this.slides.length &&
+        this.step >= this.slides[this.idx - 1].$$('.incremental > *').length) {
+        return;
+    }
+    if (this.step >= this.slides[this.idx - 1].$$('.incremental > *').length) {
+      this.setCursor(this.idx + 1, 0);
+    } else {
+      this.setCursor(this.idx, this.step + 1);
+    }
+  }
+
+  Dz.goStart = function() {
+    this.setCursor(1, 0);
+  }
+
+  Dz.goEnd = function() {
+    var lastIdx = this.slides.length;
+    var lastStep = this.slides[lastIdx - 1].$$('.incremental > *').length;
+    this.setCursor(lastIdx, lastStep);
+  }
+
+  Dz.setSlide = function(aIdx) {
+    this.idx = aIdx;
+    var old = $("section[aria-selected]");
+    var next = $("section:nth-of-type("+ this.idx +")");
+    if (old) {
+      old.removeAttribute("aria-selected");
+      var video = old.$("video");
+      if (video) {
+        video.pause();
+      }
+    }
+    if (next) {
+      next.setAttribute("aria-selected", "true");
+      var video = next.$("video");
+      if (video && !!+this.params.autoplay) {
+        video.play();
+      }
+    } else {
+      // That should not happen
+      this.idx = -1;
+      // console.warn("Slide doesn't exist.");
+    }
+  }
+
+  Dz.setIncremental = function(aStep) {
+    this.step = aStep;
+    var old = this.slides[this.idx - 1].$('.incremental > *[aria-selected]');
+    if (old) {
+      old.removeAttribute('aria-selected');
+    }
+    var incrementals = $$('.incremental');
+    if (this.step <= 0) {
+      $$.forEach(incrementals, function(aNode) {
+        aNode.removeAttribute('active');
+      });
+      return;
+    }
+    var next = this.slides[this.idx - 1].$$('.incremental > *')[this.step - 1];
+    if (next) {
+      next.setAttribute('aria-selected', true);
+      next.parentNode.setAttribute('active', true);
+      var found = false;
+      $$.forEach(incrementals, function(aNode) {
+        if (aNode != next.parentNode)
+          if (found)
+            aNode.removeAttribute('active');
+          else
+            aNode.setAttribute('active', true);
+        else
+          found = true;
+      });
+    } else {
+      setCursor(this.idx, 0);
+    }
+    return next;
+  }
+
+  Dz.goFullscreen = function() {
+    var html = $('html'),
+        requestFullscreen = html.requestFullscreen || html.requestFullScreen || html.mozRequestFullScreen || html.webkitRequestFullScreen;
+    if (requestFullscreen) {
+      requestFullscreen.apply(html);
+    }
+  }
+  
+  Dz.setProgress = function(aIdx, aStep) {
+    var slide = $("section:nth-of-type("+ aIdx +")");
+    if (!slide)
+      return;
+    var steps = slide.$$('.incremental > *').length + 1,
+        slideSize = 100 / (this.slides.length - 1),
+        stepSize = slideSize / steps;
+    this.progressBar.style.width = ((aIdx - 1) * slideSize + aStep * stepSize) + '%';
+  }
+  
+  Dz.postMsg = function(aWin, aMsg) { // [arg0, [arg1...]]
+    aMsg = [aMsg];
+    for (var i = 2; i < arguments.length; i++)
+      aMsg.push(encodeURIComponent(arguments[i]));
+    aWin.postMessage(aMsg.join(" "), "*");
+  }
+  
+  function init() {
+    Dz.init();
+    window.onkeydown = Dz.onkeydown.bind(Dz);
+    window.onresize = Dz.onresize.bind(Dz);
+    window.onhashchange = Dz.onhashchange.bind(Dz);
+    window.onmessage = Dz.onmessage.bind(Dz);
+  }
+
+  window.onload = init;
+</script>
+
+
+<script> // Helpers
+  if (!Function.prototype.bind) {
+    Function.prototype.bind = function (oThis) {
+
+      // closest thing possible to the ECMAScript 5 internal IsCallable
+      // function 
+      if (typeof this !== "function")
+      throw new TypeError(
+        "Function.prototype.bind - what is trying to be fBound is not callable"
+      );
+
+      var aArgs = Array.prototype.slice.call(arguments, 1),
+          fToBind = this,
+          fNOP = function () {},
+          fBound = function () {
+            return fToBind.apply( this instanceof fNOP ? this : oThis || window,
+                   aArgs.concat(Array.prototype.slice.call(arguments)));
+          };
+
+      fNOP.prototype = this.prototype;
+      fBound.prototype = new fNOP();
+
+      return fBound;
+    };
+  }
+
+  var $ = (HTMLElement.prototype.$ = function(aQuery) {
+    return this.querySelector(aQuery);
+  }).bind(document);
+
+  var $$ = (HTMLElement.prototype.$$ = function(aQuery) {
+    return this.querySelectorAll(aQuery);
+  }).bind(document);
+
+  $$.forEach = function(nodeList, fun) {
+    Array.prototype.forEach.call(nodeList, fun);
+  }
+
+</script>
+<!-- vim: set fdm=marker: }}} -->
+</body>
+</html>

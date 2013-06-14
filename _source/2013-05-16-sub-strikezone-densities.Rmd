@@ -1,9 +1,13 @@
 ---
 layout: post
 title: "sub strikezone densities"
-author: []
-categories: []
-tags: []
-reviewer: []
+author: [cpsievert]
+categories: [baseball, PITCHfx, pitchRx]
+tags: [MLB]
 ---
 {% include JB/setup %}
+
+```{r alternator}
+library(pitchRx)
+strikeFX(data=Darvish, geom="subplot2d", fill="")
+```
