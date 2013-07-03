@@ -128,36 +128,36 @@ interactiveFX(Rivera)
 
 <iframe src="http://cpsievert.github.io/pitchRx/rgl1/" height="600" width="1200"></iframe>
 
-### Strikezone Densities
+### Strike-zones
 
-I can also examine pitch locations at the moment they cross the plate. Unlike `animateFX`, `strikeFX` encompasses different geometries and **ggplot2** arithmetic.
+#### Raw strike-zone densities
+
+Strike-zones capture pitch locations at the moment they cross the plate. `strikeFX`'s default functionality is to plot the relevant *raw density*. Here is the density of called strikes thrown by Rivera and Hughes in 2011 (for both right and left-handed batters).
 
 
 ```r
-facets <- facet_grid(pitcher_name ~ stand)
-strikeFX(pitches, geom = "tile") + facets
+strikes <- subset(pitches, des == "Called Strike")
+strikeFX(strikes, geom = "tile", layer = facet_grid(. ~ stand))
 ```
 
 ![plot of chunk strike](figure/strike.png) 
 
 
-`strikeFX` allows one to easily manipulate the density of interest through two parameters: `density1` and `density2`. If these densities are identical, the density is defined accordingly. This is useful for avoiding repeative subsetting of data frames. For example, say I want the density of 'Called Strikes'.
+`strikeFX` allows one to easily manipulate the density of interest through two parameters: `density1` and `density2`. If these densities are identical, the density is defined accordingly. This is useful for avoiding repeative subsetting of data frames. For example, one could use the following to also generate the density of called strikes shown previously.
 
 
 ```r
-strikeFX(pitches, geom = "tile", density1 = list(des = "Called Strike"), density2 = list(des = "Called Strike")) + 
-    facets
+strikeFX(pitches, geom = "tile", density1 = list(des = "Called Strike"), density2 = list(des = "Called Strike"), 
+    layer = facet_grid(. ~ stand))
 ```
 
-![plot of chunk strike2](figure/strike2.png) 
 
-
-If you specify two different densities, `strikeFX` will plot differenced bivariate density estimates. In this case, we are subtracting the "Ball" density from the previous "Called Strike" density.
+If you specify two different densities, `strikeFX` will plot differenced densities. In this case, we are subtracting the "Ball" density from the previous "Called Strike" density.
 
 
 ```r
-strikeFX(pitches, geom = "hex", contour = TRUE, density1 = list(des = "Called Strike"), 
-    density2 = list(des = "Ball"), layer = facet_grid(pitcher_name ~ stand))
+strikeFX(pitches, geom = "tile", density1 = list(des = "Called Strike"), density2 = list(des = "Ball"), 
+    layer = facet_grid(. ~ stand))
 ```
 
 ![plot of chunk strike3](figure/strike3.png) 
@@ -176,4 +176,19 @@ strikeFX(Rivera.R, geom = "subplot2d", fill = "type")
 ```
 
 ![plot of chunk strike4](figure/strike4.png) 
+
+
+#### Probabilistic strike-zone densities
+
+Perhaps more interesting than raw strike-zone densities are probabilistic densities. These densities represent the probability of a certain event happening at a given location. A popular method for fitting such models is Generalized Additive Models. Here we use the **mgcv** library to fit such a model (which automatically chooses a proper tuning parameter via cross-validation).
+
+
+```r
+noswing <- subset(pitches, des %in% c("Ball", "Called Strike"))
+noswing$strike <- as.numeric(noswing$des %in% "Called Strike")
+strikeFX(noswing, model = gam(strike ~ s(px) + s(pz), family = binomial(link = "logit")), 
+    layer = facet_grid(. ~ stand))
+```
+
+![plot of chunk mgcv](figure/mgcv.png) 
 
