@@ -1,61 +1,178 @@
-% pitchRx: Tools for Collecting and Analyzing Major League Baseball's (MLB) PITCHf/x Data
-% Carson Sievert
-% 5/23/2013
+% pitchRx: Tools for Collecting and Analyzing MLB PITCHf/x Data
+% Carson Sievert 7/14/2013
+% Follow along: [http://cpsievert.github.io/slides/pitchRx/jsm](http://cpsievert.github.io/slides/pitchRx/jsm)
 
-## Yu "Vishnu" Darvish
+
+## Outline
+
+1. What is PITCHf/x?
+  * Camera based motion tracking system placed in every MLB stadium
+  * Tracks every baseball thrown by a pitcher to home plate
+  
+2. Collecting PITCHf/x with `pitchRx`
+
+2. Visualizing PITCHf/x with `pitchRx`
+  * Strike-zone densities
+  * Probabilistic strike-zones
+  * 2D Animation of pitch trajectories 
+  * 3D interactive graphics for a closer look
+  
+
+
+  
+## Remove Me!
+
+![](patent2.png)
+
+## Remove Me!
+
+![](patent1.png)
+  
+## Scraping PITCHf/x
+
+* All PITCHf/x data is freely accessible here: [http://gd2.mlb.com/components/game/mlb/](http://gd2.mlb.com/components/game/mlb/)
+
+* Previously suggested collection methods require installing a web stack (ie, Linux, Apache, MySQL, PHP)
+
+* These methods are not easily extended to related data sources.
+
+## Scraping with `pitchRx`
+
+
+```r
+library(pitchRx)
+dat <- scrapeFX(start="2008-01-01", 
+                end="2013-01-01")
+atbats <- dat$atbat
+pitches <- dat$pitch
+```
+
+
+<div align="center"><img src="http://3.bp.blogspot.com/-eJ8Uvvm-yX0/TiNCNbgczoI/AAAAAAAAAAo/7iRY-y6H4ds/s400/Screen%2Bshot%2B2011-07-17%2Bat%2B3.09.04%2BPM.png" width=600 height=400></div>
+
+## Strike-zone plots
+
+* Strike-zone plots have height of the batter on the vertical axis and data points correspond to the location of baseballs as they cross home plate.
+
+* This code will produce the density of all called strikes (from 2008 to 2012) faceted by batter stance.
+
+
+```r
+pitchFX <- join(pitches, atbat, 
+                by=c("num", "url"))
+strikes <- subset(pitchFX, 
+                  des == "Called Strikes")
+strikeFX(strikes, geom="tile", 
+         layer=facet_grid(.~stand))
+```
+
+
+## Some terminology
+
+* A __called strike__ is a case where the batter does not swing and the umpire declares the pitch a strike (which is a favorable outcome for the pitcher). 
+
+* A __ball__ is an instance where the batter doesn't swing and the umpire declares the pitch a ball (which is a favorable outcome for the batter). 
+
+* By restricting ourselves to these two outcomes, we condition upon a situation where the umpire has to make a binary decision about the pitch.
+
+## Remove Me!
+
+![](strikes.png)
+
+## Probabilistic strike-zones
+
+* `strikeFX`'s `model` option allows one to model the probabilistic events over the strike-zone region.
+
+* Here we use `gam` from the `mgcv` package to visualize the probability of a called strike (given the ump has to make a decision).
+
+
+```r
+decisions <- subset(pitchFX, des %in% 
+                    c("Called Strike", "Ball"))
+decisions$strike <- as.numeric(decisions$des == 
+                                 "Called Strike")
+strikeFX(decisions, model=gam(strike~s(px)+s(pz), 
+          family = binomial(link='logit')), 
+          layer=facet_grid(.~stand))
+```
+
+
+## Remove Me!
+
+![](strike-probs.png)
+
+## Probabilistic strike-zones
+
+* We can also visualize the __difference__ in probabilistic events by adding arguments to `density1` and `density2`.
+
+* Here we find the probability of a called strike during the top inning minus the probability of a called strike during the bottom inning.
+
+* Note: home pitchers pitch during the top of the inning.
+
+
+```r
+strikeFX(decisions, model=gam(strike~s(px)+s(pz), 
+          family = binomial(link='logit')), 
+          density1=list(top_inning="Y"), 
+          density2=list(top_inning="N"), 
+          layer=facet_grid(.~stand))
+```
+
+
+## Remove Me!
+
+![](diff-probs.png)
+
+## Home Field Advantage
+
+* It appears away teams actually have something valid to complain about...
+
+<div align="center"><img src="coxargument.jpg" width=600 height=400></div>
+
+## Strike-zones vs Trajectories
+
+* `strikeFX` is nice for visualizing _a lot_ of data.
+
+* PITCHf/x can also be used to regenerate (approximate) pitch trajectories.
+
+* It doesn't make sense to animate millions of pitch trajectories, so we usually restrict our focus to a few cases.
+
+## Yu "Vishnu" Darvish - a case study
 
 <div align="center">
   <img class="decoded" src="http://i.minus.com/i3SXAH4AAxtWS.gif" alt="http://i.minus.com/i3SXAH4AAxtWS.gif">
 </div>
 
-## Automate all the things!
+*Created by Drew Sheppard [@DShep25](https://twitter.com/DShep25)
 
-* __Goal__: dynamically recreate similar video snippets for _any_ MLB situation.
-
-* __Partial Solution__: use my R package `pitchRx`!
-1. Easily collect PITCHf/x data via `R` console
-2. Convenient functionality for PITCHf/x animation (as well as other visualizations) 
-
-* __Full Solution__: Somehow connect PITCHf/x data to MLB video?!?
-
-## Easy access to PITCHf/x data
-
-
-
+## Get the data
 
 
 ```r
-library(pitchRx)
 dat <- scrapeFX(start="2013-04-24", 
                 end="2013-04-24")
 atbats <- subset(dat$atbat, 
                  pitcher_name == "Yu Darvish")
-pitches <- plyr::join(atbats, dat$pitch, 
+Darvish <- plyr::join(atbats, dat$pitch, 
                 by=c("num", "url"), type="inner")
 ```
 
 
-* `dat` is a list of two data.frames - `dat$atbat` and `dat$pitch` - that contain information on every atbat and pitch thrown on April 24th, 2013.
+* `Darvish` contains info on every pitch thrown by Yu Darvish on April 24th, 2013.
 
-* `pitches` contains info on every pitch thrown by Yu Darvish on April 24th, 2013.
+## PITCHf/x animation
 
-## Animation and batter stance
+* `animateFX` can be used in a similar fashion to `strikeFX` for producing a series of plots that track pitch locations over time.
 
-* By default, `pitchRx` calculates two aggregated strikezones. One for left handed batters and one for right handed batters.
-
-* For this reason, it usually makes sense to facet plots by batter stance.
-
-* The next slide is output from:
+* As the `animateFX` animations progress, the pitches are being thrown directly towards you.
 
 
 ```r
-animateFX(pitches, layer=list(theme_bw(),
+animateFX(Darvish, layer=list(theme_bw(),
                     coord_equal(),
                     facet_grid(.~stand)))
 ```
 
-
-* Note that as the animation progresses, the pitches are being thrown directly towards you.
 
 ## `pitches` by stance (real time)
 
@@ -72,26 +189,18 @@ animateFX(pitches, layer=list(theme_bw(),
 
 * Real time animations are __hard to digest__!
 
-* Same with that many pitches...
+* Plotting that many pitches makes it even worse...
 
 ## "Normalized" PITCHf/x
 
-* Let's average over pitch types (to get a 'typical' flight path)
-
-
-
+* Let's average over pitch type (to get a 'typical' flight path)
 
 
 ```r
-ps<-ddply(pitches, c("pitch_type", "stand"), 
-          summarize, x0=mean(x0), y0=55, 
-          z0=mean(z0), vx0=mean(vx0), 
-          vy0=mean(vy0), vz0=mean(vz0),
-          ax=mean(ax), ay=mean(ay), az=mean(az))
-ps$b_height <- "6-1" #estimate average batter height (for strikezones)
-animateFX(ps, layer=list(theme_bw(), 
-                         coord_equal(), 
-                         facet_grid(.~stand)))
+animateFX(Darvish, avg.by="pitch_types", 
+          layer=list(coord_equal(),
+          theme_bw(),
+          facet_grid(.~stand)))
 ```
 
 
@@ -106,72 +215,29 @@ animateFX(ps, layer=list(theme_bw(),
 
 
 ```r
-RH <- subset(ps, stand=="R")
-interactiveFX(RH)
+RH <- subset(Darvish, stand=="R")
+interactiveFX(RH, avg.by="pitch_types")
 ```
 
 
-* Output can be viewed [here](http://cpsievert.github.com/pitchRx/YuDarvishNorm):
+* Output can be viewed [here](http://cpsievert.github.io/pitchRx/YuDarvishNorm/)
 
-## Strike-zone Densities
-
-* Strike-zone densities are essentially the final frame of an animation. That is, they portray the horizontal and vertical location of the baseball as it crosses home plate.
-* `strikeFX` provides a flexible framework for visualizing strike-zone densities.
-
-## Remove Me!
-
-
-```r
-strikeFX(pitches, layer=facet_wrap(~stand))
-```
-
-![](figure/scatter.png) 
-
-
-## Remove Me!
-
-
-```r
-strikeFX(pitches, geom="tile", contour=TRUE, 
-         layer=facet_wrap(~stand))
-```
-
-![](figure/tiles.png) 
-
-
-## Remove Me!
-
-
-
-
-
-```r
-strikeFX(pitches, geom="tile", density1=list(des="Called Strike"), 
-    density2=list(des="Ball"), layer=facet_wrap(~stand))
-```
-
-![](figure/diff.png) 
-
-
-## Remove Me!
-
-
-```r
-strikeFX(pitches, geom="subplot2d", fill="des")
-```
-
-![](figure/sub.png) 
-
+<!--<iframe src="http://cpsievert.github.io/pitchRx/YuDarvishNorm/" width=800 height=400></iframe>-->
 
 ## Want more??
 
-1. [Comprehensive pitchRx demo page](http://cpsievert.github.com/pitchRx/demo/) (now included with CRAN package as R Markdown vignette)
+1. Visit the pitchRx [demo page](http://cpsievert.github.com/pitchRx/demo/) (now included with CRAN package as R Markdown vignette).
 
-2. [Shiny web application](http://glimmer.rstudio.com/cpsievert/pitchRx/)
+2. R Journal article coming soon!
+
+2. [Shiny web application](http://glimmer.rstudio.com/cpsievert/pitchRx/).
   * Slick user interface to `strikeFX` and `animateFX`
   * Upload your own csv files!
 
-3. I [occasionally](http://cpsievert.wordpress.com/) [blog](http://cpsievert.github.io/) about `pitchRx`.
+3. Contribute to development or post an issue on [github](https://github.com/cpsievert/pitchRx).
+
+4. I [occasionally](http://cpsievert.wordpress.com/) [blog](http://cpsievert.github.io/) and tweet [@cpsievert](https://twitter.com/cpsievert) about `pitchRx`.
+
 
 ## Special Thanks to:
 
@@ -189,4 +255,4 @@ strikeFX(pitches, geom="subplot2d", fill="des")
 * Alan Nathan [@pobguy](https://twitter.com/pobguy)
 * Mike Fast [@fastballs](https://twitter.com/fastballs)
 
-## Questions???
+## Thanks for coming! Any questions???

@@ -13,6 +13,7 @@ lattice
 lubridate
 markdown
 MASS
+mgcv
 pitchRx
 plyr
 R2SWF
