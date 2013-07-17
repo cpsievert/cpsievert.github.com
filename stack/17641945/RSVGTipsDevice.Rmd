@@ -1,0 +1,10 @@
+```{r}
+library(RSVGTipsDevice)
+devSVGTips("plot.svg", toolTipMode=1)
+  plot(0:1, 0:1, type="n")
+  setSVGShapeToolTip("A rectangle","it is red")
+  rect(.1,.1,.4,.6, col='red')
+dev.off()
+```
+
+<embed src="plot.svg" type="image/svg+xml" />
