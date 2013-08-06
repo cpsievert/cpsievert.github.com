@@ -7,12 +7,9 @@
 
 1. What is PITCHf/x?
   * Camera based motion tracking system placed in every MLB stadium
-  * Tracks every baseball thrown by a pitcher to home plate
-  
+  * Tracks every baseball thrown by a pitcher to home plate 
 2. Collecting PITCHf/x with `pitchRx`
-
 3. Visualizing PITCHf/x with `pitchRx`
-  * Strike-zone densities
   * Probabilistic strike-zones
   * 2D Animation of pitch trajectories 
   * 3D interactive graphics for a closer look
@@ -30,11 +27,11 @@
   
 ## Scraping PITCHf/x
 
-* All PITCHf/x data is freely accessible here: [http://gd2.mlb.com/components/game/mlb/](http://gd2.mlb.com/components/game/mlb/)
-
-* Previously suggested collection methods require installing a web stack (ie, Linux, Apache, MySQL, PHP)
-
-* These methods are not easily extended to related data sources.
+1. All PITCHf/x data is freely accessible here: [http://gd2.mlb.com/components/game/mlb/](http://gd2.mlb.com/components/game/mlb/)
+2. Common methods for collecting PITCHf/x are laborious
+  * Requires a web stack (ie, Linux, Apache, MySQL, PHP, Perl)
+  * These methods are not easily extended to related data sources.
+3. WE CAN DO BETTER!!!
 
 ## Scraping with `pitchRx`
 
@@ -50,6 +47,26 @@ pitches <- dat$pitch
 
 <div align="center"><img src="http://3.bp.blogspot.com/-eJ8Uvvm-yX0/TiNCNbgczoI/AAAAAAAAAAo/7iRY-y6H4ds/s400/Screen%2Bshot%2B2011-07-17%2Bat%2B3.09.04%2BPM.png" width=600 height=400></div>
 
+## Advanced Scraping
+
+* scrapeFX can return up to seven different data frames
+
+
+```r
+dat <- scrapeFX(start="2008-01-01", 
+                end="2013-01-01"
+                tables = list(atbat = NULL, 
+                              pitch = NULL,
+  	                          coach = NULL, 
+                              runner = NULL, 
+                              umpire = NULL, 
+                              player = NULL, 
+                              game = NULL))
+```
+
+  
+* The function `urlsToDataFrame` can be used to manipulate _any_ collection of XML files into a list of data frames.
+
 ## Strike-zone plots
 
 1. Strike-zone plots have height of the batter on the vertical axis and data points correspond to the location of baseballs as they cross home plate.
@@ -58,7 +75,8 @@ pitches <- dat$pitch
   * frequencies
   * probabilities of events (more interesting in most cases)
   
-3. Useful for answering questions such as: "Do umpires favor home pitchers?"
+3. Useful for answering questions such as: "Do umpires favor home (as opposed to away) pitchers?"
+  * More specifically: "Given the umpire has to make a decision, do home pitchers have a higher chance of receiving a called strike?""
 
 ## Some terminology
 
@@ -75,7 +93,7 @@ pitches <- dat$pitch
 
 
 ```r
-pitchFX <- plyr::join(pitches, atbat, 
+pitchFX <- plyr::join(dat$pitch, dat$atbat, 
                 by=c("num", "url"))
 decisions <- subset(pitchFX, des %in% 
                     c("Called Strike", "Ball"))
@@ -89,9 +107,9 @@ strikeFX(decisions, model=gam(strike~s(px)+s(pz),
 
 ## Remove Me!
 
-![](strike-probs2.png)
+![](strike-probs.png)
 
-## Difference in probability of Called Strike vs. Ball
+## Difference in probability of Called Strike
 
 * We can also visualize the __difference__ in probabilistic events by adding arguments to `density1` and `density2`.
 
@@ -106,6 +124,10 @@ strikeFX(decisions, model=gam(strike~s(px)+s(pz),
           layer=facet_grid(.~stand))
 ```
 
+
+## Remove Me!
+
+![](diff-probs.png)
 
 ## Remove Me!
 
@@ -162,7 +184,7 @@ animateFX(Darvish, layer=list(theme_bw(),
 ```
 
 
-## `pitches` by stance (real time)
+## Real time animation
 
 <div align = "left">
  <embed width="864" height="720" name="plugin" src="figure/ani.swf" type="application/x-shockwave-flash"> 
@@ -199,7 +221,7 @@ animateFX(Darvish, avg.by="pitch_types",
 </div>
 
 
-## WebGL Graphics
+## [WebGL Graphics](http://cpsievert.github.io/pitchRx/YuDarvishNorm/)
 
 
 ```r
@@ -208,9 +230,9 @@ interactiveFX(RH, avg.by="pitch_types")
 ```
 
 
-* Output can be viewed [here](http://cpsievert.github.io/pitchRx/YuDarvishNorm/)
-
-<!--<iframe src="http://cpsievert.github.io/pitchRx/YuDarvishNorm/" width=800 height=400></iframe>-->
+<div align="center">
+  <img src="webgl.png" width=500 height=400>
+</div>
 
 ## Want more??
 
@@ -222,7 +244,7 @@ interactiveFX(RH, avg.by="pitch_types")
   * Slick user interface to `strikeFX` and `animateFX`
   * Upload your own csv files!
 
-3. Contribute to development or post an issue on [github](https://github.com/cpsievert/pitchRx).
+3. Contribute to development or post an issue on [GitHub](https://github.com/cpsievert/pitchRx).
 
 4. I [occasionally](http://cpsievert.wordpress.com/) [blog](http://cpsievert.github.io/) and tweet [@cpsievert](https://twitter.com/cpsievert) about `pitchRx`.
 
@@ -244,4 +266,4 @@ interactiveFX(RH, avg.by="pitch_types")
 * Mike Fast [@fastballs](https://twitter.com/fastballs)
 * Brian Mills [@BMMillsy](https://twitter.com/BMMillsy)
 
-## Thanks for coming! Any questions???
+## Thanks for listening!

@@ -110,11 +110,10 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li>Tracks every baseball thrown by a pitcher to home plate</li>
 </ul>
 <ol class="incremental" start="2" type="1">
-<li><p>Collecting PITCHf/x with <code>pitchRx</code></p></li>
+<li>Collecting PITCHf/x with <code>pitchRx</code></li>
 <li>Visualizing PITCHf/x with <code>pitchRx</code></li>
 </ol>
 <ul class="incremental">
-<li>Strike-zone densities</li>
 <li>Probabilistic strike-zones</li>
 <li>2D Animation of pitch trajectories</li>
 <li>3D interactive graphics for a closer look</li>
@@ -132,11 +131,17 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </section>
 <section class="slide level2" id="scraping-pitchfx">
 <h1>Scraping PITCHf/x</h1>
+<ol class="incremental" type="1">
+<li>All PITCHf/x data is freely accessible here: <a href="http://gd2.mlb.com/components/game/mlb/">http://gd2.mlb.com/components/game/mlb/</a></li>
+<li>Common methods for collecting PITCHf/x are laborious</li>
+</ol>
 <ul class="incremental">
-<li><p>All PITCHf/x data is freely accessible here: <a href="http://gd2.mlb.com/components/game/mlb/">http://gd2.mlb.com/components/game/mlb/</a></p></li>
-<li><p>Previously suggested collection methods require installing a web stack (ie, Linux, Apache, MySQL, PHP)</p></li>
-<li><p>These methods are not easily extended to related data sources.</p></li>
+<li>Requires a web stack (ie, Linux, Apache, MySQL, PHP, Perl)</li>
+<li>These methods are not easily extended to related data sources.</li>
 </ul>
+<ol class="incremental" start="3" type="1">
+<li>WE CAN DO BETTER!!!</li>
+</ol>
 </section>
 <section class="slide level2" id="scraping-with-pitchrx">
 <h1>Scraping with <code>pitchRx</code></h1>
@@ -150,6 +155,24 @@ pitches &lt;- dat$pitch</code></pre>
 </div>
 
 </section>
+<section class="slide level2" id="advanced-scraping">
+<h1>Advanced Scraping</h1>
+<ul class="incremental">
+<li>scrapeFX can return up to seven different data frames</li>
+</ul>
+<pre class="sourceCode r"><code class="sourceCode r">dat &lt;- <span class="kw">scrapeFX</span>(<span class="dt">start=</span><span class="st">&quot;2008-01-01&quot;</span>, 
+                <span class="dt">end=</span><span class="st">&quot;2013-01-01&quot;</span>
+                <span class="dt">tables =</span> <span class="kw">list</span>(<span class="dt">atbat =</span> <span class="ot">NULL</span>, 
+                              <span class="dt">pitch =</span> <span class="ot">NULL</span>,
+                              <span class="dt">coach =</span> <span class="ot">NULL</span>, 
+                              <span class="dt">runner =</span> <span class="ot">NULL</span>, 
+                              <span class="dt">umpire =</span> <span class="ot">NULL</span>, 
+                              <span class="dt">player =</span> <span class="ot">NULL</span>, 
+                              <span class="dt">game =</span> <span class="ot">NULL</span>))</code></pre>
+<ul class="incremental">
+<li>The function <code>urlsToDataFrame</code> can be used to manipulate <em>any</em> collection of XML files into a list of data frames.</li>
+</ul>
+</section>
 <section class="slide level2" id="strike-zone-plots">
 <h1>Strike-zone plots</h1>
 <ol class="incremental" type="1">
@@ -161,8 +184,11 @@ pitches &lt;- dat$pitch</code></pre>
 <li>probabilities of events (more interesting in most cases)</li>
 </ul>
 <ol class="incremental" start="3" type="1">
-<li>Useful for answering questions such as: <q>Do umpires favor home pitchers?</q></li>
+<li>Useful for answering questions such as: <q>Do umpires favor home (as opposed to away) pitchers?</q></li>
 </ol>
+<ul class="incremental">
+<li>More specifically: <q>Given the umpire has to make a decision, do home pitchers have a higher chance of receiving a called strike?</q>&quot;</li>
+</ul>
 </section>
 <section class="slide level2" id="some-terminology">
 <h1>Some terminology</h1>
@@ -177,7 +203,7 @@ pitches &lt;- dat$pitch</code></pre>
 <ul class="incremental">
 <li>Here we use <code>gam</code> from the <code>mgcv</code> package to visualize the probability of a called strike (given the ump has to make a decision).</li>
 </ul>
-<pre class="sourceCode r"><code class="sourceCode r">pitchFX &lt;- plyr::<span class="kw">join</span>(pitches, atbat, 
+<pre class="sourceCode r"><code class="sourceCode r">pitchFX &lt;- plyr::<span class="kw">join</span>(dat$pitch, dat$atbat, 
                 <span class="dt">by=</span><span class="kw">c</span>(<span class="st">&quot;num&quot;</span>, <span class="st">&quot;url&quot;</span>))
 decisions &lt;- <span class="kw">subset</span>(pitchFX, des %in% 
                     <span class="kw">c</span>(<span class="st">&quot;Called Strike&quot;</span>, <span class="st">&quot;Ball&quot;</span>))
@@ -189,11 +215,11 @@ decisions$strike &lt;- <span class="kw">as.numeric</span>(decisions$des ==
 </section>
 <section class="slide level2" id="remove-me-2">
 <figure>
-<img src="strike-probs2.png"><figcaption></figcaption>
+<img src="strike-probs.png"><figcaption></figcaption>
 </figure>
 </section>
-<section class="slide level2" id="difference-in-probability-of-called-strike-vs.ball">
-<h1>Difference in probability of Called Strike vs. Ball</h1>
+<section class="slide level2" id="difference-in-probability-of-called-strike">
+<h1>Difference in probability of Called Strike</h1>
 <ul class="incremental">
 <li><p>We can also visualize the <strong>difference</strong> in probabilistic events by adding arguments to <code>density1</code> and <code>density2</code>.</p></li>
 <li><p>Here we find the probability of a called strike during the top inning minus the probability of a called strike during the bottom inning (top inning == home pitcher).</p></li>
@@ -205,6 +231,11 @@ decisions$strike &lt;- <span class="kw">as.numeric</span>(decisions$des ==
           <span class="dt">layer=</span><span class="kw">facet_grid</span>(.~stand))</code></pre>
 </section>
 <section class="slide level2" id="remove-me-3">
+<figure>
+<img src="diff-probs.png"><figcaption></figcaption>
+</figure>
+</section>
+<section class="slide level2" id="remove-me-4">
 <figure>
 <img src="diff-probs2.png"><figcaption></figcaption>
 </figure>
@@ -258,8 +289,8 @@ Darvish &lt;- plyr::<span class="kw">join</span>(atbats, dat$pitch,
                     <span class="kw">coord_equal</span>(),
                     <span class="kw">facet_grid</span>(.~stand)))</code></pre>
 </section>
-<section class="slide level2" id="pitches-by-stance-real-time">
-<h1><code>pitches</code> by stance (real time)</h1>
+<section class="slide level2" id="real-time-animation">
+<h1>Real time animation</h1>
 <div align = "left">
  
 <embed width="864" height="720" name="plugin" src="figure/ani.swf" type="application/x-shockwave-flash">
@@ -299,13 +330,13 @@ Darvish &lt;- plyr::<span class="kw">join</span>(atbats, dat$pitch,
 
 </section>
 <section class="slide level2" id="webgl-graphics">
-<h1>WebGL Graphics</h1>
+<h1><a href="http://cpsievert.github.io/pitchRx/YuDarvishNorm/">WebGL Graphics</a></h1>
 <pre class="sourceCode r"><code class="sourceCode r">RH &lt;- <span class="kw">subset</span>(Darvish, stand==<span class="st">&quot;R&quot;</span>)
 <span class="kw">interactiveFX</span>(RH, <span class="dt">avg.by=</span><span class="st">&quot;pitch_types&quot;</span>)</code></pre>
-<ul class="incremental">
-<li>Output can be viewed <a href="http://cpsievert.github.io/pitchRx/YuDarvishNorm/">here</a></li>
-</ul>
-<!--<iframe src="http://cpsievert.github.io/pitchRx/YuDarvishNorm/" width=800 height=400></iframe>-->
+<div align="center">
+  
+<img src="webgl.png" width=500 height=400>
+</div>
 
 </section>
 <section class="slide level2" id="want-more">
@@ -320,7 +351,7 @@ Darvish &lt;- plyr::<span class="kw">join</span>(atbats, dat$pitch,
 <li>Upload your own csv files!</li>
 </ul>
 <ol class="incremental" start="3" type="1">
-<li><p>Contribute to development or post an issue on <a href="https://github.com/cpsievert/pitchRx">github</a>.</p></li>
+<li><p>Contribute to development or post an issue on <a href="https://github.com/cpsievert/pitchRx">GitHub</a>.</p></li>
 <li><p>I <a href="http://cpsievert.wordpress.com/">occasionally</a> <a href="http://cpsievert.github.io/">blog</a> and tweet <a href="https://twitter.com/cpsievert">@cpsievert</a> about <code>pitchRx</code>.</p></li>
 </ol>
 </section>
@@ -342,8 +373,8 @@ Darvish &lt;- plyr::<span class="kw">join</span>(atbats, dat$pitch,
 <li>Brian Mills <a href="https://twitter.com/BMMillsy">@BMMillsy</a></li>
 </ul>
 </section>
-<section class="slide level2" id="thanks-for-coming-any-questions">
-<h1>Thanks for coming! Any questions???</h1>
+<section class="slide level2" id="thanks-for-listening">
+<h1>Thanks for listening!</h1>
 </section>
 <!-- {{{{ dzslides core
 #
