@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <head>
 <meta charset="utf-8">
-  <meta name="author" content="Carson Sievert 7/14/2013" />
+  <meta name="author" content="Carson Sievert 8/6/2013" />
   <title>pitchRx: Tools for Collecting and Analyzing MLB PITCHf/x Data</title>
   <style type="text/css">
 table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
@@ -97,7 +97,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <body>
 <section>
   <h1 class="title">pitchRx: Tools for Collecting and Analyzing MLB PITCHf/x Data</h1>
-  <h2 class="author">Carson Sievert 7/14/2013</h2>
+  <h2 class="author">Carson Sievert 8/6/2013</h2>
   <h3 class="date">Follow along: <a href="http://cpsievert.github.io/slides/pitchRx/jsm">http://cpsievert.github.io/slides/pitchRx/jsm</a></h3>
 </section>
 <section class="slide level2" id="outline">
@@ -121,11 +121,13 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </ul>
 </section>
 <section class="slide level2" id="remove-me">
+<h1>Remove Me!</h1>
 <figure>
 <img src="patent2.png"><figcaption></figcaption>
 </figure>
 </section>
 <section class="slide level2" id="remove-me-1">
+<h1>Remove Me!</h1>
 <figure>
 <img src="patent1.png"><figcaption></figcaption>
 </figure>
@@ -152,16 +154,17 @@ pitches &lt;- dat$pitch</code></pre>
 </section>
 <section class="slide level2" id="strike-zone-plots">
 <h1>Strike-zone plots</h1>
-<ul class="incremental">
+<ol class="incremental" type="1">
 <li><p>Strike-zone plots have height of the batter on the vertical axis and data points correspond to the location of baseballs as they cross home plate.</p></li>
-<li><p>This code will produce the density of all called strikes (from 2008 to 2012) faceted by batter stance.</p></li>
+<li><code>pitchRx</code> can easily produce two types of strikezone plots:</li>
+</ol>
+<ul class="incremental">
+<li>frequencies</li>
+<li>probabilities of events (more interesting in most cases)</li>
 </ul>
-<pre class="sourceCode r"><code class="sourceCode r">pitchFX &lt;- <span class="kw">join</span>(pitches, atbat, 
-                <span class="dt">by=</span><span class="kw">c</span>(<span class="st">&quot;num&quot;</span>, <span class="st">&quot;url&quot;</span>))
-strikes &lt;- <span class="kw">subset</span>(pitchFX, 
-                  des == <span class="st">&quot;Called Strikes&quot;</span>)
-<span class="kw">strikeFX</span>(strikes, <span class="dt">geom=</span><span class="st">&quot;tile&quot;</span>, 
-         <span class="dt">layer=</span><span class="kw">facet_grid</span>(.~stand))</code></pre>
+<ol class="incremental" start="3" type="1">
+<li>Useful for answering questions such as: <q>Do umpires favor home pitchers?</q></li>
+</ol>
 </section>
 <section class="slide level2" id="some-terminology">
 <h1>Some terminology</h1>
@@ -171,18 +174,14 @@ strikes &lt;- <span class="kw">subset</span>(pitchFX,
 <li><p>By restricting ourselves to these two outcomes, we condition upon a situation where the umpire has to make a binary decision about the pitch.</p></li>
 </ul>
 </section>
-<section class="slide level2" id="remove-me-2">
-<figure>
-<img src="strikes.png"><figcaption></figcaption>
-</figure>
-</section>
-<section class="slide level2" id="probabilistic-strike-zones">
-<h1>Probabilistic strike-zones</h1>
+<section class="slide level2" id="probability-of-a-called-strike">
+<h1>Probability of a Called Strike</h1>
 <ul class="incremental">
-<li><p><code>strikeFX</code>’s <code>model</code> option allows one to model the probabilistic events over the strike-zone region.</p></li>
-<li><p>Here we use <code>gam</code> from the <code>mgcv</code> package to visualize the probability of a called strike (given the ump has to make a decision).</p></li>
+<li>Here we use <code>gam</code> from the <code>mgcv</code> package to visualize the probability of a called strike (given the ump has to make a decision).</li>
 </ul>
-<pre class="sourceCode r"><code class="sourceCode r">decisions &lt;- <span class="kw">subset</span>(pitchFX, des %in% 
+<pre class="sourceCode r"><code class="sourceCode r">pitchFX &lt;- plyr::<span class="kw">join</span>(pitches, atbat, 
+                <span class="dt">by=</span><span class="kw">c</span>(<span class="st">&quot;num&quot;</span>, <span class="st">&quot;url&quot;</span>))
+decisions &lt;- <span class="kw">subset</span>(pitchFX, des %in% 
                     <span class="kw">c</span>(<span class="st">&quot;Called Strike&quot;</span>, <span class="st">&quot;Ball&quot;</span>))
 decisions$strike &lt;- <span class="kw">as.numeric</span>(decisions$des == 
                                  <span class="st">&quot;Called Strike&quot;</span>)
@@ -190,17 +189,17 @@ decisions$strike &lt;- <span class="kw">as.numeric</span>(decisions$des ==
           <span class="dt">family =</span> <span class="kw">binomial</span>(<span class="dt">link=</span><span class="st">&#39;logit&#39;</span>)), 
           <span class="dt">layer=</span><span class="kw">facet_grid</span>(.~stand))</code></pre>
 </section>
-<section class="slide level2" id="remove-me-3">
+<section class="slide level2" id="remove-me-2">
+<h1>Remove Me!</h1>
 <figure>
-<img src="strike-probs.png"><figcaption></figcaption>
+<img src="strike-probs2.png"><figcaption></figcaption>
 </figure>
 </section>
-<section class="slide level2" id="probabilistic-strike-zones-1">
-<h1>Probabilistic strike-zones</h1>
+<section class="slide level2" id="difference-in-probability-of-called-strike-vs.ball">
+<h1>Difference in probability of Called Strike vs. Ball</h1>
 <ul class="incremental">
 <li><p>We can also visualize the <strong>difference</strong> in probabilistic events by adding arguments to <code>density1</code> and <code>density2</code>.</p></li>
-<li><p>Here we find the probability of a called strike during the top inning minus the probability of a called strike during the bottom inning.</p></li>
-<li><p>Note: home pitchers pitch during the top of the inning.</p></li>
+<li><p>Here we find the probability of a called strike during the top inning minus the probability of a called strike during the bottom inning (top inning == home pitcher).</p></li>
 </ul>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">strikeFX</span>(decisions, <span class="dt">model=</span><span class="kw">gam</span>(strike~<span class="kw">s</span>(px)+<span class="kw">s</span>(pz), 
           <span class="dt">family =</span> <span class="kw">binomial</span>(<span class="dt">link=</span><span class="st">&#39;logit&#39;</span>)), 
@@ -208,9 +207,10 @@ decisions$strike &lt;- <span class="kw">as.numeric</span>(decisions$des ==
           <span class="dt">density2=</span><span class="kw">list</span>(<span class="dt">top_inning=</span><span class="st">&quot;N&quot;</span>), 
           <span class="dt">layer=</span><span class="kw">facet_grid</span>(.~stand))</code></pre>
 </section>
-<section class="slide level2" id="remove-me-4">
+<section class="slide level2" id="remove-me-3">
+<h1>Remove Me!</h1>
 <figure>
-<img src="diff-probs.png"><figcaption></figcaption>
+<img src="diff-probs2.png"><figcaption></figcaption>
 </figure>
 </section>
 <section class="slide level2" id="home-field-advantage">
@@ -226,9 +226,9 @@ decisions$strike &lt;- <span class="kw">as.numeric</span>(decisions$des ==
 <section class="slide level2" id="strike-zones-vs-trajectories">
 <h1>Strike-zones vs Trajectories</h1>
 <ul class="incremental">
-<li><p><code>strikeFX</code> is nice for visualizing <em>a lot</em> of data.</p></li>
+<li><p><code>strikeFX</code> is nice for visualizing <em>a lot</em> of data (we just visualized over 1.5 million pitches).</p></li>
 <li><p>PITCHf/x can also be used to regenerate (approximate) pitch trajectories.</p></li>
-<li><p>It doesn’t make sense to animate millions of pitch trajectories, so we usually restrict our focus to a few cases.</p></li>
+<li><p>It isn’t straightforward to animate millions of pitch trajectories, so we usually restrict our focus to a few cases.</p></li>
 </ul>
 </section>
 <section class="slide level2" id="yu-vishnu-darvish---a-case-study">
@@ -317,7 +317,7 @@ Darvish &lt;- plyr::<span class="kw">join</span>(atbats, dat$pitch,
 <ol class="incremental" type="1">
 <li><p>Visit the pitchRx <a href="http://cpsievert.github.com/pitchRx/demo/">demo page</a> (now included with CRAN package as R Markdown vignette).</p></li>
 <li><p>R Journal article coming soon!</p></li>
-<li><a href="http://glimmer.rstudio.com/cpsievert/pitchRx/">Shiny web application</a>.</li>
+<li><a href="http://glimmer.rstudio.com/cpsievert/pitchRx/">My web app</a>.</li>
 </ol>
 <ul class="incremental">
 <li>Slick user interface to <code>strikeFX</code> and <code>animateFX</code></li>
@@ -343,6 +343,7 @@ Darvish &lt;- plyr::<span class="kw">join</span>(atbats, dat$pitch,
 <li>MLB Advanced Media <a href="https://twitter.com/mlbdotcom">@mlbdotcom</a></li>
 <li>Alan Nathan <a href="https://twitter.com/pobguy">@pobguy</a></li>
 <li>Mike Fast <a href="https://twitter.com/fastballs">@fastballs</a></li>
+<li>Brian Mills <a href="https://twitter.com/BMMillsy">@BMMillsy</a></li>
 </ul>
 </section>
 <section class="slide level2" id="thanks-for-coming-any-questions">

@@ -11,7 +11,7 @@
   
 2. Collecting PITCHf/x with `pitchRx`
 
-2. Visualizing PITCHf/x with `pitchRx`
+3. Visualizing PITCHf/x with `pitchRx`
   * Strike-zone densities
   * Probabilistic strike-zones
   * 2D Animation of pitch trajectories 
@@ -54,18 +54,13 @@ pitches <- dat$pitch
 
 ## Strike-zone plots
 
-* Strike-zone plots have height of the batter on the vertical axis and data points correspond to the location of baseballs as they cross home plate.
+1. Strike-zone plots have height of the batter on the vertical axis and data points correspond to the location of baseballs as they cross home plate.
 
-* This code will produce the density of all called strikes (from 2008 to 2012) faceted by batter stance.
-
-```{r dens}
-pitchFX <- join(pitches, atbat, 
-                by=c("num", "url"))
-strikes <- subset(pitchFX, 
-                  des == "Called Strikes")
-strikeFX(strikes, geom="tile", 
-         layer=facet_grid(.~stand))
-```
+2. `pitchRx` can easily produce two types of strikezone plots:
+  * frequencies
+  * probabilities of events (more interesting in most cases)
+  
+3. Useful for answering questions such as: "Do umpires favor home pitchers?"
 
 ## Some terminology
 
@@ -75,17 +70,14 @@ strikeFX(strikes, geom="tile",
 
 * By restricting ourselves to these two outcomes, we condition upon a situation where the umpire has to make a binary decision about the pitch.
 
-## Remove Me!
 
-![](strikes.png)
-
-## Probabilistic strike-zones
-
-* `strikeFX`'s `model` option allows one to model the probabilistic events over the strike-zone region.
+## Probability of a Called Strike
 
 * Here we use `gam` from the `mgcv` package to visualize the probability of a called strike (given the ump has to make a decision).
 
 ```{r easy2}
+pitchFX <- plyr::join(pitches, atbat, 
+                by=c("num", "url"))
 decisions <- subset(pitchFX, des %in% 
                     c("Called Strike", "Ball"))
 decisions$strike <- as.numeric(decisions$des == 
@@ -97,15 +89,13 @@ strikeFX(decisions, model=gam(strike~s(px)+s(pz),
 
 ## Remove Me!
 
-![](strike-probs.png)
+![](strike-probs2.png)
 
-## Probabilistic strike-zones
+## Difference in probability of Called Strike vs. Ball
 
 * We can also visualize the __difference__ in probabilistic events by adding arguments to `density1` and `density2`.
 
-* Here we find the probability of a called strike during the top inning minus the probability of a called strike during the bottom inning.
-
-* Note: home pitchers pitch during the top of the inning.
+* Here we find the probability of a called strike during the top inning minus the probability of a called strike during the bottom inning (top inning == home pitcher).
 
 ```{r easy3}
 strikeFX(decisions, model=gam(strike~s(px)+s(pz), 
@@ -117,7 +107,7 @@ strikeFX(decisions, model=gam(strike~s(px)+s(pz),
 
 ## Remove Me!
 
-![](diff-probs.png)
+![](diff-probs2.png)
 
 ## Home Field Advantage
 
@@ -127,11 +117,11 @@ strikeFX(decisions, model=gam(strike~s(px)+s(pz),
 
 ## Strike-zones vs Trajectories
 
-* `strikeFX` is nice for visualizing _a lot_ of data.
+* `strikeFX` is nice for visualizing _a lot_ of data (we just visualized over 1.5 million pitches).
 
 * PITCHf/x can also be used to regenerate (approximate) pitch trajectories.
 
-* It doesn't make sense to animate millions of pitch trajectories, so we usually restrict our focus to a few cases.
+* It isn't straightforward to animate millions of pitch trajectories, so we usually restrict our focus to a few cases.
 
 ## Yu "Vishnu" Darvish - a case study
 
@@ -219,7 +209,7 @@ interactiveFX(RH, avg.by="pitch_types")
 
 2. R Journal article coming soon!
 
-2. [Shiny web application](http://glimmer.rstudio.com/cpsievert/pitchRx/).
+2. [My web app](http://glimmer.rstudio.com/cpsievert/pitchRx/).
   * Slick user interface to `strikeFX` and `animateFX`
   * Upload your own csv files!
 
@@ -243,5 +233,6 @@ interactiveFX(RH, avg.by="pitch_types")
 * MLB Advanced Media [@mlbdotcom](https://twitter.com/mlbdotcom)
 * Alan Nathan [@pobguy](https://twitter.com/pobguy)
 * Mike Fast [@fastballs](https://twitter.com/fastballs)
+* Brian Mills [@BMMillsy](https://twitter.com/BMMillsy)
 
 ## Thanks for coming! Any questions???
