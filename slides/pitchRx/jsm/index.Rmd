@@ -70,11 +70,9 @@ dat <- scrapeFX(start="2008-01-01",
 ## Strike-zone plots
 
 1. Strike-zone plots have height of the batter on the vertical axis and data points correspond to the location of baseballs as they cross home plate.
-
 2. `pitchRx` can easily produce two types of strikezone plots:
   * frequencies
   * probabilities of events (more interesting in most cases)
-  
 3. Useful for answering questions such as: "Do umpires favor home (as opposed to away) pitchers?"
   * More specifically: "Given the umpire has to make a decision, do home pitchers have a higher chance of receiving a called strike?""
 
@@ -226,16 +224,12 @@ interactiveFX(RH, avg.by="pitch_types")
 ## Want more??
 
 1. Visit the pitchRx [demo page](http://cpsievert.github.com/pitchRx/demo/) (now included with CRAN package as R Markdown vignette).
-
 2. R Journal article coming soon!
-
-2. [My web app](http://glimmer.rstudio.com/cpsievert/pitchRx/).
+3. [My web app](http://glimmer.rstudio.com/cpsievert/pitchRx/).
   * Slick user interface to `strikeFX` and `animateFX`
   * Upload your own csv files!
-
-3. Contribute to development or post an issue on [GitHub](https://github.com/cpsievert/pitchRx).
-
-4. I [occasionally](http://cpsievert.wordpress.com/) [blog](http://cpsievert.github.io/) and tweet [@cpsievert](https://twitter.com/cpsievert) about `pitchRx`.
+4. Contribute to development or post an issue on [GitHub](https://github.com/cpsievert/pitchRx).
+5. I [occasionally](http://cpsievert.wordpress.com/) [blog](http://cpsievert.github.io/) and tweet [@cpsievert](https://twitter.com/cpsievert) about `pitchRx`.
 
 
 ## Special Thanks to:
