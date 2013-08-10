@@ -61,6 +61,7 @@ group: navigation
 ---
 	
 ## Presentations
+* [pitchRx: Tools for Collecting and Analyzing Major League Baseball PITCHf/x Data](http://www.amstat.org/meetings/jsm/2013/onlineprogram/AbstractDetails.cfm?abstractid=309308) Joint Statistical Meetings ([Slides](http://cpsievert.github.io/slides/pitchRx/jsm/)). Montreal, Canada. August, 2013.
 * [Getting Started with Shiny](http://www.stat.iastate.edu/seminars/seminar.html?id=828), ISU Graphics Working Group ([Slides](http://cpsievert.github.com/slides/shiny/index.html)). January, 2013.
 * [Simple Methods for Collecting and Analyzing Major League Baseball PITCHf/x Data](http://www.stat.iastate.edu/seminars/seminar.html?id=790), ISU Graphics Working Group ([Slides](http://cpsievert.github.com/slides/pitchRx/pitchRx.html)). October, 2012.
 * Play for Pay: the Effects of 'Walk Year' Performance on MLB Free Agent Contracts, Scholarship Day. St. Joseph, MN. 04/2010.
