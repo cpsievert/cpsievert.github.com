@@ -14,7 +14,7 @@ Announcements
   * Except for this upcoming Monday...
   * The full office hours schedule should be finalized by the end of the week.
 * Any questions about the syllabus, Chapter 1 or Chapter 2?
-  * I don't want to focus too much on Chapters 1-4...things will get much harder!
+  * I don't want to focus too much on Chapters 1-4...time is better spent on the subsequent chapters!
 
 K-Packs Example
 ========================================================
@@ -59,7 +59,7 @@ title:false
 * __Population__:
   * There isn't one (I can't observe games in the future)!
 * __Process__:
-  * The Cubs could be viewed as a __system__ and the average runs per game is a __component (or process)__ of that system.
+  * Cubs can be viewed as a __system__ and the average runs per game is a __component (or process)__ of that system.
   * Future games would be __inputs__ to the system and past games would be __outputs__.
 * __Sample__:
   * Every game played by the Cubs in 2013 thus far.
