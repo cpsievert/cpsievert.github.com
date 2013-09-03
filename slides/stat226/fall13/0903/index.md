@@ -213,7 +213,7 @@ Pie Chart
 Month
 ========================================================
 
-* __description__ is a __ordinal__ variable. Here is it's distribution (shown as a __frequency table__):
+* __month__ is a __ordinal__ variable. Here is it's distribution (shown as a __frequency table__):
 
 
 ```
@@ -309,7 +309,7 @@ Mean vs. median
 * Thus, we sometimes compare these values to assess the direction of skew in a distribution.
   * If mean < median, then the mean is dragged to the left (skewed left)
   * If mean > median, then the mean is dragged to the right (skewed right)
-  * If mean = median, then the mean is dragged to the right (symmetric)
+  * If mean = median, the distribution is symmetric (in a perfect world)
   
 Visual representation
 ========================================================
