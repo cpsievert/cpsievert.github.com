@@ -98,7 +98,7 @@ Percentiles
 ***
 
 * What percentage of pitches thrown by Rivera are less than 90 MPH?
-* Add up the relative frequencies...0.06 + 0.073 = 0.079 (about 8%)
+* Add up the relative frequencies...0.006 + 0.073 = 0.079 (about 8%)
 * We say that 90 MPH is the 8th __percentile__.
 
 Percentiles continued
@@ -121,8 +121,8 @@ Percentiles continued
 ***
 
 * What percentage of pitches thrown by Rivera are less than 91 MPH?
-* Add up the relative frequencies...0.06 + 0.073 + .181 = 0.314 (about 31%)
-* We say that 90 MPH is the 31st __percentile__.
+* Add up the relative frequencies...0.006 + 0.073 + .181 = 0.26
+* We say that 91 MPH is the 26th __percentile__.
 
 Foreshadowing
 ========================================================
