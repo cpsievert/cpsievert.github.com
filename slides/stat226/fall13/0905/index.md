@@ -2,7 +2,7 @@ Stat 226 - Lecture 4
 ========================================================
 date: 09/05/13
 transition: rotate
-incremental: false
+incremental: true
 
 Announcements
 ========================================================
