@@ -1,6 +1,6 @@
-Stat 226 - Lecture 4
+Stat 226 - Lecture 5
 ========================================================
-date: 09/05/13
+date: 09/10/13
 transition: rotate
 incremental: true
 
@@ -33,7 +33,7 @@ Summarizing Measurements
 ========================================================
 
 <!-- html table generated in R 3.0.1 by xtable 1.7-1 package -->
-<!-- Tue Sep 10 13:30:54 2013 -->
+<!-- Tue Sep 10 13:41:15 2013 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> nominal </TH> <TH> ordinal </TH> <TH> quantitative </TH>  </TR>
   <TR> <TD align="right"> mode </TD> <TD> Yes </TD> <TD> Yes </TD> <TD> Yes </TD> </TR>
@@ -51,7 +51,7 @@ Quantitative Measurements
 ========================================================
 
 <!-- html table generated in R 3.0.1 by xtable 1.7-1 package -->
-<!-- Tue Sep 10 13:30:54 2013 -->
+<!-- Tue Sep 10 13:41:15 2013 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> center </TH> <TH> spread </TH>  </TR>
   <TR> <TD align="right"> skewed </TD> <TD> median </TD> <TD> IQR, Range </TD> </TR>
