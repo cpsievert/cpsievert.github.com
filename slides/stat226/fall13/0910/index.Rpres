@@ -1,0 +1,83 @@
+Stat 226 - Lecture 4
+========================================================
+date: 09/05/13
+transition: rotate
+incremental: true
+
+Announcements
+========================================================
+
+* The project is now available on Blackboard. There will be about 4 parts. The first part is due September 22nd.
+* Keep in mind you will need to collect data associated with the variables in the first step. Come up with a realistic example!
+* Go to office hours if you have problems with JMP!
+* Any questions?
+
+A Mental Exercise
+========================================================
+
+```{r x, echo=FALSE, fig.height=12, fig.width=8}
+library(reshape)
+library(ggplot2)
+x <- rnorm(1000)
+y <- rnorm(1000, sd=5)
+df <- melt(data.frame(x,y))
+themes <- theme(axis.text.x=element_text(size=25), axis.text.y=element_text(size=25), plot.title = element_text(lineheight=1.8, face="bold"))
+ggplot(df, aes(x=value))+geom_histogram(aes(y=..density..), fill=I('steelblue'), col=I('black'))+geom_vline(xint=0, color="red")+facet_wrap(~variable, ncol=1)+themes
+```
+
+***
+* What's the difference between these two histograms?
+* There is "more __variation__" or "more __spread__" in the bottom histogram!
+
+Measures of spread (or variability)
+========================================================
+
+* __Range__: Maximum - Minimum
+* __IQR__: Q3 - Q1
+* __Variance and Standard Deviation__: see pages 75-79 in the lecture notes.
+
+Summarizing Measurements
+========================================================
+
+```{r table, results='asis', echo=FALSE}
+library(xtable)
+nominal <- c("Yes", "No", "No", "No")
+ordinal <- c("Yes", "No", "No", "Yes")
+quantitative <- rep("Yes", 4)
+df <- data.frame(nominal, ordinal, quantitative)
+row.names(df) <- c("mode", "mean", "variance", "percentiles")
+print(xtable(df), type="html")
+```
+
+* If you can calculate a __percentile__, you can calculate the __5 number summary__.
+
+* If you can calculate __variance__, you can calculate __standard deviation__.
+
+Quantitative Measurements
+========================================================
+
+```{r table2, results='asis', echo=FALSE}
+center <- c("median", "mean")
+spread <- c("IQR, Range", "Standard Deviation")
+df2 <- data.frame(center, spread)
+row.names(df2) <- c("skewed", "symmetric")
+print(xtable(df2), type="html")
+```
+
+* Both the mean and standard deviation are influenced by outliers. That is why we don't use them for skewed distributions.
+
+* Still have to determine whether the distribution is skewed or not. How should we do this?
+
+Your Turn
+========================================================
+incremental:false
+
+* Finish the heights worksheet, then consider the following:
+1. For each of the following data scenarios, determine the appropriate measure of center and measure of spread. To answer the question, think about what values are plausible and whether a histogram would yield a more symmetric or a more skewed distribution.
+  * amount of income tax paid by household in the US
+  * amount of tuition charged by public colleges in the midwest states of the US
+  * runs per game scored by the Chicago Cubs (or any baseball team)
+  * points per game scored by the Chicago Bulls (or any basketball team)
+  
+
+
