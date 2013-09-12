@@ -1,0 +1,91 @@
+Stat 226 - Lecture 6
+========================================================
+date: 09/12/13
+transition: rotate
+incremental: true
+
+Announcements
+========================================================
+
+* Homework is due today. From now on, the homework is due at 4:30pm.
+* Reading quiz due tomorrow.
+* Any questions?
+
+Runs per game in baseball
+========================================================
+
+```{r dens, echo=FALSE}
+all.runs <- read.csv("runs.csv", header=TRUE)
+runs <- c(all.runs[,1], all.runs[,2])
+hist(runs, freq=FALSE, xlab="runs/game", main="")
+```
+
+***
+
+* Pretty close to what we said on Tuesday, huh?
+* This doesn't look like a normal distribution...
+
+Square root of runs per game in baseball
+========================================================
+
+```{r dens2, echo=FALSE}
+hist(sqrt(runs)+1, freq=FALSE, main="")
+runs2 <- sqrt(runs)
+mn <- mean(runs2, na.rm=TRUE)
+s <- sqrt(var(runs2, na.rm=TRUE))
+x <- seq(0, 6, .1)
+y <- dnorm(x, mean=mn, sd=s)
+```
+
+*** 
+
+* Statisticians have a lot of tricks they can use to transform skewed distributions into symmetric/normal distributions.
+* This type of trick will make it harder to interpret some statistical models.
+
+Histogram of hits per game in baseball
+========================================================
+
+```{r hit_dens, echo=FALSE}
+all.hits <- read.csv("hits.csv", header=TRUE)
+hits <- c(all.hits[,1], all.hits[,2])
+hist(hits, freq=FALSE, xlim=c(0, 25), xlab="hits/game", main="")
+```
+***
+
+* Pretty close to a symmetric, bell-shaped distribution. Let's fit a normal distribution to it!
+
+Fitting a normal distribution to data
+========================================================
+
+```{r hit_dens2, echo=FALSE}
+hist(hits, freq=FALSE, xlim=c(0, 25), xlab="hits/game", main="")
+mn <- mean(hits, na.rm=TRUE)
+s <- sqrt(var(hits, na.rm=TRUE))
+x <- seq(0, 25, .1)
+y <- dnorm(x, mean=mn, sd=s)
+lines(x, y)
+abline(v=mn, col=2)
+```
+***
+
+* We can fit a normal distribution to this data by:
+  * setting the mean parameter $\mu$ equal to the sample mean $\bar{x}$ = `r mn`
+  * setting the variance parameter $\sigma^2$ equal to the sample variance $s^2$  = `r s`
+  
+Making approximate inference with empirical rule
+========================================================
+
+```{r hit_dens3, echo=FALSE}
+hist(hits, freq=FALSE, xlim=c(0, 25), xlab="hits/game", main="")
+lines(x, y)
+abline(v=mn-s, col=3)
+abline(v=mn+s, col=3)
+mn <- round(mn, 2)
+s <- round(s, 2)
+```
+
+***
+
+* The empirical rule tells us about 68% of the normal curve falls within one standard deviation of the mean.
+* Note that the mean is `r mn` and the standard deviation is `r s`.
+* If we were to pick __one__ random game, there is roughly a 68% chance of there being between  (`r mn` - `r s`, `r mn` + `r s`) => (`r mn - s`, `r mn + s`) hits in that game.
