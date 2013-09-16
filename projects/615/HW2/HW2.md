@@ -28,10 +28,10 @@ where $\Phi$ is the cdf of a standard normal
 #### Run an MCMC for the model below (you can use BUGS/JAGS) and describe (using a plot?) how non-identifiability affects the posterior.
 
 $$
-y=I(Z>a), Z \sim N(Xb,1)
+y=I(Z >\alpha), Z \sim N(X\beta,1)
 $$
 
-where $X$ includes an intercept and a single explanatory variable and $a$ and $b$ are unknown parameters
+where $X$ includes an intercept and a single explanatory variable and $\alpha$ and $\beta$ are unknown parameters
 
 
 ```r
@@ -39,17 +39,17 @@ library(rjags)
 model <- "
 model {
     for (i in 1:n) {
-      y[i] <- dinterval(z[i], a)
+      is.censored[i] ~ dinterval(z[i], a)
       z[i] ~ dnorm(Xb[i], 1)
-      Xb[i] <- X[i,1]*b0 + X[i,2]*b1
+      Xb[i] <- b0 + X[i]*b1
     }
     b1 ~ dunif(-1e6, 1e6)
     b0 ~ dunif(-1e6, 1e6)
     a ~ dunif(-1e6, 1e6)
   }
 "
-X <- cbind(1, rnorm(100))
-m <- jags.model(textConnection(model), list(X=X, n=dim(X)[1]), n.chain=1, quiet=TRUE)
+X <- rnorm(100)
+m <- jags.model(textConnection(model), list(X=X, n=length(X)), n.chain=1, quiet=TRUE)
 res <- coda.samples(m, c("a", "b0", "b1"), 10000, nthin=1)
 mat <- as.matrix(res)
 par(mfrow=c(1, 3))
@@ -61,7 +61,7 @@ plot(mat[,3], ylab=expression(beta[1]))
 ![plot of chunk jags](figure/jags.png) 
 
 
-When there are identifiability issues, the MCMC can not converge to the posterior.
+The figures above are traceplots for values of $\alpha$, $\beta_0$, $\beta_1$. Clearly, the MCMC does not converge when there are identifiability issues.
 
 #### Verify (or find the typo for) the likelihood for beta at the bottom of page 7 of Polson et al.
 
