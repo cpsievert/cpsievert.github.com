@@ -8,8 +8,8 @@ Thumbs.db
 
 .rbenv-version
 .rvmrc
-
-
+.DS_Store
+*.Rhistory
 _source/__*
 .Rproj.user
 *.Rproj
