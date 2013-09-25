@@ -5,10 +5,12 @@ date: 9-26-2013
 transition: rotate
 incremental: true
 
+Follow along here: http://cpsievert.github.com/slides/LDA/0926
+
 The ugly truth
 ========================================================
 
-<div align="center"><img src="statisticans.png" /></div>
+<div align="center"><img src="statisticans.png" width=1000 height=800/></div>
 
 Overview
 ========================================================
@@ -32,7 +34,6 @@ title: false
 
 Latent Dirichlet Allocation (LDA)
 ========================================================
-type: prompt
 
 Given $T$ topics, the probability of the $i^{th}$ word $i \in \{1, \dots, V\}$ in a given document:
 
@@ -52,10 +53,7 @@ AP Case Study
 ```{r doc-term, echo=FALSE}
 library(LDAviz)
 data(APtopdocs, package="LDAviz")
-top.docs[1,1]
-#words <- APinput$vocab[APinput$word.id]
-#head(words)
-#head(APinput$)APinput$word.id
+APtopdocs[1,1]
 ```
 
 Input structure
@@ -98,20 +96,18 @@ tail(mat2, 4)
 ***
 
 * After every iteration of gibbs sampling we will have a topic ID for each word. 
-* Since memory can be an issue, we usually just save the topics from the last iteration (ans after convergence, of course).
+* Since memory can be an issue, we usually just save the topics from the last iteration (after convergence, of course).
 
 What now?
 ========================================================
 
 * From here, we construct point estimates of $\Phi$ and $\Theta$.
 * In our "simple" example, $\Phi$ is `r length(APinput$vocab)` by `r max(mat2$topic)` and $\Theta$ is `r max(mat2$topic)` by `r max(mat2$doc_id)`
-* Each topic has a unique pmf over `r length(APinput$vocab)` points!!!
-* __Problem__: How do we interpret topics given such a large space?
+* __Problem__: Each topic has a unique pmf over `r length(APinput$vocab)` points!!! How do we interpret topics given such a large space?
 * __Solution__: Rank words based on their "relevance" to each topic
 
 What's relevance?
 ========================================================
-type: prompt
 
 - For a given topic $t$, rank words by:
   1. $p(w_i|t)$: common approach, but over-ranks common words
@@ -121,7 +117,6 @@ type: prompt
 
 Global keywords
 ========================================================
-type: prompt
 
 1. $distinctiveness(w_i) = \sum_t p(t|w_i) log[\frac{p(t|w_i)}{p(t)}]$
 <img src='upgrade.png' style="display:inline-block; margin-left:auto; margin-right:auto; height:205px;"/>
@@ -135,14 +130,13 @@ type: prompt
 
 <div align="center"><img src="termite.png" width=1200 height=800/></div>
 
-Comparing Topics
+Topic Similarities
 ========================================================
 
 * Remember each topic has a unique distribution over words.
 * We can calculate a dissimilarity between two topics by measuring the dissimilarity of their distributions (via a measure such as symmetric KL divergence)
 * Computing dissimilarity for each unique pair of topics results in a high dimensional distance matrix.
 * Thus, we use MDS to scale the points down to two dimensions (in order to visualize).
-
 <li class="fragment" data-fragment-index="5">
 <div align="center"><img src="scatter.png" width=400 height=300/></div>
 <li>
