@@ -5,12 +5,14 @@ date: 9-26-2013
 transition: rotate
 incremental: true
 
+Watch the talk here: https://www.dropbox.com/s/datl8sshpp859sh/LDAviz.mov
 Follow along here: http://cpsievert.github.com/slides/LDA/0926
+
 
 The ugly truth
 ========================================================
 
-<div align="center"><img src="statisticans.png" width=1000 height=800/></div>
+<div align="center"><img src="statisticans.png" width=800 height=600/></div>
 
 Overview
 ========================================================
