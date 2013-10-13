@@ -18,14 +18,14 @@ Since the variation in the seasonal component is consistent over time (see figur
 ![plot of chunk decompose](figure/decompose.png) 
 
 
-To keep the model simple, consider the random walk plus noise model:
+To keep things simple, consider the random walk plus noise model:
 
 $$
 y_t = \mu_t + v_t \hspace{2cm} v_t \sim N(0, V)
 \\ \mu_t = \mu_{t-1} + w_t \hspace{2cm} w_t \sim N(0, W)
 $$
 
-Note that this model is constant and the only parameters are the observation and evolution variances ($V$ and $W$, respectively). These parameters are normally estimated via Maximum Likelihood or Bayesian estimation. Before we head in this direction, first consider the trajectory of the random walk plus model with a low signal-to-noise ratio $r = W/V = 1/100$
+Note that this model is constant and the only parameters are the observation and evolution variances ($V$ and $W$, respectively). These (unknown) parameters are usually estimated via Maximum Likelihood and/or Bayesian estimation. Before we head in this direction, first consider the trajectory of the random walk plus model with a low signal-to-noise ratio $r = W/V = 1/100$
 
 
 ```r
@@ -46,8 +46,10 @@ In this case, the choice for these values of $V$ and $W$ were arbitrary. To obta
 
 
 ```r
-buildFun <- function(x) dlmModPoly(order = 1, dV = exp(x[1]), dW = exp(x[2]))
-fit <- dlmMLE(y_tmp, parm = rep(0, 2), build = buildFun)
+buildFun <- function(x) {
+    dlmModPoly(order = 1, dV = exp(x[1]), dW = exp(x[2]))
+}
+fit <- dlmMLE(y_tmp, parm = rep(0, 3), build = buildFun)
 stopifnot(fit$convergence == 0)
 dlmTemp2 <- buildFun(fit$par)
 unlist(dlmTemp2[c("V", "W")])
@@ -71,7 +73,7 @@ legend("bottomright", c("Filtered Trajectory", "Smoothed Trajectory"), col = 2:3
 ![plot of chunk two](figure/two.png) 
 
 
-Note that the high signal-to-noise ratio estimated via Maximum Likelihood produces a trajectory that essentially mimics the actual trajectory. If we were to treat these parameter estimates as known and perform a Bayesian analysis, one could obtain samples from the posterior via the Forward Filtering Backward Sampling (FFBS) algorithm. However, this is not a great way to proceed since (in addition to these values not really being known) backwards sampling from this filtered object would produce samples with very little variation. Instead, we proceed by treating $V$ and $W$ as unknown. 
+Note that the high signal-to-noise ratio estimated via Maximum Likelihood produces a trajectory that essentially mimics the actual trajectory. Due to this overfitting, any prediction would be highly inaccurate since predictions would be heavily influenced by the noise in previous observations. If we were to treat these parameter estimates as known and perform a Bayesian analysis, one could obtain samples from the posterior via the Forward Filtering Backward Sampling (FFBS) algorithm. However, this is not a great way to proceed since (in addition to these values not really being known) backwards sampling from this filtered object would produce samples with very little variation. Instead, we proceed by treating $V$ and $W$ as unknown. 
 
 Assuming that $W$ is a diagonal matrix and both unknown variances have independent inverse Gamma prior distributions, we can sample from the posterior using the function `dlm::dlmGibbsDIG`.
 
@@ -92,7 +94,7 @@ m[1, ]  #point estimates for unknown variances
 
 ```
 ##         V         W 
-## 0.0001666 0.0679343
+## 0.0002152 0.0679393
 ```
 
 ```r
@@ -101,7 +103,7 @@ m[2, ]  #Monte Carlo standard errors
 
 ```
 ##         V         W 
-## 7.235e-06 5.344e-05
+## 1.502e-05 6.070e-05
 ```
 
 
@@ -119,4 +121,35 @@ lines(u, col = 3, lty = 2)
 ```
 
 ![plot of chunk plot](figure/plot.png) 
+
+
+Clearly, a simple random walk plus noise model is not going to work since the observation and evolution variance are so small. Next, we consider adding a fourier representation of the periodic component. This particular representation contains two harmonics.
+
+
+```r
+buildFun <- function(x) {
+    dlmModPoly(order = 1, dV = exp(x[1]), dW = exp(x[2])) + dlmModTrig(s = 24, 
+        q = 2, dV = exp(x[1]), dW = exp(x[2]))
+}
+fit <- dlmMLE(log(y_tmp), parm = rep(1, 2), build = buildFun, lower = 1e-08, 
+    upper = 10)
+stopifnot(fit$convergence == 0)
+t <- buildFun(fit$par)
+```
+
+
+Note that the estimates of $V$ and $W$ are still incredibly small, but this model systematically restricts the states from mimicing the actual trajectory (as seen below). It is interesting to see the large spike in the filtered trajectory at the start of the time series, but it makes total sense considering the filtered estimates are based on _previous_ data and there large spike from the 1st time point to the 2nd time point.
+
+
+```r
+tempFilt2 <- dlmFilter(y_tmp, t)
+tempSmooth2 <- dlmSmooth(y_tmp, t)
+plot(y_tmp, type = "l")
+lines(tempFilt2$m[-1], col = 2)
+lines(tempSmooth2$s[-1], col = 3)
+legend("bottomright", c("Filtered Trajectory", "Smoothed Trajectory"), col = 2:3, 
+    lty = 1)
+```
+
+![plot of chunk plot_harm](figure/plot_harm.png) 
 
