@@ -15,6 +15,11 @@ It then follows that $\theta_t|\theta_{t-1} \sim N(G_t\theta_{t-1}, W_t) \implie
 
 Since the variation in the seasonal component is consistent over time (see figure below), should provide an adequate fit to this data.
 
+```{r setup, echo=FALSE, include=FALSE}
+library(knitr)
+render_markdown()
+```
+
 ```{r decompose, echo=FALSE}
 #setwd("~/Desktop/github/local/cpsievert.github.com/projects/615/HW4")
 library(dlm)

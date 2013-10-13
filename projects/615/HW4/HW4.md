@@ -15,6 +15,9 @@ It then follows that $\theta_t|\theta_{t-1} \sim N(G_t\theta_{t-1}, W_t) \implie
 
 Since the variation in the seasonal component is consistent over time (see figure below), should provide an adequate fit to this data.
 
+
+
+
 ![plot of chunk decompose](figure/decompose.png) 
 
 
