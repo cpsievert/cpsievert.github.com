@@ -1071,7 +1071,7 @@ $(function() {
 
 <h2>Extracting observations</h2>
 
-<p>The  <strong>XML2R</strong> package is meant to simplify scraping <a href="http://en.wikipedia.org/wiki/XML">XML</a> data from XML files hosted on the web. The main function of <strong>XML2R</strong>, <code>XML2Obs</code>, coerces XML content into a list of <em>observations</em>. Here we define an <em>observation</em> as a matrix with one row. One observation will contain all attributes and the XML value for a particular XML ancestory. The name of each list element (or each observation) tracks the XML hierarchy so observations can be grouped together at a later point. In the code below, we obtain 946 observations from two MLB games played on June 14th, 2013.</p>
+<p>The  <a href="https://github.com/cpsievert/XML2R">XML2R package</a> is meant to simplify scraping <a href="http://en.wikipedia.org/wiki/XML">XML</a> data from XML files hosted on the web. The main function of <strong>XML2R</strong>, <code>XML2Obs</code>, coerces XML content into a list of <em>observations</em>. Here we define an <em>observation</em> as a matrix with one row. One observation will contain all attributes and the XML value for a particular XML ancestory. The name of each list element (or each observation) tracks the XML hierarchy so observations can be grouped together at a later point. In the code below, we obtain 946 observations from two MLB games played on June 14th, 2013.</p>
 
 <div class="chunk" id="ex1"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">library</span><span class="hl std">(XML2R)</span>
 <span class="hl std">pre</span> <span class="hl kwb">&lt;-</span> <span class="hl str">&quot;http://gd2.mlb.com/components/game/mlb/year_2013/month_06/day_14/&quot;</span>
