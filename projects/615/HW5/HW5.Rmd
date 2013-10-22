@@ -1,0 +1,133 @@
+Homework 5 (due 22 Oct in class)
+========================================================
+
+### Find the nugget, sill, and range (or effective range) for the linear, spherical, exponential, and Gaussian covariance function. ###
+
+First consider the __linear__ case:
+
+$$
+\gamma(t) = \begin{cases} 
+      \tau^2 + \sigma^2 t  & \text{if } t >0, \sigma >0, \tau >0 \\
+      0 & \text{otherwise}
+   \end{cases}
+$$
+
+* $\tau^2$ is the _nugget_ since $\lim_{t \rightarrow 0^+} \gamma(t) = \tau^2$.
+
+* Note that the _sill_ infinite since $\lim_{t \rightarrow \infty} \gamma(t) = \infty$.
+
+* Since the _sill_ is infinite, the _range_ is also infinite.
+
+Next consider the __spherical__ case:
+
+$$
+\gamma(t) = \begin{cases} 
+      \tau^2 + \sigma^2  & \text{if } t \geq 1/\phi \\
+      \tau^2 + \sigma^2 (\frac{3\phi t}{2} - \frac{(\phi t)^3}{2})  & \text{if } 0 < t < 1/\phi \\
+      0 & \text{otherwise}
+   \end{cases}
+$$
+
+* $\tau^2$ is the _nugget_ since $\lim_{t \rightarrow 0^+} \gamma(t) = \tau^2$.
+
+* $\tau^2 + \sigma^2$ is the _sill_ since $\lim_{t \rightarrow \infty} \gamma(t) = \tau^2 + \sigma^2$.
+
+* $1/\phi$ is the _range_ since $\gamma(t)$ reaches the _sill_ when $t = 1/\phi$.
+
+Next consider the __exponential__ case:
+
+$$
+\gamma(t) = \begin{cases} 
+      \tau^2 + \sigma^2 (1 - exp\{ -\phi t \})  & \text{if } t > 0 \\
+      0 & \text{otherwise}
+   \end{cases}
+$$
+
+* $\tau^2$ is the _nugget_ since $\lim_{t \rightarrow 0^+} \gamma(t) = \tau^2$.
+
+* $\tau^2 + \sigma^2$ is the _sill_ since $\lim_{t \rightarrow \infty} \gamma(t) = \tau^2 + \sigma^2$.
+
+* Since the _sill_ is reached asymptotically, the _range_ must be defined in terms of _effective range_. That is, we have to find the value of $t$ such that the covariance is less than 0.05. Now, note that
+
+$$
+\begin{align*}
+C(t) &= \lim_{u \rightarrow \infty} \gamma(u) - \gamma(t)
+\\ &= \tau^2 + \sigma^2 - [\tau^2 + \sigma^2(1 - exp\{ - \phi t\})]
+\\ &= \sigma^2exp\{ - \phi t\}
+\end{align*}
+$$
+
+By setting $C(t) = 0.05$, we obtain the _effective range_ of $t = 3/\phi$
+
+Next consider the __gaussian__ case:
+
+$$
+\gamma(t) = \begin{cases} 
+      \tau^2 + \sigma^2 (1 - exp\{ -\phi^2 t^2 \})  & \text{if } t > 0 \\
+      0 & \text{otherwise}
+   \end{cases}
+$$
+
+* $\tau^2$ is the _nugget_ since $\lim_{t \rightarrow 0^+} \gamma(t) = \tau^2$.
+
+* $\tau^2 + \sigma^2$ is the _sill_ since $\lim_{t \rightarrow \infty} \gamma(t) = \tau^2 + \sigma^2$.
+
+* Since the _sill_ is reached asymptotically, the _range_ must be defined in terms of _effective range_. That is, we have to find the value of $t$ such that the covariance is less than 0.05. Now, note that
+
+$$
+\begin{align*}
+C(t) &= \lim_{u \rightarrow \infty} \gamma(u) - \gamma(t)
+\\ &= \tau^2 + \sigma^2 - [\tau^2 + \sigma^2(1 - exp\{ -\phi^2 t^2 \})]
+\\ &= \sigma^2exp\{ -\phi^2 t^2 \}
+\end{align*}
+$$
+
+By setting $C(t) = 0.05$, we obtain the _effective range_ of $t = \sqrt{3}/\phi$
+
+
+
+### Plot the variograms for the linear, spherical, exponential, and Gaussian using the same value for the nugget, sill, and range (or effective range). ###
+
+```{r setup, echo=FALSE, message=FALSE}
+library(knitr)
+render_html()
+```
+
+```{r plots, fig.width=12}
+sigma2 <- .5
+tau2 <- .2
+t <- seq(from=0.001, to=2, by=.01)
+linear <- tau2 + sigma2*t
+phi <- 1
+spherical <- ifelse(t >= 1/phi, tau2 + sigma2, tau2 + sigma2*(3*phi*t/2 - (.5)*(phi*t)^3))
+phi_exp <- 3/phi
+exponential <- tau2 + sigma2*(1 - exp(-phi_exp*t))
+phi_gauss <- sqrt(3)/phi
+gauss <- tau2 + sigma2*(1 - exp(-phi_gauss^2*t^2))
+plot(t, linear, type="l", main="Theoretical semivariogram", ylim=c(0, 1), ylab=expression(gamma(t)))
+lines(t, spherical, col=2)
+lines(t, exponential, col=3)
+lines(t, gauss, col=4)
+legend(1.1, 0.6, c("linear", "spherical", "exponential", "gaussian"), col=1:4, lty=1)
+```
+
+
+### Use Brook's Lemma to find the joint distribution for the conditional distributions $X|Y \sim N(\rho Y, 1-\rho^2)$ and $Y|X \sim N(\rho X, 1-\rho^2)$. ###
+
+According to Brook's Lemma, for any $X'$ and $Y'$, 
+
+$$
+\frac{p(X, Y)}{p(X', Y')} = \frac{p(X|Y)}{p(X'|Y)}\frac{p(Y|X')}{p(Y'|X')}
+$$
+
+Choosing $X', Y' = 0$ we have 
+
+$$
+\begin{align*}
+\frac{p(X, Y)}{p(X', Y')} &\propto \frac{ exp\{ \frac{-(x - \rho y)^2 - y^2}{2(1-\rho^2)} \} }{ exp\{ \frac{-(\rho y)^2}{2(1-\rho^2)} \} }
+\\ &\propto exp\{ \frac{ -x^2 + 2\rho xy - y^2}{2(1-\rho^2)} \}
+\\ &= exp\{ - \frac{1}{2} (\begin{array}{cc} x&y \end{array}) \Sigma^{-1} (\begin{array}{c} x \\ y \end{array}) \}
+\end{align*}
+$$
+
+where $\Sigma^{-1} = (\begin{array}{cc} \frac{1}{1 - \rho^2} & \frac{\rho}{1 - \rho^2} \\ \frac{\rho}{1 - \rho^2} & \frac{1}{1 - \rho^2}\end{array})$, which implies $\Sigma =  (\begin{array}{cc} 1 & \rho \\ \rho & 1 \end{array})$. Therefore, $(\begin{array}{cc} x \\ y \end{array}) \sim N(0, \Sigma)$
