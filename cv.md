@@ -31,7 +31,7 @@ group: navigation
 ## Professional Experience
 
 * *Intern*, [Statistics Research Department at AT&T Labs](http://stats.research.att.com/) Summer 2013
-	* Authored the R package [LDAviz]() with [Kenny Shirley](http://www2.research.att.com/~kshirley/)
+	* Authored the R package [LDAviz](https://github.com/kshirley/LDAviz) with [Kenny Shirley](http://www2.research.att.com/~kshirley/). You can see a live version of the app I created [here](http://glimmer.rstudio.com/cpsievert/LDAviz/).
 	
 <p></p>
 

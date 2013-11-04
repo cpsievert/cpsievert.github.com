@@ -1,0 +1,11 @@
+base
+geoR
+ggplot2
+inline
+knitr
+MASS
+plyr
+Rcpp
+reshape
+rstan
+sp

@@ -1,0 +1,156 @@
+Homework 6 (due 5 Nov in class)
+===============================
+
+### The [real estate data set](http://www.biostat.umn.edu/~brad/data/BatonRouge.dat) consists of information regarding 70 sales of single-family homes in Baton Rouge, LA, during the month of June 1989 (modified from exercise 5.7 of Hierarchical Modeling and Analysis for Spatial Data). ###
+
+```{r setup, echo=FALSE, warning=FALSE, message=FALSE}
+library(ggplot2)
+library(plyr)
+library(reshape)
+library(knitr)
+render_html()
+opts_chunk$set(message=FALSE, warning=FALSE)
+#setwd("~/Desktop/github/local/cpsievert.github.com/projects/615/HW6")
+#BR <- read.table("BatonRouge.txt", header=TRUE)
+```
+
+#### Obtain the empirical variogram of the logarithm of selling prices. ####
+
+```{r variogram, results='hide'}
+library(geoR)
+br <- read.table("http://www.biostat.umn.edu/~brad/data/BatonRouge.dat", header=T)
+br.geo <- as.geodata(obj=br, coords.col=8:9, data.col=1)
+vg <- variog(br.geo)
+vf <- variofit(vg, cov.model="linear")
+```
+
+```{r plot1}
+plot(vg)
+lines(vf)
+```
+
+#### Fit a standard regression model to the logarithm of selling price using all explanatory variables other than location. ####
+
+```{r reg}
+mod <- br[!names(br) %in% c("Latitude", "Longitude")]
+m <- lm(logSellingPr~., data=mod)
+summary(m)
+```
+
+#### Obtain the empirical variogram of the residuals to the fit above. ####
+
+```{r variogram2, results='hide'}
+br$residuals <- m$residuals
+br.geo2 <- as.geodata(obj=br, coords.col=8:9, data.col=10)
+vg2 <- variog(br.geo2)
+vf2 <- variofit(vg2, cov.model="linear")
+```
+
+```{r plot2}
+plot(vg2)
+lines(vf2)
+```
+
+#### Perform a fully Bayesian analysis using an exponential spatial correlation function. Use a flat prior for the regression coefficients, inverse gamma priors for the variance components, and a Unif(0,10) prior on the range parameter. ####
+
+```{r bayes, cache=TRUE, tidy=FALSE, results='hide'}
+library(rstan)
+set_cppo("fast")  # for best running speed
+#code borrows heavily from page 133 of the stan reference manual
+code <- '
+  data {
+    int<lower=1> N; // number of observations 
+    int<lower=1> D; //number of spatial dimensions
+    int<lower=1> K; // number of covariates
+    vector[N] y; // log selling price
+    vector[D] s[N]; //array of vectors (with lat/longs)
+    matrix[N,K] x; //design matrix
+  }
+  parameters {
+    vector[K] beta;
+    real<lower=0> eta_sq;
+    real<lower=0> rho_sq;
+    real<lower=0> sigma_sq;
+  }
+  model {
+    matrix[N,N] Sigma;
+    // off-diagonal elements
+    for (i in 1:(N-1)) {
+      for (j in i:N) {
+        Sigma[i,j] <- eta_sq * exp(-rho_sq * dot_self(s[i] - s[j]));
+        Sigma[j,i] <- Sigma[i,j];
+      }
+    }
+    // diagonal elements
+    for (k in 1:N)
+      Sigma[k,k] <- eta_sq + sigma_sq; // + jitter
+
+    eta_sq ~ inv_gamma(0.1, 0.1);
+    rho_sq ~ inv_gamma(0.1, 0.1);
+    sigma_sq ~ inv_gamma(0.1, 0.1);
+    for (b in 1:K) 
+      beta[b] ~ normal(0.0, sqrt(1e5));
+
+    y ~ multi_normal(x * beta, Sigma);
+}
+'
+X <- cbind(1, rescaler(mod[,-1])) #design matrix with intercept and standardized covariates
+dat <- list(N = length(br.geo$data),
+            D = 2,
+            K = dim(X)[2],
+            y = rescaler(br.geo$data), #standardized response
+            s = br.geo[[1]],
+            x = X)
+
+fit <- stan(model_code = code, data = dat, 
+            iter = 1000, chains = 3)
+```
+
+```{r plot3}
+plot(fit, display_parallel = TRUE)
+```
+
+```{r print}
+print(fit)
+```
+
+Similar to the results from the simple regression, the significant effects are living area and age. That is, the 80% credible intervals for the other regression coefficients contain 0.
+
+#### Provide a predictive distribution for the actual selling price for a home at location (long=-91.1174, lat=30.506) that has 938 sqft of living area, 332 sqft of other area, 25 years old with 3 bedrooms and 1 bathroom (no half baths). ####
+
+Let $y_0$ be the selling price for a home at location $s_0$ and $x_0$ be the covariate values at this new location. Then
+
+$$
+p(y_0|y, X, x_0) = \int p(y_0|\theta, x_0, y)p(\theta|y, X) d\theta \approx \frac{1}{M} \sum_{i=1}^M p(y_0|\theta^{(i)}, x_0, y)
+$$
+
+Thus, we can take draws using the simulations generated in the previous step (ie, $y_0^{(i)} \sim p(y_0|\theta^{(i)}, x_0, y)$)
+
+```{r pred}
+x0 <- c(1, 938, 332, 25, 3, 1, 0)
+s0 <- c(30.506, -91.1174)
+la <- extract(fit, permuted = TRUE) # return a list of arrays (with draws after the warmup period)
+#put parameters back on original scale
+xbar <- apply(mod[,-1], 2, mean)
+s_x <- apply(mod[,-1], 2, sd)
+ybar <- mean(br.geo$data)
+s_y <- sd(br.geo$data)
+B0 <- ybar + s_y*(la$beta[,1] - colSums(t(la$beta[,-1]) * (xbar/s_x))) 
+B <- t(t(la$beta[,-1]) * (s_y/s_x))
+Beta <- cbind(B0, B)
+eta_sq <- s_y * la$eta_sq
+sigma_sq <- s_y * la$sigma_sq
+
+#now calculate mean and covariance of predictive distribution
+xb <- colSums(t(Beta * x0))
+y0 <- numeric(length(xb))
+sigma <- sqrt(la$sigma_sq*(la$eta_sq*exp(-la$rho_sq) + 1))
+for (i in seq_along(y0)){
+  y0[i] <- rnorm(1, mean=xb[i], sd=sigma[i])
+}
+
+hist(xb)
+hist(exp(y0))
+summary(y0[-(1:500)])
+summary(br.geo$data)
+```

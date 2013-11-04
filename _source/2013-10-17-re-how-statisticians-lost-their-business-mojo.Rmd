@@ -24,7 +24,7 @@ minimizing cost, profit!)."
 This seems like an attempt to bash on traditional statistical methods simply because most
 statistical models require assumptions. While some machine learning tools like random-forest and
 support vector machines may not require similar assumptions, the trade-off is a lack of
-interpretability. I agree that these tools are helpful *provided that your goal is prediction*.
+interpret-ability. I agree that these tools are helpful *provided that your goal is prediction*.
 However, if there is any skill that statisticians can hold over data scientists (if any difference
 really exists), it's their ability to explain real-world phenomena in a simplistic manner. If you
 call yourself a statistician and you restrict yourself to non-parametric methods, then *you're
@@ -42,7 +42,7 @@ a criteria for evaluating the performance of (possibly parametric) model.
 I've probably lost most of you my now, which may be why "Statisticians Lost Their Business Mojo".
 Let's be honest, the statistician's tendency to be careful, critical, and thorough when
 communicating their work generally doesn't translate well in the business world. As a result,
-people tend to put an articifical box around the capabilities of the statistician.
+people tend to put an artificial box around the capabilities of the statistician.
 
 Besides the mainstream misunderstanding of statisticians, I think "Statisticians Lost Their
 Business Mojo" because of their slow response to the increase in computational capability. I think
