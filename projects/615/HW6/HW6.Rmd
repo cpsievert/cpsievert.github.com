@@ -129,7 +129,7 @@ Thus, we can take draws using the simulations generated in the previous step (ie
 ```{r pred}
 x0 <- c(1, 938, 332, 25, 3, 1, 0)
 s0 <- c(30.506, -91.1174)
-la <- extract(fit, permuted = TRUE) # return a list of arrays (with draws after the warmup period)
+la <- rstan::extract(fit, permuted = TRUE) # return a list of arrays (with draws after the warmup period)
 #put parameters back on original scale
 xbar <- apply(mod[,-1], 2, mean)
 s_x <- apply(mod[,-1], 2, sd)

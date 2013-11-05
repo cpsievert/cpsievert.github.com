@@ -173,57 +173,25 @@ Thus, we can take draws using the simulations generated in the previous step (ie
 
 <div class="chunk" id="pred"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">x0</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">c</span><span class="hl std">(</span><span class="hl num">1</span><span class="hl std">,</span> <span class="hl num">938</span><span class="hl std">,</span> <span class="hl num">332</span><span class="hl std">,</span> <span class="hl num">25</span><span class="hl std">,</span> <span class="hl num">3</span><span class="hl std">,</span> <span class="hl num">1</span><span class="hl std">,</span> <span class="hl num">0</span><span class="hl std">)</span>
 <span class="hl std">s0</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">c</span><span class="hl std">(</span><span class="hl num">30.506</span><span class="hl std">,</span> <span class="hl opt">-</span><span class="hl num">91.1174</span><span class="hl std">)</span>
-<span class="hl std">la</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">extract</span><span class="hl std">(fit,</span> <span class="hl kwc">permuted</span> <span class="hl std">=</span> <span class="hl num">TRUE</span><span class="hl std">)</span>  <span class="hl com"># return a list of arrays (with draws after the warmup period)</span>
-</pre></div>
-<div class="error"><pre class="knitr r">## Error: could not find function "extract"
-</pre></div>
-<div class="source"><pre class="knitr r"><span class="hl com"># put parameters back on original scale</span>
+<span class="hl std">la</span> <span class="hl kwb">&lt;-</span> <span class="hl std">rstan::</span><span class="hl kwd">extract</span><span class="hl std">(fit,</span> <span class="hl kwc">permuted</span> <span class="hl std">=</span> <span class="hl num">TRUE</span><span class="hl std">)</span>  <span class="hl com"># return a list of arrays (with draws after the warmup period)</span>
+<span class="hl com"># put parameters back on original scale</span>
 <span class="hl std">xbar</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">apply</span><span class="hl std">(mod[,</span> <span class="hl opt">-</span><span class="hl num">1</span><span class="hl std">],</span> <span class="hl num">2</span><span class="hl std">, mean)</span>
 <span class="hl std">s_x</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">apply</span><span class="hl std">(mod[,</span> <span class="hl opt">-</span><span class="hl num">1</span><span class="hl std">],</span> <span class="hl num">2</span><span class="hl std">, sd)</span>
 <span class="hl std">ybar</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">mean</span><span class="hl std">(br.geo</span><span class="hl opt">$</span><span class="hl std">data)</span>
 <span class="hl std">s_y</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">sd</span><span class="hl std">(br.geo</span><span class="hl opt">$</span><span class="hl std">data)</span>
 <span class="hl std">B0</span> <span class="hl kwb">&lt;-</span> <span class="hl std">ybar</span> <span class="hl opt">+</span> <span class="hl std">s_y</span> <span class="hl opt">*</span> <span class="hl std">(la</span><span class="hl opt">$</span><span class="hl std">beta[,</span> <span class="hl num">1</span><span class="hl std">]</span> <span class="hl opt">-</span> <span class="hl kwd">colSums</span><span class="hl std">(</span><span class="hl kwd">t</span><span class="hl std">(la</span><span class="hl opt">$</span><span class="hl std">beta[,</span> <span class="hl opt">-</span><span class="hl num">1</span><span class="hl std">])</span> <span class="hl opt">*</span> <span class="hl std">(xbar</span><span class="hl opt">/</span><span class="hl std">s_x)))</span>
-</pre></div>
-<div class="error"><pre class="knitr r">## Error: object 'la' not found
-</pre></div>
-<div class="source"><pre class="knitr r"><span class="hl std">B</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">t</span><span class="hl std">(</span><span class="hl kwd">t</span><span class="hl std">(la</span><span class="hl opt">$</span><span class="hl std">beta[,</span> <span class="hl opt">-</span><span class="hl num">1</span><span class="hl std">])</span> <span class="hl opt">*</span> <span class="hl std">(s_y</span><span class="hl opt">/</span><span class="hl std">s_x))</span>
-</pre></div>
-<div class="error"><pre class="knitr r">## Error: object 'la' not found
-</pre></div>
-<div class="source"><pre class="knitr r"><span class="hl std">Beta</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">cbind</span><span class="hl std">(B0, B)</span>
-</pre></div>
-<div class="error"><pre class="knitr r">## Error: object 'B0' not found
-</pre></div>
-<div class="source"><pre class="knitr r"><span class="hl std">eta_sq</span> <span class="hl kwb">&lt;-</span> <span class="hl std">s_y</span> <span class="hl opt">*</span> <span class="hl std">la</span><span class="hl opt">$</span><span class="hl std">eta_sq</span>
-</pre></div>
-<div class="error"><pre class="knitr r">## Error: object 'la' not found
-</pre></div>
-<div class="source"><pre class="knitr r"><span class="hl std">sigma_sq</span> <span class="hl kwb">&lt;-</span> <span class="hl std">s_y</span> <span class="hl opt">*</span> <span class="hl std">la</span><span class="hl opt">$</span><span class="hl std">sigma_sq</span>
-</pre></div>
-<div class="error"><pre class="knitr r">## Error: object 'la' not found
-</pre></div>
-<div class="source"><pre class="knitr r"><span class="hl com"># now calculate mean and covariance of predictive distribution</span>
+<span class="hl std">B</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">t</span><span class="hl std">(</span><span class="hl kwd">t</span><span class="hl std">(la</span><span class="hl opt">$</span><span class="hl std">beta[,</span> <span class="hl opt">-</span><span class="hl num">1</span><span class="hl std">])</span> <span class="hl opt">*</span> <span class="hl std">(s_y</span><span class="hl opt">/</span><span class="hl std">s_x))</span>
+<span class="hl std">Beta</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">cbind</span><span class="hl std">(B0, B)</span>
+<span class="hl std">eta_sq</span> <span class="hl kwb">&lt;-</span> <span class="hl std">s_y</span> <span class="hl opt">*</span> <span class="hl std">la</span><span class="hl opt">$</span><span class="hl std">eta_sq</span>
+<span class="hl std">sigma_sq</span> <span class="hl kwb">&lt;-</span> <span class="hl std">s_y</span> <span class="hl opt">*</span> <span class="hl std">la</span><span class="hl opt">$</span><span class="hl std">sigma_sq</span>
+<span class="hl com"># now calculate mean and covariance of predictive distribution</span>
 <span class="hl std">xb</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">colSums</span><span class="hl std">(</span><span class="hl kwd">t</span><span class="hl std">(Beta</span> <span class="hl opt">*</span> <span class="hl std">x0))</span>
-</pre></div>
-<div class="error"><pre class="knitr r">## Error: object 'Beta' not found
-</pre></div>
-<div class="source"><pre class="knitr r"><span class="hl std">y0</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">numeric</span><span class="hl std">(</span><span class="hl kwd">length</span><span class="hl std">(xb))</span>
-</pre></div>
-<div class="error"><pre class="knitr r">## Error: object 'xb' not found
-</pre></div>
-<div class="source"><pre class="knitr r"><span class="hl std">sigma</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">sqrt</span><span class="hl std">(la</span><span class="hl opt">$</span><span class="hl std">sigma_sq</span> <span class="hl opt">*</span> <span class="hl std">(la</span><span class="hl opt">$</span><span class="hl std">eta_sq</span> <span class="hl opt">*</span> <span class="hl kwd">exp</span><span class="hl std">(</span><span class="hl opt">-</span><span class="hl std">la</span><span class="hl opt">$</span><span class="hl std">rho_sq)</span> <span class="hl opt">+</span> <span class="hl num">1</span><span class="hl std">))</span>
-</pre></div>
-<div class="error"><pre class="knitr r">## Error: object 'la' not found
-</pre></div>
-<div class="source"><pre class="knitr r"><span class="hl kwa">for</span> <span class="hl std">(i</span> <span class="hl kwa">in</span> <span class="hl kwd">seq_along</span><span class="hl std">(y0)) {</span>
+<span class="hl std">y0</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">numeric</span><span class="hl std">(</span><span class="hl kwd">length</span><span class="hl std">(xb))</span>
+<span class="hl std">sigma</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">sqrt</span><span class="hl std">(la</span><span class="hl opt">$</span><span class="hl std">sigma_sq</span> <span class="hl opt">*</span> <span class="hl std">(la</span><span class="hl opt">$</span><span class="hl std">eta_sq</span> <span class="hl opt">*</span> <span class="hl kwd">exp</span><span class="hl std">(</span><span class="hl opt">-</span><span class="hl std">la</span><span class="hl opt">$</span><span class="hl std">rho_sq)</span> <span class="hl opt">+</span> <span class="hl num">1</span><span class="hl std">))</span>
+<span class="hl kwa">for</span> <span class="hl std">(i</span> <span class="hl kwa">in</span> <span class="hl kwd">seq_along</span><span class="hl std">(y0)) {</span>
     <span class="hl std">y0[i]</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">rnorm</span><span class="hl std">(</span><span class="hl num">1</span><span class="hl std">,</span> <span class="hl kwc">mean</span> <span class="hl std">= xb[i],</span> <span class="hl kwc">sd</span> <span class="hl std">= sigma[i])</span>
 <span class="hl std">}</span>
+<span class="hl kwd">hist</span><span class="hl std">(y0)</span>
 </pre></div>
-<div class="error"><pre class="knitr r">## Error: object 'y0' not found
-</pre></div>
-<div class="source"><pre class="knitr r"><span class="hl kwd">hist</span><span class="hl std">(y0)</span>
-</pre></div>
-<div class="error"><pre class="knitr r">## Error: object 'y0' not found
-</pre></div>
-</div></div>
+</div><div class="rimage default"><img src="figure/pred.png" title="plot of chunk pred" alt="plot of chunk pred" class="plot" /></div></div>
 
