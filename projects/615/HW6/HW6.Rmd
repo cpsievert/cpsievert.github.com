@@ -124,7 +124,7 @@ $$
 p(y_0|y, X, x_0) = \int p(y_0|\theta, x_0, y)p(\theta|y, X) d\theta \approx \frac{1}{M} \sum_{i=1}^M p(y_0|\theta^{(i)}, x_0, y)
 $$
 
-Thus, we can take draws using the simulations generated in the previous step (ie, $y_0^{(i)} \sim p(y_0|\theta^{(i)}, x_0, y)$)
+Thus, we can take draws using the simulations generated in the previous step (ie, $y_0^{(i)} \sim p(y_0|\theta^{(i)}, x_0, y)$). A histogram of these simulations is shown below. 
 
 ```{r pred}
 x0 <- c(1, 938, 332, 25, 3, 1, 0)
@@ -148,9 +148,5 @@ sigma <- sqrt(la$sigma_sq*(la$eta_sq*exp(-la$rho_sq) + 1))
 for (i in seq_along(y0)){
   y0[i] <- rnorm(1, mean=xb[i], sd=sigma[i])
 }
-
-hist(xb)
-hist(exp(y0))
-summary(y0[-(1:500)])
-summary(br.geo$data)
+hist(y0)
 ```
