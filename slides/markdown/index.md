@@ -16,8 +16,8 @@ Why Markdown?
 All the cool kids use it...
 ========================================================
 
-* GitHub, StackOverflow, Reddit and many other websites use Markdown syntax.
-* Many popular blogging frameworks utilize Markdown.
+* GitHub, StackOverflow, Reddit and many other websites use Markdown.
+* Many popular blogging frameworks support Markdown.
 * Thanks to the R package __knitr__, it's easy to create __reproducible__ and __dynamic__ web documents!
   * Later we will integrate `R` code with Markdown, but you are not limited to `R` code!
 * Thanks to __slidify__ and RStudio presentations, one can also easily create HTML5 presentations (like this one)!
@@ -34,10 +34,10 @@ Some Examples
 ========================================================
 
 * [R learning resources at UCLA by Joshua Wiley et al](http://www.ats.ucla.edu/stat/r/)
+* [Advanced R programming by Hadley](http://adv-r.had.co.nz/memory.html)
 * [My R package vignette for pitchRx](http://cpsievert.github.io/pitchRx/demo/)
-* [Interactive charts and slides with R, googleVis and knitr](http://decastillo.github.io/googleVis_Tutorial/#1)
 * [knitrBootstrap](https://github.com/jimhester/knitrBootstrap?source=c) makes it incredibly easy to make Bootstrap flavored [documents](http://cpsievert.github.io/projects/615/HW5/HW5.html).
-* Blog about and share [interactive visualizations](http://timelyportfolio.github.io/rCharts_nyt_home_price/)
+* Inject JavaScript for [interactive visualizations](http://timelyportfolio.github.io/rCharts_nyt_home_price/)
 
 What is Markdown?
 ========================================================
@@ -1267,5 +1267,3 @@ Thanks for coming!
 <div align="center">
 <img class="decoded" src="http://img.pandawhale.com/29490-Picard-applause-clapping-gif-s5nz.gif" width=800 height=600>
 </div>
-
-
