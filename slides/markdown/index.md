@@ -1269,7 +1269,7 @@ incremental:false
 * [Markdown Cheat Sheet](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#wiki-code)
 * [Using R Markdown with RStudio](http://www.rstudio.com/ide/docs/authoring/using_markdown)
 * [knitr website](http://yihui.name/knitr/)
-* [rCharts, Markdown and knitr](http://rpubs.com/rchavelas90/9331)
+* [Markdown example with knitr and rCharts](http://rpubs.com/rchavelas90/9331) by Ricardo Chavelas
 
 Thanks for coming!
 ========================================================
