@@ -10,7 +10,7 @@ Why Markdown?
 ========================================================
 
 <div align="center">
-<img class="decoded" src="http://img.pandawhale.com/51174-To-the-Internet-gif--PandaWhal-80YH.gif" width=800 height=600>
+<img class="decoded" src="internet.gif" width=800 height=600>
 </div>
 
 All the cool kids use it...
@@ -598,9 +598,9 @@ incremental:false
 
 <link rel='stylesheet' href=http://nvd3.org/src/nv.d3.css>
 <link rel='stylesheet' href=http://rawgithub.com/ramnathv/rCharts/master/inst/libraries/nvd3/css/rNVD3.css>
-<script type='text/javascript' src=http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js></script>
-<script type='text/javascript' src=http://d3js.org/d3.v2.min.js></script>
-<script type='text/javascript' src=http://nvd3.org/nv.d3.js></script>
+<script type='text/javascript' src=http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js></script>
+<script type='text/javascript' src=http://d3js.org/d3.v3.min.js></script>
+<script type='text/javascript' src=http://timelyportfolio.github.io/rCharts_nvd3_tests/libraries/widgets/nvd3/js/nv.d3.min-new.js></script>
 <script type='text/javascript' src=http://nvd3.org/lib/fisheye.js></script>
 
 
@@ -613,7 +613,7 @@ n1$print("nvd3mbar")
 ```
 
 
-<div id='nvd3mbar' class='rChart nvd3'></div>
+<div id = 'nvd3mbar' class = 'rChart nvd3'></div>
 <script type='text/javascript'>
  $(document).ready(function(){
       drawnvd3mbar()
@@ -634,105 +634,115 @@ n1$print("nvd3mbar")
  "Hair": "Black",
 "Eye": "Brown",
 "Sex": "Male",
-"Freq":     32 
+"Freq":             32 
 },
 {
  "Hair": "Brown",
 "Eye": "Brown",
 "Sex": "Male",
-"Freq":     53 
+"Freq":             53 
 },
 {
  "Hair": "Red",
 "Eye": "Brown",
 "Sex": "Male",
-"Freq":     10 
+"Freq":             10 
 },
 {
  "Hair": "Blond",
 "Eye": "Brown",
 "Sex": "Male",
-"Freq":      3 
+"Freq":              3 
 },
 {
  "Hair": "Black",
 "Eye": "Blue",
 "Sex": "Male",
-"Freq":     11 
+"Freq":             11 
 },
 {
  "Hair": "Brown",
 "Eye": "Blue",
 "Sex": "Male",
-"Freq":     50 
+"Freq":             50 
 },
 {
  "Hair": "Red",
 "Eye": "Blue",
 "Sex": "Male",
-"Freq":     10 
+"Freq":             10 
 },
 {
  "Hair": "Blond",
 "Eye": "Blue",
 "Sex": "Male",
-"Freq":     30 
+"Freq":             30 
 },
 {
  "Hair": "Black",
 "Eye": "Hazel",
 "Sex": "Male",
-"Freq":     10 
+"Freq":             10 
 },
 {
  "Hair": "Brown",
 "Eye": "Hazel",
 "Sex": "Male",
-"Freq":     25 
+"Freq":             25 
 },
 {
  "Hair": "Red",
 "Eye": "Hazel",
 "Sex": "Male",
-"Freq":      7 
+"Freq":              7 
 },
 {
  "Hair": "Blond",
 "Eye": "Hazel",
 "Sex": "Male",
-"Freq":      5 
+"Freq":              5 
 },
 {
  "Hair": "Black",
 "Eye": "Green",
 "Sex": "Male",
-"Freq":      3 
+"Freq":              3 
 },
 {
  "Hair": "Brown",
 "Eye": "Green",
 "Sex": "Male",
-"Freq":     15 
+"Freq":             15 
 },
 {
  "Hair": "Red",
 "Eye": "Green",
 "Sex": "Male",
-"Freq":      7 
+"Freq":              7 
 },
 {
  "Hair": "Blond",
 "Eye": "Green",
 "Sex": "Male",
-"Freq":      8 
+"Freq":              8 
 } 
 ]
   
-      var data = d3.nest()
-        .key(function(d){
-          return opts.group === undefined ? 'main' : d[opts.group]
+      if(!(opts.type==="pieChart" || opts.type==="sparklinePlus")) {
+        var data = d3.nest()
+          .key(function(d){
+            //return opts.group === undefined ? 'main' : d[opts.group]
+            //instead of main would think a better default is opts.x
+            return opts.group === undefined ? opts.y : d[opts.group];
+          })
+          .entries(data);
+      }
+      
+      if (opts.disabled != undefined){
+        data.map(function(d, i){
+          d.disabled = opts.disabled[i]
         })
-        .entries(data)
+      }
       
       nv.addGraph(function() {
         var chart = nv.models[opts.type]()
@@ -1265,5 +1275,5 @@ Thanks for coming!
 ========================================================
 
 <div align="center">
-<img class="decoded" src="http://img.pandawhale.com/29490-Picard-applause-clapping-gif-s5nz.gif" width=800 height=600>
+<img class="decoded" src="picard.gif" width=800 height=600>
 </div>
