@@ -1,4 +1,4 @@
-Bayesian Model Selection applied to Latent Dirichlet Allocation & xkcd comics
+Bayesian model selection applied to Latent Dirichlet Allocation & xkcd comics
 ========================================================
 author: Carson Sievert
 date: December 10th, 2013
@@ -24,13 +24,14 @@ incremental:true
 
 ***
 
-* "a", "of", and "to" are viewed as noninformative. They are removed before any modeling.
+* "a", "of", and "to" are viewed as noninformative and are removed.
 * This document's content is:
   * 4/17 math
   * 5/17 <font color="red">romance</font>
   * 5/17 <font color="blue">sarcasm</font>
   * 3/17 <font color="green">language</font>
-* Each topic has a unique probability distribution over all possible words.
+* Each document has a unique pmf over all topics.
+* Each topic has a unique pmf over all words.
 
 Latent Dirichlet Allocation (LDA)
 ========================================================
@@ -40,11 +41,10 @@ Let $w_i$ denote the $i^{th}$ token where $i \in \{1, \dots, N\}$. For a fixed v
 
 $P(w_i = v) = \sum_{j=1}^T P(w_i = v | z_i = j)P(z_i = j)$
 
-* Let $\phi_i^{(j)} = P(w_i = v | z_i = j)$ be the distribution of words for a given topic. Let the resulting $V$ by $T$ matrix be $\Phi$.
-* Let $\theta_j^{(d_i)} = P(z_i = j)$ be the distribution of topics (for a given document $d_i \in \{1, \dots, D\}$).
-* Let the resulting $T$ by $D$ matrix be $\Theta$.
-* Assign (you guessed it) Dirichlet priors to both $\Phi$ and $\Theta$.
-* Sample a topic for each word (at every iteration) of a collapsed Gibbs sampler.
+* Let $\phi_i^{(j)} = P(w_i = v | z_i = j)$ and $\Phi$ the $V$ by $T$ matrix.
+* For a given document $d_i \in \{1, \dots, D\}$), let $\theta_j^{(d_i)} = P(z_i = j)$ and $\Theta$ the $T$ by $D$ matrix.
+* Assign (you guessed it) Dirichlet priors to both $\phi$ and $\theta$.
+* With symmetric hyperparameters, we may integrate out $\phi$ and $\theta$ and use collapsed Gibbs to obtain samples from the target $p(\textbf{z}|\textbf{w}, T)$ and construct $\hat{\phi}$, $\hat{\theta}$.
 
 Choosing # of Topics
 ========================================================

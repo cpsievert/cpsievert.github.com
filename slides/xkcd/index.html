@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <title>Bayesian Model Selection applied to Latent Dirichlet Allocation & xkcd comics</title>
+  <title>Bayesian model selection applied to Latent Dirichlet Allocation & xkcd comics</title>
     
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -794,7 +794,7 @@ hljs.initHighlightingOnLoad();
   <div class="slides">
 
 <section data-state="section" data-transition="default" data-transition-speed="default">
-<h1>Bayesian Model Selection applied to Latent Dirichlet Allocation &amp; xkcd comics</h1><p>Carson Sievert<br/>December 10th, 2013</p>
+<h1>Bayesian model selection applied to Latent Dirichlet Allocation &amp; xkcd comics</h1><p>Carson Sievert<br/>December 10th, 2013</p>
 
 <div class="slideContent" >
 
@@ -829,7 +829,7 @@ hljs.initHighlightingOnLoad();
 
 
 <ul>
-<li class="fragment">&ldquo;a&rdquo;, &ldquo;of&rdquo;, and &ldquo;to&rdquo; are viewed as noninformative. They are removed before any modeling.</li>
+<li class="fragment">&ldquo;a&rdquo;, &ldquo;of&rdquo;, and &ldquo;to&rdquo; are viewed as noninformative and are removed.</li>
 <li class="fragment">This document&#39;s content is:
 
 <ul>
@@ -838,7 +838,8 @@ hljs.initHighlightingOnLoad();
 <li class="fragment">5/17 <font color="blue">sarcasm</font></li>
 <li class="fragment">3/17 <font color="green">language</font></li>
 </ul></li>
-<li class="fragment">Each topic has a unique probability distribution over all possible words.</li>
+<li class="fragment">Each document has a unique pmf over all topics.</li>
+<li class="fragment">Each topic has a unique pmf over all words.</li>
 </ul>
 
 </div>
@@ -847,18 +848,15 @@ hljs.initHighlightingOnLoad();
 <section data-transition="default" data-transition-speed="default">
 <h3>Latent Dirichlet Allocation (LDA)</h3>
 <div class="slideContent" >
-<p>Let \( w_i \) denote the \( i^{th} \) token where \( i \in \{1, \dots, N\} \). For a fixed vocab \( w_i \in \{1, \dots, V\} \), the probability of observing word \( i \) in a document \( d_i \in \{1, \dots, D\} \):</p>
+<p>Let \( w_i \) denote the \( i^{th} \) token where \( i \in \{1, \dots, N\} \). For a fixed vocab \( v \in \{1, \dots, V\} \) and number of topics \( T \):</p>
 
 <p class="fragment">\( P(w_i = v) = \sum_{j=1}^T P(w_i = v | z_i = j)P(z_i = j) \)</p>
 
-<p class="fragment">where \( z_i \in \{1, \dots, T\} \) for a <strong>given number of topics</strong> \( T \).</p>
-
 <ul>
-<li class="fragment">Let \( \phi_i^{(j)} = P(w_i = v | z_i = j) \) be the distribution of words for a given topic. Let the resulting \( V \) by \( T \) matrix be \( \Phi \).</li>
-<li class="fragment">Let \( \theta_j^{(d_i)} = P(z_i = j) \) be the distribution of topics (for a given document \( d \in \{1, \dots, D\} \)).</li>
-<li class="fragment">Let the resulting \( T \) by \( D \) matrix be \( \Theta \).</li>
-<li class="fragment">Assign (you guessed it) Dirichlet priors to both \( \Phi \) and \( \Theta \).</li>
-<li class="fragment">Sample a topic for each word (at every iteration) of a collapsed Gibbs sampler.</li>
+<li class="fragment">Let \( \phi_i^{(j)} = P(w_i = v | z_i = j) \) and \( \Phi \) the \( V \) by \( T \) matrix.</li>
+<li class="fragment">For a given document \( d_i \in \{1, \dots, D\} \)), let \( \theta_j^{(d_i)} = P(z_i = j) \) and \( \Theta \) the \( T \) by \( D \) matrix.</li>
+<li class="fragment">Assign (you guessed it) Dirichlet priors to both \( \phi \) and \( \theta \).</li>
+<li class="fragment">With symmetric hyperparameters, we may integrate out \( \phi \) and \( \theta \) and use collapsed Gibbs to obtain samples from the target \( p(\textbf{z}|\textbf{w}, T) \) and construct \( \hat{\phi} \), \( \hat{\theta} \).</li>
 </ul>
 
 </div>
