@@ -1,4 +1,4 @@
-Bayesian model selection applied to Latent Dirichlet Allocation & xkcd comics
+Finding structure in xkcd comics with Latent Dirichlet Allocation
 ========================================================
 author: Carson Sievert
 date: December 10th, 2013
