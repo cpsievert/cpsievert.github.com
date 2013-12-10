@@ -38,7 +38,7 @@ w_i | z_i, \phi^{(z_i)} &\sim Multinomial(\phi^{(z_i)}, 1)
 \end{align*}
 $$
 
-It's also common to use symmetric hyperpriors $\alpha$ and $\beta$, so these are usually thought of as scalar values. The benefit here is that we can integrate out $\phi$ and $\theta$ and use a collapsed Gibbs algorithm to obtain samples from the target distribution $p(\textbf{z}|\textbf{w}, T)$. Posterior samples of $\textbf{z}$ can then be used to construct estimates of $\phi$ and $\theta$. This algorithm has many implementations, but I chose to use the [R](http://cran.r-project.org/) package [LDAviz](https://github.com/kshirley/LDAviz) for model fitting and post-processing.
+It's also common to use symmetric hyperparameters $\alpha$ and $\beta$, so these are usually thought of as scalar values. The benefit here is that we can integrate out $\phi$ and $\theta$ and use a collapsed Gibbs algorithm to obtain samples from the target distribution $p(\textbf{z}|\textbf{w}, T)$. Posterior samples of $\textbf{z}$ can then be used to construct estimates of $\phi$ and $\theta$. This algorithm has many implementations, but I chose to use the [R](http://cran.r-project.org/) package [LDAviz](https://github.com/kshirley/LDAviz) for model fitting and post-processing.
 
 Finding an optimal number of topics
 ---------------------------------------
@@ -49,7 +49,7 @@ $$
 \max_T\{ p(T| \textbf{w}) \} = \max_T\{ p(\textbf{w}|T)p(T) \}
 $$
 
-Using a uniform prior for $p(T)$, we have $\max_T p(\textbf{w}|T)$. Unfortunately, computing $p(\textbf{w}|T)$ requires summing over all possible assignments of words to topics which is often infeasible. Griffiths & Steyvers suggest approximating $p(\textbf{w}|T)$ via:
+Using a uniform prior for $p(T)$, we have $\max_T p(\textbf{w}|T)$. Unfortunately, computing $p(\textbf{w}|T)$ requires summing over all possible assignments of words to topics which is often unfeasible. Griffiths & Steyvers suggest approximating $p(\textbf{w}|T)$ via:
 
 $$
 p(w|T) \approx (\frac{1}{M} \sum^M_{m=1} p(\textbf{w} | \textbf{z}_m, T)^{-1})^{-1}
@@ -61,7 +61,7 @@ where $\textbf{z}_m$ is the $m^{th}$ sample from the posterior $p(\textbf{z} | \
 Scraping and pre-processing xkcd corpus
 ---------------------------------------
 
-Thankfully xkcd keeps an [archive](http://xkcd.com/archive/) of all their comics with url paths and corresponding dates. Also, most comics are transcribed complete with scene descriptions, speaker ids, and "meta" alternative text. In this analysis, both scene descriptions and speaker ids were removed from the text corpus. It's also worth noting that, [especially](http://xkcd.com/1299/) [recently](http://xkcd.com/1300/), transcibers have been [lazy](http://xkcd.com/444/) because transcripts are missing. Luckily, in most of those cases, there is "meta" alternative text in the HTML `<img>` tag that was used instead. [This script](https://github.com/cpsievert/cpsievert.github.com/blob/master/projects/615/xkcd/scrape.R) shows how to scrape the data. [This script](https://github.com/cpsievert/cpsievert.github.com/blob/master/projects/615/xkcd/preprocess.R) shows the other pre-processing such as removing stopwords and stemming.
+Thankfully xkcd keeps an [archive](http://xkcd.com/archive/) of all their comics with url paths and corresponding dates. Also, most comics are transcribed complete with scene descriptions, speaker ids, and "meta" alternative text. In this analysis, both scene descriptions and speaker ids were removed from the text corpus. It's also worth noting that, [especially](http://xkcd.com/1299/) [recently](http://xkcd.com/1300/), transcribers have been [lazy](http://xkcd.com/444/) because transcripts are missing. Luckily, in most of those cases, there is "meta" alternative text in the HTML `<img>` tag that was used instead. [This script](https://github.com/cpsievert/cpsievert.github.com/blob/master/projects/615/xkcd/scrape.R) shows how to scrape the data. [This script](https://github.com/cpsievert/cpsievert.github.com/blob/master/projects/615/xkcd/preprocess.R) shows the other pre-processing such as removing stop-words and stemming.
 
 Fitting the model
 -------------------------------
@@ -149,7 +149,7 @@ xkcd has released one comic per day every day since January 1st, 2006. Using the
   <img src="raw.png" width="800" height="500">
 </div>
 
-Clearly, the number of words appearing topic 2 during 2012 was much larger than any other topic in any other year. Note that in 2006 there are noticably fewer total words. This is not surprising after looking at [the](http://xkcd.com/1/) [early](http://xkcd.com/2/) [xkcd](http://xkcd.com/3/) [comics](http://xkcd.com/4/). For this reason, the number of words within a topic for a particular year were divided by the total number of words in that year. This yields the proportion of words within each topic for each year in the figure below.
+Clearly, the number of words appearing topic 2 during 2012 was much larger than any other topic in any other year. Note that in 2006 there are noticeably fewer total words. This is not surprising after looking at [the](http://xkcd.com/1/) [early](http://xkcd.com/2/) [xkcd](http://xkcd.com/3/) [comics](http://xkcd.com/4/). For this reason, the number of words within a topic for a particular year were divided by the total number of words in that year. This yields the proportion of words within each topic for each year in the figure below.
 
 <div align="center">
   <img src="prop1.png" width="800" height="500">
