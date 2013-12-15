@@ -136,3 +136,8 @@ Conclusion
 -------------------------------
 
 Hopefully you (the reader) will take time to explore different topics and find interesting things that I have not. To be honest, I found that some of the topics are hard to decipher. If you're a fan of xkcd, you're probably aware that their comics are sometimes hard to understand and often have hidden messages or implicit meaning (Heck, there's even a [website](http://www.explainxkcd.com/wiki/index.php/Main_Page) devoted to explaining xkcd comics). Since this is a bag-of-words model, it isn't that surprising that the model may be sub-optimal. Perhaps introducing bi-grams or even n-grams into the model would help in this respect.
+
+Acknowledgements
+-------------------------------
+
+Special thanks to my collaborator [Kenny Shirley](http://www2.research.att.com/~kshirley/) for helpful comments and his work on [LDAviz](https://github.com/kshirley/LDAviz).
