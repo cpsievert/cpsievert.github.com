@@ -9,7 +9,7 @@ Finding structure in xkcd comics with Latent Dirichlet Allocation
 What exactly is LDA?
 ---------------------
 
-Unlike many other text classification models, LDA is a special case of a [statistical mixture model](http://en.wikipedia.org/wiki/Mixture_model). As a result, each document (in our case, comic) is assumed to be _mixture_ of latent topics. That is, each observed word originates from a topic that we do not directly observe. For demonstration purposes, consider the following xkcd comic given a hypothetical model with four topics: "romance" (in red), "sarcasm" (in blue), "math" (in black), and "language" (in green). 
+Unlike many other text classification models, LDA is a special case of a [statistical mixture model](http://en.wikipedia.org/wiki/Mixture_model). As a result, each document (in our case, comic) is assumed to be a _mixture_ of latent topics. That is, each observed word originates from a topic that we do not directly observe. For demonstration purposes, consider the following xkcd comic given a hypothetical model with four topics: "romance" (in red), "sarcasm" (in blue), "math" (in black), and "language" (in green). 
 
 <div align="center">
   <img src="sports copy.png" width="300" height="400">
@@ -67,7 +67,7 @@ Thankfully xkcd keeps an [archive](http://xkcd.com/archive/) of all their comics
 Fitting the model
 -------------------------------
 
-The collapsed Gibbs sampler implemented in [LDAviz](https://github.com/kshirley/LDAviz) was used to fit models with 5, 10, ..., 50 topics. In each case, three chains (with randomized starting values) were each run for 1000 iterations. Convergence was monitored by tracking the log-likelihood and computing the potential scale reduction factor using the [coda](http://cran.r-project.org/web/packages/coda/index.html) package. As seen below, all of the upper confidence intervals for the reduction factor are well within the reasonable range.
+The collapsed Gibbs sampler implemented in [LDAviz](https://github.com/kshirley/LDAviz) was used to fit models with 5, 10, ..., 50 topics. For each one of these 10 models, three chains (with randomized starting values) were each run for 1000 iterations. Convergence was monitored by tracking the log-likelihood and computing the potential scale reduction factor using the [coda](http://cran.r-project.org/web/packages/coda/index.html) package. As seen below, the reduction factor for each model is very close to 1 (thus, we a evidence of convergence for each model).
 
 <table>
  <thead>
@@ -133,7 +133,7 @@ The collapsed Gibbs sampler implemented in [LDAviz](https://github.com/kshirley/
 
 
 
-After convergence was reached, 1000 samples from each posterior was obtained. From these samples, $\log p(w|T)$ was approximated using the approach discussed earlier. A confidence interval accounting for the approximation of the Monte Carlo estimates were also computed, but the bounds were no bigger than the points on the figure below. 
+After convergence was reached, 1000 additional samples from each posterior was obtained. From these posterior samples, $\log p(w|T)$ was approximated using the approach discussed in the previous section. A confidence interval accounting for the approximation of the Monte Carlo estimates were also computed, but the bounds were no bigger than the points on the figure below. 
 
 <div align="center">
   <img src="log-like.png" width="800" height="500">
@@ -171,7 +171,7 @@ Another metric used to assess topic "volume" involves classifying each comic int
 Topic Interpretation
 -------------------------------
 
-One of the hardest components to any topic model analysis is topic interpretation. The problem essentially boils down to finding a small set of keywords that are most "relevant" or "informative" to a given topic's meaning. There are many ways we could define "relevance", but many times people tend to focus just on the words with the highest probability within a topic. As I will explain shortly, we can take a more flexible approach.
+One of the hardest components to any topic model analysis is topic interpretation. The problem essentially boils down to finding a small set of keywords that are most "relevant" or "informative" to a given topic's meaning. There are many ways one could define the "relevance" of a word, but it is common to simply use probability within a topic. As I will explain shortly, we can take a much more flexible approach that fosters [EDA](http://en.wikipedia.org/wiki/Exploratory_data_analysis).
 
 The window below contains a tool for visualizing the model output in an interactive way ([click here](http://glimmer.rstudio.com/cpsievert/xkcd/) if nothing shows up). If you hover your mouse over the circle labeled "6", the bar chart changes to reflect the most "relevant" words for topic 6. In this case, the most relevant words are "hey", "girl", "real", "sorri", "littl", "parti". This topic must be related to the trials and tribulations of romance. Note that by clicking on any of the topics, the web links to comics with the highest proportion of words from that topic are provided at the bottom of the window. For example, [http://xkcd.com/276/](http://xkcd.com/276/) has the highest proportion of words (among all comics) belonging to topic 6. Since this topic is on the decline, maybe xkcd is getting a bit more mature with age (at least in this respect)?
 
@@ -185,7 +185,9 @@ $$
 
 In some sense, we can think of _relevance_ as a compromise between a measure that tends to over-rank words that have a _high_ overall probability of occurring and a measure that tends to over-rank words that have a _low_ overall probability of occurring. Since this is a relatively small data set, we probably want to use a value of $\lambda$ closer to 1 (than the default of 1/3). 
 
-To demonstrate this idea, change the value of $\lambda$ to 1 and select topic 6. The word "guy" has now been introduced as a keyword. Notice the difference between the probability of "guy" within topic 6 (in red) and overall (in gray). One may now be interested in what other topics "guy" appears. By hovering over the label "guy", the distribution over topics is revealed in the sizing of the circles and it becomes obvious that "guy" is heavily concentrated under topic 17.
+To demonstrate this idea, change the value of $\lambda$ to 1 and select topic 6. The word "guy" has now been introduced as a keyword. Notice the difference between the probability of "guy" within topic 6 (in red) and overall (in gray). When ranking by probability within topic ($\lambda = 1$), we tend to get more words that are informative to the overall text corpus, but not necessarily for the topic of interest. 
+
+One may now be curious where else "guy" appears. By hovering over the label "guy", the distribution over topics is revealed in the sizing of the circles and it becomes clear that "guy" is heavily concentrated under topic 17. Looking at the most relevant words in topic 17, it must be that this topic is related to the re-occurring [hat guy comics](http://xkcd.com/515/).
 
 Another option, which is useful for gaining a higher level understanding of the "landscape of topics", is the slider labelled "Number of Clusters". Try changing the value from 1 to 4. By doing so, we are grouping topics together into clusters of "similar" topics - based on their distribution over words (more details are on the "What's this?" tab). You should now see the three topics in the bottom left-hand portion of the scatterplot grouped together. By hovering over this cluster region, we can again see a list of relevant words, but now defined on this whole grouping of topics. It seems as though this cluster is related to the self-proclaimed "romance" theme.
 
