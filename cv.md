@@ -52,7 +52,7 @@ group: navigation
 	* Proficient with [R](http://www.r-project.org), experience with [SAS](http://www.sas.com/company/about/history.html) & [JMP](http://www.jmp.com/)
     * Author of the R packages [pitchRx](http://cran.r-project.org/web/packages/pitchRx/), [LDAviz](https://github.com/kshirley/LDAviz), & [XML2R](https://github.com/cpsievert/XML2R). 
 * Other Stuff:
-	* MySQL, XML, HTML, JavaScript, D3js, AWK, Microsoft Excel, Access
+	* MySQL, XML, HTML, JavaScript, D3js, git, AWK, Microsoft Excel
 * Report Generation:
 	* LaTeX, knitr, Markdown, pandoc
 * Operating Systems:
@@ -61,10 +61,10 @@ group: navigation
 ---
 	
 ## Presentations
+* [Reproducible web documents with R, knitr & Markdown](http://www.stat.iastate.edu/seminars/seminar.html?id=968), ISU Graphics Working Group ([Slides](http://cpsievert.github.io/slides/markdown/). November, 2013.
 * [An interactive visualization platform for interpreting topic models](http://www.stat.iastate.edu/seminars/seminar.html?id=946), ISU Graphics Working Group ([Slides](http://cpsievert.github.io/slides/LDA/0926/) and [Video](https://www.dropbox.com/s/datl8sshpp859sh/LDAviz.mov)). August, 2013.
 * [pitchRx: Tools for Collecting and Analyzing Major League Baseball PITCHf/x Data](http://www.amstat.org/meetings/jsm/2013/onlineprogram/AbstractDetails.cfm?abstractid=309308) Joint Statistical Meetings ([Slides](http://cpsievert.github.io/slides/pitchRx/jsm/)). Montreal, Canada. August, 2013.
 * [Getting Started with Shiny](http://www.stat.iastate.edu/seminars/seminar.html?id=828), ISU Graphics Working Group ([Slides](http://cpsievert.github.com/slides/shiny/index.html)). January, 2013.
-* [Simple Methods for Collecting and Analyzing Major League Baseball PITCHf/x Data](http://www.stat.iastate.edu/seminars/seminar.html?id=790), ISU Graphics Working Group ([Slides](http://cpsievert.github.com/slides/pitchRx/pitchRx.html)). October, 2012.
 * Play for Pay: the Effects of 'Walk Year' Performance on MLB Free Agent Contracts, Scholarship Day. St. Joseph, MN. 04/2010.
 * A Mathematical Perspective of Voting, [Pi Mu Epsilon's National Conference at MathFest.](http://www.maa.org/abstracts/mf2009-studentbook.pdf) Portland, OR. 08/2009.
 * An Application of Auction Theory to the MLB Free Agent Market, with Zhishan Guo. [Mathematical Association of America's MathFest.](http://www.maa.org/abstracts/mf2008-studentbook.pdf) Madison, WI. 08/2008.
