@@ -1,0 +1,237 @@
+<!--
+%\VignetteEngine{knitr}
+%\VignetteIndexEntry{A Markdown Vignette with knitr}
+-->
+
+Introduction to pitchRx package
+====================================
+
+The  [pitchRx package](https://github.com/cpsievert/pitchRx) provides tools for collecting Major League Baseball (MLB) Gameday data and visualizing  [PITCHf/x](http://en.wikipedia.org/wiki/PITCHf/x).
+
+```{r dev, echo=FALSE, message=FALSE}
+library(devtools)
+install_github('pitchRx', 'cpsievert')
+```
+
+```{r setup, include=FALSE}
+options(CBoundsCheck=TRUE)
+library(knitr)
+render_html()
+opts_chunk$set(fig.path="figure/", cache.path="cache/", fig.align="center", warning=FALSE, message=FALSE, fig.height=7, fig.width=5, tidy=FALSE)
+opts_knit$set(animation.fun = hook_r2swf)
+library(pitchRx)
+```
+
+Data Collection
+----------------------------
+
+### Collecting data in bulk
+
+**pitchRx** makes it easy to collect Gameday data directly from the source. The main scraping function in **pitchRx**, `scrape`, currently supports four different types of files. Each of the four types have a common file name ending: [miniscoreboard.xml](http://gd2.mlb.com/components/game/mlb/year_2012/month_05/day_01/miniscoreboard.xml), [players.xml](http://gd2.mlb.com/components/game/mlb/year_2012/month_05/day_01/gid_2012_05_01_arimlb_wasmlb_1/players.xml), [inning/inning_all.xml](http://gd2.mlb.com/components/game/mlb/year_2012/month_05/day_01/gid_2012_05_01_arimlb_wasmlb_1/inning/inning_all.xml), and [inning/inning_hit.xml](http://gd2.mlb.com/components/game/mlb/year_2012/month_05/day_01/gid_2012_05_01_arimlb_wasmlb_1/inning/inning_hit.xml). `scrape` extracts information from these files and returns a named list of data frames. 
+
+```{r scrape, eval=FALSE}
+library(pitchRx)
+files <- c("miniscoreboard.xml", "players.xml"
+          "inning/inning_all.xml", "inning/inning_hit.xml")
+dat <- scrape(start="2011-01-01", end="2011-12-31", suffix = files)
+```
+
+In this example, `dat` is a very large object. It is a list of 10 data frames and the data frame `dat$pitch` alone contains more than a million rows and about 45 columns! For this reason, if the user wants to collect data in bulk, it is highly recommended to query on a bi-annual basis and append the results to a database. There are many database options, but here is a simple example of how to append the `dat$pitch` and `dat$atbat` tables to a [MySQL](http://en.wikipedia.org/wiki/MySQL) database using the [RMySQL](http://cran.r-project.org/web/packages/RMySQL/index.html) package.
+
+```{r MySQL, eval=FALSE}
+library(RMySQL)
+drv <- dbDriver("MySQL")
+MLB <- dbConnect(drv, user="your_user_name", password="your_password", dbname="your_database_name", host="your_host")
+dbWriteTable(MLB, value = dat$pitch, name = "pitch", row.names = FALSE, append = TRUE)
+dbWriteTable(MLB, value = dat$atbat, name = "atbat", row.names = FALSE, append = TRUE)
+```
+
+No matter how you're storing data, you will probably want to join `data$atbat` with `data$pitch` at some point. For instance, lets combine all information on the 'at-bat and 'pitch' level for every 'four-seam' and 'cutting' fastball thrown by Mariano Rivera and Phil Hughes during the 2011 season:
+
+```{r joining, eval=FALSE}
+names <- c("Mariano Rivera", "Phil Hughes")
+atbats <- subset(dat$atbat, pitcher_name == name)
+pitchFX <- plyr::join(atbats, dat$pitch, by=c("num", "url"), type="inner")
+pitches <- subset(pitchFX, pitch_type == c("FF", "FC"))
+```
+
+The `pitches` object is used as an example data and can be accessed by simply entering `data(pitches, package="pitchRx")` in your console. If you're using you're MySQL database, you could also recreate `pitches` using this query (if you have multiple years in your database, you'll want to add criteria for the year of interest):
+
+```{r sql, eval=FALSE}
+pitches <- dbGetQuery(MLB, "SELECT * FROM atbat INNER JOIN pitch 
+                      ON (atbat.num = pitch.num AND atbat.url = pitch.url) 
+                      WHERE atbat.pitcher_name = 'Mariano Rivera' 
+                      OR atbat.pitcher_name = 'Phil Hughes'")
+```
+
+### Collecting data by Gameday IDs
+
+`scrape` also has an option named `game.ids` that allows one to query specific game(s) rather than all games between two dates. For example, suppose I want all PITCHf/x data on every game player by the Minnesota Twins in 2011. I can find the relevant Gameday IDs using information from the built in `gids` object:
+
+```{r gids}
+data(gids, package="pitchRx")
+twins11 <- gids[grepl("min", gids) & grepl("2011", gids)]
+head(twins11)
+```
+
+```{r scrape2, eval=FALSE}
+dat <- scrape(gids=twins11)
+```
+
+### Building your own custom scraper
+
+The rest of this section demonstrates how to build a custom Gameday scraper using [XML2R](https://github.com/cpsievert/XML2R) (`scrape` is built on top of this package). For a more detailed look at **XML2R** [see here](http://cpsievert.github.io/XML2R/). 
+
+#### Obtaining urls
+
+The first (and probably most difficult) step of building a scraper is to obtain the file names of interest. `pitchRx::makeUrls` is convenient for constructing urls that are specific to the [Gameday website](http://gd2.mlb.com/components/game/mlb/). The default functionality of `makeUrls` is to "infer" all the Gameday links that exists between two dates. For example:
+
+```{r makeUrls, cache=TRUE}
+urls <- makeUrls(start="2012-06-01", end="2012-06-01")
+urls
+```
+
+As a side note, `makeUrls` can also be tricked into constructing the urls specific to each day:
+
+```{r makeUrls2}
+makeUrls(start="2012-06-01", end="2012-06-05", gid="")
+```
+
+#### Using XML2R
+
+The `urls` object can be used to obtain the file names for every [bench.xml](http://gd2.mlb.com/components/game/mlb/year_2011/month_06/day_12/gid_2011_06_12_texmlb_minmlb_1/bench.xml) file available for June 1st, 2012.
+
+```{r paste}
+bench.urls <- paste0(urls, "/bench.xml")
+```
+
+Next, load the **XML2R** library and use the `XML2Obs` function:
+
+```{r XML2Obs}
+library(XML2R)
+obs <- XML2Obs(bench.urls, as.equiv=TRUE, quiet=TRUE)
+unique(names(obs))
+```
+
+In short, the `obs` object is a named list and each element corresponds to an "observation" or "record" of data. The `names` of `obs` keeps track of the "level" of information where each observation was obtained. This is important because we eventually `collapse` observations into separate tables based on these levels. In this example, there are currently six different levels of observations. There would have been many more if the `as.equiv` option was `FALSE` since this adds a prefix to `names(obs)` to help differentiate observations that were obtained from different files. This can be useful if you have to `add_key`s for each file. In this example, we don't need to use `add_key` at all, but it can useful in many other cases (see the [XML2R page](https://github.com/cpsievert/XML2R)).
+
+In this example, we could probably get away with not adding a key to link observations between tables, but we will for demonstration's sake. The `add_key` function will add an additional column to each relevant observation that can be used later for merging/joining purposes.
+
+```{r add_key}
+tmp <- add_key(obs, parent="bench//away", key.name="away_key")
+obswkey <- add_key(tmp, parent="bench//home", key.name="home_key")
+```
+
+Note that it would be cumbersome to store observations from the `'bench//away//pitchers//pitcher'` level in a separate table from the `'bench//home//pitchers//pitcher'` (and same for the batter case). This is where the `re_name` function becomes useful:
+
+```{r re_name}
+tmp <- re_name(obs, equiv=c("bench//away//batters//batter", "bench//home//batters//batter"), 
+               diff.name="location")
+obs2 <- re_name(tmp, equiv=c("bench//away//pitchers//pitcher", "bench//home//pitchers//pitcher"), 
+               diff.name="location")
+unique(names(obs2))
+```
+
+Note how the `re_name` function automatically determines the difference in the names supplied to `equiv` and suppresses that difference in the new name. This information is not lost; however, as this value is appended as an additional column (location) for each observation:
+
+```{r re_name2}
+obs2[c(1, 20)]
+```
+
+Simply because of the structure of this XML file, we can use `re_name` again to have a key to merge information on the "bench" level with the "batter/pitcher" level:
+
+```{r re_name3}
+obs3 <- re_name(obs2, equiv=c("bench//away", "bench//home"), diff.name="location")
+```
+
+Finally, we can `collapse` the list of observations into a list of matrices and `merge` them accordingly to obtain a `pitcher` and `batter` data frame:
+
+```{r collapse}
+dat <- collapse(obs3)
+batter <- merge(x=dat[["bench//batters//batter"]], y=dat[["bench"]], by=c("url", "location"))
+head(batter)
+pitcher <- merge(x=dat[["bench//pitchers//pitcher"]], y=dat[["bench"]], by=c("url", "location"))
+head(pitcher)
+```
+
+
+PITCHf/x Visualization
+--------------------
+
+### 2D animation
+
+Let's animate the `pitches` data frame created in the previous section on a series of 2D scatterplots. The viewer should notice that as the animation progresses, pitches coming closer to them (that is, imagine you are the umpire/catcher - watching the pitcher throw directly at you). In the animation below, the horizontal and vertical location of `pitches` is plotted every tenth of a second until they reach home plate (in real time). Since looking at animations in real time can be painful, the subsequent animation (with four panels) delays the time between each frame to a half a second.
+
+```{r load_pitches, echo=FALSE, dev="CairoPNG"}
+data(pitches)
+```
+
+```{r ani, fig.show="animate", interval=0.1, cache=TRUE, dev="CairoPNG", fig.width=10}
+animateFX(pitches, point.size=5, interval=0.1, layer=list(theme_bw(), coord_equal(), facet_grid(.~stand, labeller = label_both)))
+```
+
+`animateFX` utilizes the [ggplot2](http://ggplot2.org/) layered grammar of graphics. This is useful for comparing and contrasting pitching styles (among other things). In the next animation, we use several layers at once to fix the aspect ratio, change the plotting theme and facet by pitcher. 
+
+```{r ani2, fig.show="animate", interval=0.5, cache=TRUE, fig.height=14, fig.width=14,dev="CairoPNG"}
+animateFX(pitches, point.size=5, interval=0.1, layer=list(facet_grid(pitcher_name~stand, labeller = label_both), coord_fixed(), theme_bw()))
+```
+
+Note that the user may want to wrap the function `animation::saveHTML` around `animateFX` for a better viewing experience.
+
+### Interactive 3D plots
+
+**pitchRx** also makes use of **rgl** graphics. If I want a more revealing look as Mariano Rivera's pitches, I can subset the `pitches` data frame accordingly. Note that the plot below is interactive, so make sure you have JavaScript & [WebGL](http://get.webgl.org/) enabled (if you do, go ahead - click and drag)!
+
+```{r demo, eval=FALSE}
+Rivera <- subset(pitches, pitcher_name=="Mariano Rivera")
+interactiveFX(Rivera)
+```
+
+<iframe src="http://cpsievert.github.io/pitchRx/rgl1/" height="600" width="1200"></iframe>
+
+### Strike-zones
+
+#### Raw strike-zone densities
+
+Strike-zones capture pitch locations at the moment they cross the plate. `strikeFX`'s default functionality is to plot the relevant *raw density*. Here is the density of called strikes thrown by Rivera and Hughes in 2011 (for both right and left-handed batters).
+
+```{r strike, fig.height=7, fig.width=10, dev="CairoPNG"}
+strikes <- subset(pitches, des == "Called Strike")
+strikeFX(strikes, geom="tile", layer=facet_grid(.~stand))
+```
+
+`strikeFX` allows one to easily manipulate the density of interest through two parameters: `density1` and `density2`. If these densities are identical, the density is defined accordingly. This is useful for avoiding repetitive subsetting of data frames. For example, one could use the following to also generate the density of called strikes shown previously.
+
+```{r strike2, eval=FALSE}
+strikeFX(pitches, geom="tile", density1=list(des="Called Strike"), density2=list(des="Called Strike"), layer=facet_grid(.~stand))
+```
+
+If you specify two different densities, `strikeFX` will plot differenced densities. In this case, we are subtracting the "Ball" density from the previous "Called Strike" density.
+
+```{r strike3, fig.height=7, fig.width=10, dev="CairoPNG"}
+strikeFX(pitches, geom="tile", density1=list(des="Called Strike"), density2=list(des="Ball"), layer=facet_grid(.~stand))
+```
+
+`strikeFX` also has the capability to plot tiled bar charts via the option `geom="subplot2d"`. Each grid (or sub-region) of the plot below has a distribution of outcomes among Rivera's pitches to right handed batters. The three outcomes are "S" for strike, "X" for a ball hit into play and "B" for a ball. 
+
+```{r sub, echo=FALSE}
+Rivera <- subset(pitches, pitcher_name=="Mariano Rivera")
+```
+
+```{r strike4, fig.height=10, fig.width=8, dev="CairoPNG"}
+Rivera.R <- subset(Rivera, stand=="R")
+strikeFX(Rivera.R, geom="subplot2d", fill="type")
+```
+
+#### Probabilistic strike-zone densities
+
+Perhaps more interesting than raw strike-zone densities are probabilistic densities. These densities represent the probability of a certain event happening at a given location. A popular method for fitting such models is Generalized Additive Models. Here we use the **mgcv** library to fit such a model (which automatically chooses a proper tuning parameter via cross-validation).
+
+```{r mgcv, fig.height=7, fig.width=10, dev="CairoPNG"}
+noswing <- subset(pitches, des %in% c("Ball", "Called Strike"))
+noswing$strike <- as.numeric(noswing$des %in% "Called Strike")
+library(mgcv)
+m1 <- bam(strike ~ s(px, pz, by=factor(stand)) +
+          factor(stand), data=noswing, family = binomial(link='logit'))
+strikeFX(noswing, model=m1, layer=facet_grid(.~stand)) 
+```
