@@ -41,7 +41,8 @@ In this example, `dat` is a very large object. It is a list of 10 data frames an
 ```{r MySQL, eval=FALSE}
 library(RMySQL)
 drv <- dbDriver("MySQL")
-MLB <- dbConnect(drv, user="your_user_name", password="your_password", dbname="your_database_name", host="your_host")
+MLB <- dbConnect(drv, user="your_user_name", password="your_password", 
+                 dbname="your_database_name", host="your_host")
 dbWriteTable(MLB, value = dat$pitch, name = "pitch", row.names = FALSE, append = TRUE)
 dbWriteTable(MLB, value = dat$atbat, name = "atbat", row.names = FALSE, append = TRUE)
 ```
@@ -160,20 +161,18 @@ PITCHf/x Visualization
 
 ### 2D animation
 
-Let's animate the `pitches` data frame created in the previous section on a series of 2D scatterplots. The viewer should notice that as the animation progresses, pitches coming closer to them (that is, imagine you are the umpire/catcher - watching the pitcher throw directly at you). In the animation below, the horizontal and vertical location of `pitches` is plotted every tenth of a second until they reach home plate (in real time). Since looking at animations in real time can be painful, the subsequent animation (with four panels) delays the time between each frame to a half a second.
+Let's animate the `pitches` data frame created in the previous section on a series of 2D scatterplots. The viewer should notice that as the animation progresses, pitches coming closer to them (that is, imagine you are the umpire/catcher - watching the pitcher throw directly at you). In the animation below, the horizontal and vertical location of `pitches` is plotted every tenth of a second until they reach home plate (in real time). Since looking at animations in real time can be painful, the subsequent animation delays the time between each frame to a half a second (and adds pitcher_name as a faceting variable).
 
 ```{r load_pitches, echo=FALSE, dev="CairoPNG"}
 data(pitches)
 ```
 
 ```{r ani, fig.show="animate", interval=0.1, cache=TRUE, dev="CairoPNG", fig.width=10}
-animateFX(pitches, point.size=5, interval=0.1, layer=list(theme_bw(), coord_equal(), facet_grid(.~stand, labeller = label_both)))
+animateFX(pitches, layer=list(facet_grid(.~stand, labeller = label_both), theme_bw(), coord_equal()))
 ```
 
-`animateFX` utilizes the [ggplot2](http://ggplot2.org/) layered grammar of graphics. This is useful for comparing and contrasting pitching styles (among other things). In the next animation, we use several layers at once to fix the aspect ratio, change the plotting theme and facet by pitcher. 
-
-```{r ani2, fig.show="animate", interval=0.5, cache=TRUE, fig.height=14, fig.width=14,dev="CairoPNG"}
-animateFX(pitches, point.size=5, interval=0.1, layer=list(facet_grid(pitcher_name~stand, labeller = label_both), coord_fixed(), theme_bw()))
+```{r ani2, fig.show="animate", interval=0.5, cache=TRUE, fig.height=14, fig.width=14, dev="CairoPNG"}
+animateFX(pitches, layer=list(facet_grid(pitcher_name~stand, labeller = label_both), theme_bw(), coord_equal()))
 ```
 
 Note that the user may want to wrap the function `animation::saveHTML` around `animateFX` for a better viewing experience.
@@ -234,4 +233,12 @@ library(mgcv)
 m1 <- bam(strike ~ s(px, pz, by=factor(stand)) +
           factor(stand), data=noswing, family = binomial(link='logit'))
 strikeFX(noswing, model=m1, layer=facet_grid(.~stand)) 
+```
+
+### Session Info
+
+In the spirit of reproducible research, here is the `sessionInfo` used when creating this document:
+
+```{r info}
+sessionInfo()
 ```

@@ -33,7 +33,8 @@ In this example, `dat` is a very large object. It is a list of 10 data frames an
 
 <div class="chunk" id="MySQL"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">library</span><span class="hl std">(RMySQL)</span>
 <span class="hl std">drv</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">dbDriver</span><span class="hl std">(</span><span class="hl str">&quot;MySQL&quot;</span><span class="hl std">)</span>
-<span class="hl std">MLB</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">dbConnect</span><span class="hl std">(drv,</span> <span class="hl kwc">user</span><span class="hl std">=</span><span class="hl str">&quot;your_user_name&quot;</span><span class="hl std">,</span> <span class="hl kwc">password</span><span class="hl std">=</span><span class="hl str">&quot;your_password&quot;</span><span class="hl std">,</span> <span class="hl kwc">dbname</span><span class="hl std">=</span><span class="hl str">&quot;your_database_name&quot;</span><span class="hl std">,</span> <span class="hl kwc">host</span><span class="hl std">=</span><span class="hl str">&quot;your_host&quot;</span><span class="hl std">)</span>
+<span class="hl std">MLB</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">dbConnect</span><span class="hl std">(drv,</span> <span class="hl kwc">user</span><span class="hl std">=</span><span class="hl str">&quot;your_user_name&quot;</span><span class="hl std">,</span> <span class="hl kwc">password</span><span class="hl std">=</span><span class="hl str">&quot;your_password&quot;</span><span class="hl std">,</span>
+                 <span class="hl kwc">dbname</span><span class="hl std">=</span><span class="hl str">&quot;your_database_name&quot;</span><span class="hl std">,</span> <span class="hl kwc">host</span><span class="hl std">=</span><span class="hl str">&quot;your_host&quot;</span><span class="hl std">)</span>
 <span class="hl kwd">dbWriteTable</span><span class="hl std">(MLB,</span> <span class="hl kwc">value</span> <span class="hl std">= dat</span><span class="hl opt">$</span><span class="hl std">pitch,</span> <span class="hl kwc">name</span> <span class="hl std">=</span> <span class="hl str">&quot;pitch&quot;</span><span class="hl std">,</span> <span class="hl kwc">row.names</span> <span class="hl std">=</span> <span class="hl num">FALSE</span><span class="hl std">,</span> <span class="hl kwc">append</span> <span class="hl std">=</span> <span class="hl num">TRUE</span><span class="hl std">)</span>
 <span class="hl kwd">dbWriteTable</span><span class="hl std">(MLB,</span> <span class="hl kwc">value</span> <span class="hl std">= dat</span><span class="hl opt">$</span><span class="hl std">atbat,</span> <span class="hl kwc">name</span> <span class="hl std">=</span> <span class="hl str">&quot;atbat&quot;</span><span class="hl std">,</span> <span class="hl kwc">row.names</span> <span class="hl std">=</span> <span class="hl num">FALSE</span><span class="hl std">,</span> <span class="hl kwc">append</span> <span class="hl std">=</span> <span class="hl num">TRUE</span><span class="hl std">)</span>
 </pre></div>
@@ -247,21 +248,19 @@ PITCHf/x Visualization
 
 ### 2D animation
 
-Let's animate the `pitches` data frame created in the previous section on a series of 2D scatterplots. The viewer should notice that as the animation progresses, pitches coming closer to them (that is, imagine you are the umpire/catcher - watching the pitcher throw directly at you). In the animation below, the horizontal and vertical location of `pitches` is plotted every tenth of a second until they reach home plate (in real time). Since looking at animations in real time can be painful, the subsequent animation (with four panels) delays the time between each frame to a half a second.
+Let's animate the `pitches` data frame created in the previous section on a series of 2D scatterplots. The viewer should notice that as the animation progresses, pitches coming closer to them (that is, imagine you are the umpire/catcher - watching the pitcher throw directly at you). In the animation below, the horizontal and vertical location of `pitches` is plotted every tenth of a second until they reach home plate (in real time). Since looking at animations in real time can be painful, the subsequent animation delays the time between each frame to a half a second (and adds pitcher_name as a faceting variable).
 
 
 
 
-<div class="chunk" id="ani"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">animateFX</span><span class="hl std">(pitches,</span> <span class="hl kwc">point.size</span><span class="hl std">=</span><span class="hl num">5</span><span class="hl std">,</span> <span class="hl kwc">interval</span><span class="hl std">=</span><span class="hl num">0.1</span><span class="hl std">,</span> <span class="hl kwc">layer</span><span class="hl std">=</span><span class="hl kwd">list</span><span class="hl std">(</span><span class="hl kwd">theme_bw</span><span class="hl std">(),</span> <span class="hl kwd">coord_equal</span><span class="hl std">(),</span> <span class="hl kwd">facet_grid</span><span class="hl std">(.</span><span class="hl opt">~</span><span class="hl std">stand,</span> <span class="hl kwc">labeller</span> <span class="hl std">= label_both)))</span>
+<div class="chunk" id="ani"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">animateFX</span><span class="hl std">(pitches,</span> <span class="hl kwc">layer</span><span class="hl std">=</span><span class="hl kwd">list</span><span class="hl std">(</span><span class="hl kwd">facet_grid</span><span class="hl std">(.</span><span class="hl opt">~</span><span class="hl std">stand,</span> <span class="hl kwc">labeller</span> <span class="hl std">= label_both),</span> <span class="hl kwd">theme_bw</span><span class="hl std">(),</span> <span class="hl kwd">coord_equal</span><span class="hl std">()))</span>
 </pre></div>
 <div align = "center">
  <embed width="720" height="504" name="plugin" src="figure/ani.swf" type="application/x-shockwave-flash"> 
 </div></div></div>
 
 
-`animateFX` utilizes the [ggplot2](http://ggplot2.org/) layered grammar of graphics. This is useful for comparing and contrasting pitching styles (among other things). In the next animation, we use several layers at once to fix the aspect ratio, change the plotting theme and facet by pitcher. 
-
-<div class="chunk" id="ani2"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">animateFX</span><span class="hl std">(pitches,</span> <span class="hl kwc">point.size</span><span class="hl std">=</span><span class="hl num">5</span><span class="hl std">,</span> <span class="hl kwc">interval</span><span class="hl std">=</span><span class="hl num">0.1</span><span class="hl std">,</span> <span class="hl kwc">layer</span><span class="hl std">=</span><span class="hl kwd">list</span><span class="hl std">(</span><span class="hl kwd">facet_grid</span><span class="hl std">(pitcher_name</span><span class="hl opt">~</span><span class="hl std">stand,</span> <span class="hl kwc">labeller</span> <span class="hl std">= label_both),</span> <span class="hl kwd">coord_fixed</span><span class="hl std">(),</span> <span class="hl kwd">theme_bw</span><span class="hl std">()))</span>
+<div class="chunk" id="ani2"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">animateFX</span><span class="hl std">(pitches,</span> <span class="hl kwc">layer</span><span class="hl std">=</span><span class="hl kwd">list</span><span class="hl std">(</span><span class="hl kwd">facet_grid</span><span class="hl std">(pitcher_name</span><span class="hl opt">~</span><span class="hl std">stand,</span> <span class="hl kwc">labeller</span> <span class="hl std">= label_both),</span> <span class="hl kwd">theme_bw</span><span class="hl std">(),</span> <span class="hl kwd">coord_equal</span><span class="hl std">()))</span>
 </pre></div>
 <div align = "center">
  <embed width="1008" height="1008" name="plugin" src="figure/ani2.swf" type="application/x-shockwave-flash"> 
@@ -331,4 +330,39 @@ Perhaps more interesting than raw strike-zone densities are probabilistic densit
 <span class="hl kwd">strikeFX</span><span class="hl std">(noswing,</span> <span class="hl kwc">model</span><span class="hl std">=m1,</span> <span class="hl kwc">layer</span><span class="hl std">=</span><span class="hl kwd">facet_grid</span><span class="hl std">(.</span><span class="hl opt">~</span><span class="hl std">stand))</span>
 </pre></div>
 </div><div class="rimage center"><img src="figure/mgcv.png" title="plot of chunk mgcv" alt="plot of chunk mgcv" class="plot" /></div></div>
+
+
+### Session Info
+
+In the spirit of reproducible research, here is the `sessionInfo` used when creating this document:
+
+<div class="chunk" id="info"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">sessionInfo</span><span class="hl std">()</span>
+</pre></div>
+<div class="output"><pre class="knitr r">## R version 3.0.2 (2013-09-25)
+## Platform: x86_64-apple-darwin10.8.0 (64-bit)
+## 
+## locale:
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+## [1] mgcv_1.7-27       nlme_3.1-113      ggsubplot_0.3.2   XML2R_0.0.3      
+## [5] XML_3.95-0.2      pitchRx_1.0       ggplot2_0.9.3.1   devtools_1.4.1.99
+## [9] knitr_1.5        
+## 
+## loaded via a namespace (and not attached):
+##  [1] Cairo_1.5-5        colorspace_1.2-4   dichromat_2.0-0   
+##  [4] digest_0.6.4       evaluate_0.5.1     formatR_0.10      
+##  [7] grid_3.0.2         gtable_0.1.2       hexbin_1.26.3     
+## [10] highr_0.3          httr_0.2           labeling_0.2      
+## [13] lattice_0.20-24    lubridate_1.3.3    MASS_7.3-29       
+## [16] Matrix_1.1-1.1     memoise_0.1        munsell_0.4.2     
+## [19] parallel_3.0.2     plyr_1.8           proto_0.3-10      
+## [22] RColorBrewer_1.0-5 RCurl_1.95-4.1     reshape2_1.2.2    
+## [25] rgl_0.93.963       scales_0.2.3       stringr_0.6.2     
+## [28] tools_3.0.2        whisker_0.3-2
+</pre></div>
+</div></div>
 
