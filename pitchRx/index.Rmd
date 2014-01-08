@@ -6,7 +6,7 @@
 Introduction to pitchRx package
 ====================================
 
-The  [pitchRx package](https://github.com/cpsievert/pitchRx) provides tools for collecting Major League Baseball (MLB) Gameday data and visualizing  [PITCHf/x](http://en.wikipedia.org/wiki/PITCHf/x).
+The  [pitchRx package](https://github.com/cpsievert/pitchRx) provides tools for collecting Major League Baseball (MLB) Gameday data and visualizing  [PITCHf/x](http://en.wikipedia.org/wiki/PITCHf/x). This page give a few examples of how to use it. You can view the source file used to generate this web page [here](https://github.com/cpsievert/cpsievert.github.com/blob/master/pitchRx/index.Rmd).
 
 ```{r dev, echo=FALSE, message=FALSE}
 library(devtools)
@@ -76,7 +76,7 @@ head(twins11)
 ```
 
 ```{r scrape2, eval=FALSE}
-dat <- scrape(gids=twins11)
+dat <- scrape(game.ids=twins11)
 ```
 
 ### Building your own custom scraper
@@ -161,21 +161,23 @@ PITCHf/x Visualization
 
 ### 2D animation
 
-Let's animate the `pitches` data frame created in the previous section on a series of 2D scatterplots. The viewer should notice that as the animation progresses, pitches coming closer to them (that is, imagine you are the umpire/catcher - watching the pitcher throw directly at you). In the animation below, the horizontal and vertical location of `pitches` is plotted every tenth of a second until they reach home plate (in real time). Since looking at animations in real time can be painful, the subsequent animation delays the time between each frame to a half a second (and adds pitcher_name as a faceting variable).
+Let's animate the `pitches` data frame created in the previous section on a series of 2D scatterplots. The viewer should notice that as the animation progresses, pitches coming closer to them (that is, imagine you are the umpire/catcher - watching the pitcher throw directly at you). In the animation below, the horizontal and vertical location of `pitches` is plotted every tenth of a second until they reach home plate (in real time). Since looking at animations in real time can be painful, this animation delays the time between each frame to a half a second.
 
 ```{r load_pitches, echo=FALSE, dev="CairoPNG"}
 data(pitches)
 ```
 
-```{r ani, fig.show="animate", interval=0.1, cache=TRUE, dev="CairoPNG", fig.width=10}
-animateFX(pitches, layer=list(facet_grid(.~stand, labeller = label_both), theme_bw(), coord_equal()))
-```
-
-```{r ani2, fig.show="animate", interval=0.5, cache=TRUE, fig.height=14, fig.width=14, dev="CairoPNG"}
+```{r ani, fig.show="animate", interval=0.5, cache=TRUE, fig.height=12, fig.width=12, dev="CairoPNG"}
 animateFX(pitches, layer=list(facet_grid(pitcher_name~stand, labeller = label_both), theme_bw(), coord_equal()))
 ```
 
-Note that the user may want to wrap the function `animation::saveHTML` around `animateFX` for a better viewing experience.
+To avoid a cluttered animation, the `avg.by` option averages the trajectory for each unique value of the variable supplied to `avg.by`.
+
+```{r ani2, fig.show="animate", interval=0.5, cache=TRUE, fig.height=12, fig.width=12, dev="CairoPNG"}
+animateFX(pitches, avg.by="pitch_types", layer=list(facet_grid(pitcher_name~stand, labeller = label_both), theme_bw(), coord_equal()))
+```
+
+Note that when using `animateFX`, the user may want to wrap the expression with `animation::saveHTML` to view the result in a web browser. If you want to include the animation in a document, [knitr](http://yihui.name/knitr/options#chunk_options)'s `fig.show="animate"` chunk option is very useful. 
 
 ### Interactive 3D plots
 

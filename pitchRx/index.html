@@ -947,7 +947,7 @@ img.mfp-img {
 
 <h1>Introduction to pitchRx package</h1>
 
-<p>The  <a href="https://github.com/cpsievert/pitchRx">pitchRx package</a> provides tools for collecting Major League Baseball (MLB) Gameday data and visualizing  <a href="http://en.wikipedia.org/wiki/PITCHf/x">PITCHf/x</a>.</p>
+<p>The  <a href="https://github.com/cpsievert/pitchRx">pitchRx package</a> provides tools for collecting Major League Baseball (MLB) Gameday data and visualizing  <a href="http://en.wikipedia.org/wiki/PITCHf/x">PITCHf/x</a>. This page give a few examples of how to use it. You can view the source file used to generate this web page <a href="https://github.com/cpsievert/cpsievert.github.com/blob/master/pitchRx/index.Rmd">here</a>.</p>
 
 <h2>Data Collection</h2>
 
@@ -1011,7 +1011,7 @@ dat &lt;- <span class="hl kwd">scrape</span>(start=<span class="hl str">&quot;20
 
 <p></div></div></p>
 
-<div class="chunk" id="scrape2"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">dat</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">scrape</span><span class="hl std">(</span><span class="hl kwc">gids</span><span class="hl std">=twins11)</span>
+<div class="chunk" id="scrape2"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">dat</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">scrape</span><span class="hl std">(</span><span class="hl kwc">game.ids</span><span class="hl std">=twins11)</span>
 </pre></div>
 
 <p></div></div></p>
@@ -1189,23 +1189,25 @@ dat &lt;- <span class="hl kwd">scrape</span>(start=<span class="hl str">&quot;20
 
 <h3>2D animation</h3>
 
-<p>Let&#39;s animate the <code>pitches</code> data frame created in the previous section on a series of 2D scatterplots. The viewer should notice that as the animation progresses, pitches coming closer to them (that is, imagine you are the umpire/catcher - watching the pitcher throw directly at you). In the animation below, the horizontal and vertical location of <code>pitches</code> is plotted every tenth of a second until they reach home plate (in real time). Since looking at animations in real time can be painful, the subsequent animation delays the time between each frame to a half a second (and adds pitcher_name as a faceting variable).</p>
+<p>Let&#39;s animate the <code>pitches</code> data frame created in the previous section on a series of 2D scatterplots. The viewer should notice that as the animation progresses, pitches coming closer to them (that is, imagine you are the umpire/catcher - watching the pitcher throw directly at you). In the animation below, the horizontal and vertical location of <code>pitches</code> is plotted every tenth of a second until they reach home plate (in real time). Since looking at animations in real time can be painful, this animation delays the time between each frame to a half a second.</p>
 
-<div class="chunk" id="ani"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">animateFX</span><span class="hl std">(pitches,</span> <span class="hl kwc">layer</span><span class="hl std">=</span><span class="hl kwd">list</span><span class="hl std">(</span><span class="hl kwd">facet_grid</span><span class="hl std">(.</span><span class="hl opt">~</span><span class="hl std">stand,</span> <span class="hl kwc">labeller</span> <span class="hl std">= label_both),</span> <span class="hl kwd">theme_bw</span><span class="hl std">(),</span> <span class="hl kwd">coord_equal</span><span class="hl std">()))</span>
+<div class="chunk" id="ani"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">animateFX</span><span class="hl std">(pitches,</span> <span class="hl kwc">layer</span><span class="hl std">=</span><span class="hl kwd">list</span><span class="hl std">(</span><span class="hl kwd">facet_grid</span><span class="hl std">(pitcher_name</span><span class="hl opt">~</span><span class="hl std">stand,</span> <span class="hl kwc">labeller</span> <span class="hl std">= label_both),</span> <span class="hl kwd">theme_bw</span><span class="hl std">(),</span> <span class="hl kwd">coord_equal</span><span class="hl std">()))</span>
 </pre></div>
 
 <div align = "center">
- <embed width="720" height="504" name="plugin" src="figure/ani.swf" type="application/x-shockwave-flash"> 
+ <embed width="864" height="864" name="plugin" src="figure/ani.swf" type="application/x-shockwave-flash"> 
 </div></div></div>
 
-<div class="chunk" id="ani2"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">animateFX</span><span class="hl std">(pitches,</span> <span class="hl kwc">layer</span><span class="hl std">=</span><span class="hl kwd">list</span><span class="hl std">(</span><span class="hl kwd">facet_grid</span><span class="hl std">(pitcher_name</span><span class="hl opt">~</span><span class="hl std">stand,</span> <span class="hl kwc">labeller</span> <span class="hl std">= label_both),</span> <span class="hl kwd">theme_bw</span><span class="hl std">(),</span> <span class="hl kwd">coord_equal</span><span class="hl std">()))</span>
+<p>To avoid a cluttered animation, the <code>avg.by</code> option averages the trajectory for each unique value of the variable supplied to <code>avg.by</code>.</p>
+
+<div class="chunk" id="ani2"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">animateFX</span><span class="hl std">(pitches,</span> <span class="hl kwc">avg.by</span><span class="hl std">=</span><span class="hl str">&quot;pitch_types&quot;</span><span class="hl std">,</span> <span class="hl kwc">layer</span><span class="hl std">=</span><span class="hl kwd">list</span><span class="hl std">(</span><span class="hl kwd">facet_grid</span><span class="hl std">(pitcher_name</span><span class="hl opt">~</span><span class="hl std">stand,</span> <span class="hl kwc">labeller</span> <span class="hl std">= label_both),</span> <span class="hl kwd">theme_bw</span><span class="hl std">(),</span> <span class="hl kwd">coord_equal</span><span class="hl std">()))</span>
 </pre></div>
 
 <div align = "center">
- <embed width="1008" height="1008" name="plugin" src="figure/ani2.swf" type="application/x-shockwave-flash"> 
+ <embed width="864" height="864" name="plugin" src="figure/ani2.swf" type="application/x-shockwave-flash"> 
 </div></div></div>
 
-<p>Note that the user may want to wrap the function <code>animation::saveHTML</code> around <code>animateFX</code> for a better viewing experience.</p>
+<p>Note that when using <code>animateFX</code>, the user may want to wrap the expression with <code>animation::saveHTML</code> to view the result in a web browser. If you want to include the animation in a document, <a href="http://yihui.name/knitr/options#chunk_options">knitr</a>&#39;s <code>fig.show=&quot;animate&quot;</code> chunk option is very useful. </p>
 
 <h3>Interactive 3D plots</h3>
 
