@@ -81,7 +81,7 @@ dat <- scrape(game.ids=twins11)
 
 ### Building your own custom scraper
 
-The rest of this section demonstrates how to build a custom Gameday scraper using [XML2R](https://github.com/cpsievert/XML2R) (`scrape` is built on top of this package). For a more detailed look at **XML2R** [see here](http://cpsievert.github.io/XML2R/). 
+The rest of this section demonstrates how to build a custom Gameday scraper using [XML2R](https://github.com/cpsievert/XML2R) (`scrape` is built on top of this package). For a more detailed look at **XML2R**, [see here](http://cpsievert.github.io/XML2R/). 
 
 #### Obtaining urls
 
@@ -114,18 +114,11 @@ obs <- XML2Obs(bench.urls, as.equiv=TRUE, quiet=TRUE)
 unique(names(obs))
 ```
 
-In short, the `obs` object is a named list and each element corresponds to an "observation" or "record" of data. The `names` of `obs` keeps track of the "level" of information where each observation was obtained. This is important because we eventually `collapse` observations into separate tables based on these levels. In this example, there are currently six different levels of observations. There would have been many more if the `as.equiv` option was `FALSE` since this adds a prefix to `names(obs)` to help differentiate observations that were obtained from different files. This can be useful if you have to `add_key`s for each file. In this example, we don't need to use `add_key` at all, but it can useful in many other cases (see the [XML2R page](https://github.com/cpsievert/XML2R)).
-
-In this example, we could probably get away with not adding a key to link observations between tables, but we will for demonstration's sake. The `add_key` function will add an additional column to each relevant observation that can be used later for merging/joining purposes.
-
-```{r add_key}
-tmp <- add_key(obs, parent="bench//away", key.name="away_key")
-obswkey <- add_key(tmp, parent="bench//home", key.name="home_key")
-```
+In short, the `obs` object is a named list and each element corresponds to an "observation" or "record" of data. The `names` of `obs` keeps track of the "level" of information where each observation was obtained. This is important because we eventually `collapse` observations into separate tables based on these levels. In this example, there are currently six different levels of observations. There would have been many more if the `as.equiv` option was `FALSE` since this adds a prefix to `names(obs)` to help differentiate observations that were obtained from different files. This can be useful if you have to `add_key`s for each file. In this example, we don't need to use `add_key` at all, but it can useful in many other cases (see the [XML2R page](http://cpsievert.github.io/XML2R/)).
 
 Note that it would be cumbersome to store observations from the `'bench//away//pitchers//pitcher'` level in a separate table from the `'bench//home//pitchers//pitcher'` (and same for the batter case). This is where the `re_name` function becomes useful:
 
-```{r re_name}
+```{r re_name, message=TRUE}
 tmp <- re_name(obs, equiv=c("bench//away//batters//batter", "bench//home//batters//batter"), 
                diff.name="location")
 obs2 <- re_name(tmp, equiv=c("bench//away//pitchers//pitcher", "bench//home//pitchers//pitcher"), 
@@ -133,7 +126,7 @@ obs2 <- re_name(tmp, equiv=c("bench//away//pitchers//pitcher", "bench//home//pit
 unique(names(obs2))
 ```
 
-Note how the `re_name` function automatically determines the difference in the names supplied to `equiv` and suppresses that difference in the new name. This information is not lost; however, as this value is appended as an additional column (location) for each observation:
+The `re_name` function automatically determines the difference in the names supplied to `equiv` and suppresses that difference in the new name. This information is not lost; however, as this value is appended as an additional column (location) for each observation:
 
 ```{r re_name2}
 obs2[c(1, 20)]
@@ -141,7 +134,7 @@ obs2[c(1, 20)]
 
 Simply because of the structure of this XML file, we can use `re_name` again to have a key to merge information on the "bench" level with the "batter/pitcher" level:
 
-```{r re_name3}
+```{r re_name3, message=TRUE}
 obs3 <- re_name(obs2, equiv=c("bench//away", "bench//home"), diff.name="location")
 ```
 

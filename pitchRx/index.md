@@ -83,7 +83,7 @@ The `pitches` object is used as an example data and can be accessed by simply en
 
 ### Building your own custom scraper
 
-The rest of this section demonstrates how to build a custom Gameday scraper using [XML2R](https://github.com/cpsievert/XML2R) (`scrape` is built on top of this package). For a more detailed look at **XML2R** [see here](http://cpsievert.github.io/XML2R/). 
+The rest of this section demonstrates how to build a custom Gameday scraper using [XML2R](https://github.com/cpsievert/XML2R) (`scrape` is built on top of this package). For a more detailed look at **XML2R**, [see here](http://cpsievert.github.io/XML2R/). 
 
 #### Obtaining urls
 
@@ -146,23 +146,27 @@ Next, load the **XML2R** library and use the `XML2Obs` function:
 </div></div>
 
 
-In short, the `obs` object is a named list and each element corresponds to an "observation" or "record" of data. The `names` of `obs` keeps track of the "level" of information where each observation was obtained. This is important because we eventually `collapse` observations into separate tables based on these levels. In this example, there are currently six different levels of observations. There would have been many more if the `as.equiv` option was `FALSE` since this adds a prefix to `names(obs)` to help differentiate observations that were obtained from different files. This can be useful if you have to `add_key`s for each file. In this example, we don't need to use `add_key` at all, but it can useful in many other cases (see the [XML2R page](https://github.com/cpsievert/XML2R)).
-
-In this example, we could probably get away with not adding a key to link observations between tables, but we will for demonstration's sake. The `add_key` function will add an additional column to each relevant observation that can be used later for merging/joining purposes.
-
-<div class="chunk" id="add_key"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">tmp</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">add_key</span><span class="hl std">(obs,</span> <span class="hl kwc">parent</span><span class="hl std">=</span><span class="hl str">&quot;bench//away&quot;</span><span class="hl std">,</span> <span class="hl kwc">key.name</span><span class="hl std">=</span><span class="hl str">&quot;away_key&quot;</span><span class="hl std">)</span>
-<span class="hl std">obswkey</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">add_key</span><span class="hl std">(tmp,</span> <span class="hl kwc">parent</span><span class="hl std">=</span><span class="hl str">&quot;bench//home&quot;</span><span class="hl std">,</span> <span class="hl kwc">key.name</span><span class="hl std">=</span><span class="hl str">&quot;home_key&quot;</span><span class="hl std">)</span>
-</pre></div>
-</div></div>
-
+In short, the `obs` object is a named list and each element corresponds to an "observation" or "record" of data. The `names` of `obs` keeps track of the "level" of information where each observation was obtained. This is important because we eventually `collapse` observations into separate tables based on these levels. In this example, there are currently six different levels of observations. There would have been many more if the `as.equiv` option was `FALSE` since this adds a prefix to `names(obs)` to help differentiate observations that were obtained from different files. This can be useful if you have to `add_key`s for each file. In this example, we don't need to use `add_key` at all, but it can useful in many other cases (see the [XML2R page](http://cpsievert.github.io/XML2R/)).
 
 Note that it would be cumbersome to store observations from the `'bench//away//pitchers//pitcher'` level in a separate table from the `'bench//home//pitchers//pitcher'` (and same for the batter case). This is where the `re_name` function becomes useful:
 
 <div class="chunk" id="re_name"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">tmp</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">re_name</span><span class="hl std">(obs,</span> <span class="hl kwc">equiv</span><span class="hl std">=</span><span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;bench//away//batters//batter&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;bench//home//batters//batter&quot;</span><span class="hl std">),</span>
                <span class="hl kwc">diff.name</span><span class="hl std">=</span><span class="hl str">&quot;location&quot;</span><span class="hl std">)</span>
-<span class="hl std">obs2</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">re_name</span><span class="hl std">(tmp,</span> <span class="hl kwc">equiv</span><span class="hl std">=</span><span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;bench//away//pitchers//pitcher&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;bench//home//pitchers//pitcher&quot;</span><span class="hl std">),</span>
+</pre></div>
+<div class="message"><pre class="knitr r">## Renaming all list elements named: 
+## bench//away//batters//batter  OR  bench//home//batters//batter
+## with
+## bench//batters//batter
+</pre></div>
+<div class="source"><pre class="knitr r"><span class="hl std">obs2</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">re_name</span><span class="hl std">(tmp,</span> <span class="hl kwc">equiv</span><span class="hl std">=</span><span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;bench//away//pitchers//pitcher&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;bench//home//pitchers//pitcher&quot;</span><span class="hl std">),</span>
                <span class="hl kwc">diff.name</span><span class="hl std">=</span><span class="hl str">&quot;location&quot;</span><span class="hl std">)</span>
-<span class="hl kwd">unique</span><span class="hl std">(</span><span class="hl kwd">names</span><span class="hl std">(obs2))</span>
+</pre></div>
+<div class="message"><pre class="knitr r">## Renaming all list elements named: 
+## bench//away//pitchers//pitcher  OR  bench//home//pitchers//pitcher
+## with
+## bench//pitchers//pitcher
+</pre></div>
+<div class="source"><pre class="knitr r"><span class="hl kwd">unique</span><span class="hl std">(</span><span class="hl kwd">names</span><span class="hl std">(obs2))</span>
 </pre></div>
 <div class="output"><pre class="knitr r">## [1] "bench//batters//batter"   "bench//pitchers//pitcher"
 ## [3] "bench//away"              "bench//home"
@@ -170,7 +174,7 @@ Note that it would be cumbersome to store observations from the `'bench//away//p
 </div></div>
 
 
-Note how the `re_name` function automatically determines the difference in the names supplied to `equiv` and suppresses that difference in the new name. This information is not lost; however, as this value is appended as an additional column (location) for each observation:
+The `re_name` function automatically determines the difference in the names supplied to `equiv` and suppresses that difference in the new name. This information is not lost; however, as this value is appended as an additional column (location) for each observation:
 
 <div class="chunk" id="re_name2"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">obs2[</span><span class="hl kwd">c</span><span class="hl std">(</span><span class="hl num">1</span><span class="hl std">,</span> <span class="hl num">20</span><span class="hl std">)]</span>
 </pre></div>
@@ -196,6 +200,11 @@ Note how the `re_name` function automatically determines the difference in the n
 Simply because of the structure of this XML file, we can use `re_name` again to have a key to merge information on the "bench" level with the "batter/pitcher" level:
 
 <div class="chunk" id="re_name3"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">obs3</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">re_name</span><span class="hl std">(obs2,</span> <span class="hl kwc">equiv</span><span class="hl std">=</span><span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;bench//away&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;bench//home&quot;</span><span class="hl std">),</span> <span class="hl kwc">diff.name</span><span class="hl std">=</span><span class="hl str">&quot;location&quot;</span><span class="hl std">)</span>
+</pre></div>
+<div class="message"><pre class="knitr r">## Renaming all list elements named: 
+## bench//away  OR  bench//home
+## with
+## bench
 </pre></div>
 </div></div>
 
