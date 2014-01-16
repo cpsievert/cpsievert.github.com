@@ -92,7 +92,7 @@ Less is more!
 ========================================================
 
 <div align="center">
-<img class="decoded" src="less-is-more.gif" width=800 height=600>
+<img class="decoded" src="http://darkhorseanalytics.com/blog/wp-content/uploads/2013/08/data-ink.gif" width=800 height=600>
 </div>
 
 
