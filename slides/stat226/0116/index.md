@@ -38,16 +38,13 @@ Digging Deeper
   * Even if everyone here is a potential customer, would this class be a _good_ representation of all potential customers?
   * No, this is a case of __convenience__ sampling. The __statistic__ is probably not a good estimate of the __parameter__!
   
-Identifying Variables
+Diagram to Identify Variable Types
 ========================================================
 
-* What is the __variable__ of interest?
-* Is this variable __quantitative__ or __categorical__?
-  * Is the number of possible values large (>50)?
-  * Is there a natural ordering to the possible values?
-  * If the answer is "yes" to both, then it is a __quantitative__ variable.
-  * Otherwise, the it is a __categorical__ variable.
-* This handout gives you practice with identifying the difference...
+<div align="center"><img src="variables.png" width="800" height="500"/></div>
+
+* What type of __variable__ is in the K-Packs example?
+* Let's get more practice with a worksheet
 
 Random Variables...
 ========================================================
@@ -72,11 +69,11 @@ Time Series Data
 ========================================================
 title: false
 
-* The graphic below contains a similar __time series__ data on monthly sales. What's the difference?
+* The graphic below contains similar __time series__ data on monthly sales. What's the difference?
 
 <div align="center"><img src="http://2.bp.blogspot.com/-31MxTL2k6W8/UQKhvlJH5vI/AAAAAAAAX38/PDtcuTN8pYE/s1600/NHSNSADec2012.jpg" width="800" height="400"/></div>
 
-* Is one better than the other?
+* Is one graphic better than the other?
 * Quality is a matter of context (and sometimes preference). There is an entire field focused on these problems!
 
 Data Visualization
@@ -88,14 +85,20 @@ There is more than one way to represent the same [data](http://www.nanocubes.net
 
 <style>iframe{width: 1600px;height:800px}</style> 
 
+Misleading graphs
+========================================================
+title: false
+
+<div align="center"><img src="http://gailly123.files.wordpress.com/2010/08/cartoon1.png" height=1000 width=800></div>
+
+* Take away: Don't mislead your audience!
+
 Less is more!
 ========================================================
 
 <div align="center">
 <img class="decoded" src="http://darkhorseanalytics.com/blog/wp-content/uploads/2013/08/data-ink.gif" width=800 height=600>
 </div>
-
-
 
 What's a 226 student to do?
 ========================================================
@@ -110,8 +113,4 @@ What's a 226 student to do?
   * <div title="distribution of a variable is the collection of possible values the
 variable can take and how often each value occurs." style="float:left;clear:both;">__Histogram__ (good for examining a single __distribution__)</div>
   * __Boxplot__ (good for comparing multiple __distributions__)
-  
-
-
-
   
