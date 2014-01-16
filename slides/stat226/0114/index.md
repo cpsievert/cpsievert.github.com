@@ -108,7 +108,7 @@ Tips for success in 226
 
 * Use office hours! All the instructors have office hours. Don't be intimidated to come and ask questions, but don't expect us to do your homework. Schedules will be posted on blackboard.
 
-* Use Supplemental Instruction (SI)! Schedule will be announced soon.
+* Use [Supplemental Instruction](http://www.dso.iastate.edu/asc/supplemental/homepage.html) (SI)! Schedule will be announced soon.
 
 Grading
 ========================================================
