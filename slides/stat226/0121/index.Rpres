@@ -1,0 +1,235 @@
+Stat 226 - Lecture 3
+========================================================
+date: 01/21/13
+transition: rotate
+incremental: true
+
+Announcements
+========================================================
+
+* Homework 1 is due by 5pm today. Homework 2 is now available (it requires __JMP__)!
+* Your student/class number helps us alphabetize assignments (its not a grade). Use it! 
+* The reading quiz is now available. __It is due Sunday!__
+* Find a group of 4 for the course project (and in-class help). 
+* Any questions???
+
+Misleading graphs
+========================================================
+title: false
+
+<div align="center"><img src="http://gailly123.files.wordpress.com/2010/08/cartoon1.png" height=1000 width=800></div>
+
+* Take away: Don't mislead your audience!
+
+Less is (often) more!
+========================================================
+
+<div align="center">
+<img class="decoded" src="http://darkhorseanalytics.com/blog/wp-content/uploads/2013/08/data-ink.gif" width=800 height=600>
+</div>
+
+What's a 226 student to do?
+========================================================
+
+1. Identify the __variable__ of interest.
+2. Identify whether the variable is __categorical__ or __quantitative__.
+3. If variable is __categorical__ (chapter 3), you're options are:
+  * __Bar chart__ (recommended)
+  * __Pareto chart__ (recommended)
+  * __Pie chart__ (not recommended)
+4. If variable is __quantitative__ (chapter 4), you're options are:
+  * <div title="distribution of a variable is the collection of possible values the
+variable can take and how often each value occurs." style="float:left;clear:both;">__Histogram__ (good for examining a single __distribution__)</div>
+  * __Boxplot__ (good for comparing multiple __distributions__)
+  
+  
+Every pitch by Mariano Rivera in '11
+========================================================
+incremental: false
+
+```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
+library(knitr)
+library(pitchRx)
+library(ggplot2)
+library(stringr)
+library(gridExtra)
+library(xtable)
+data(pitches)
+opts_chunk$set(echo=FALSE, fig.height=8, fig.width=10, fig.align='center', warning=FALSE)
+```
+
+```{r head, echo=FALSE}
+pitches$month <- gsub("month_", "", str_extract_all(pitches$url, "month_[0-9]+"))
+toy <- subset(pitches, pitcher_name == "Mariano Rivera", select=c(des, pitch_type, start_speed, month))
+names(toy) <- gsub("pitch_type", "type", names(toy))
+names(toy) <- gsub("des", "description", names(toy))
+head(toy, 100)
+```
+
+```{r format}
+toy$description <- factor(toy$description)
+toy$type <- factor(toy$type)
+toy$month <- factor(toy$month)
+toy$start_speed <- as.numeric(toy$start_speed)
+```
+
+
+Pitch Description
+========================================================
+
+* What type of variable is the pitch __description__?
+* __description__ is a __nominal__ variable. Here is it's distribution (shown as a __frequency table__):
+  
+```{r summary, echo=FALSE}
+summary(toy["description"])
+```
+
+Relative Frequencies
+========================================================
+
+* Now, here is the __relative frequency__:
+
+```{r relative, echo=FALSE}
+t <- table(toy["description"])
+round(t(t(t))/sum(t), 3)
+```
+
+* There were `r dim(toy)[1]` pitches, so divide every number in the frequency table by this number to get the relative frequencies.
+
+Bar Chart
+========================================================
+
+```{r bar, echo=FALSE}
+qplot(x=description, data=toy, fill=I('steelblue'), col=I('black'),  main="Bar chart of the pitch description")+ theme(text=element_text(size=30), axis.text.x = element_text(angle=45, size=30, hjust=1))
+```
+
+
+Pareto Chart
+========================================================
+
+```{r pareto, echo=FALSE}
+lvls <- names(sort(table(toy$description), decreasing=TRUE))
+qplot(x=factor(description, levels=lvls), data=toy, fill=I('steelblue'), col=I('black'), main="Pareto chart of the pitch description")+ theme(text=element_text(size=30), axis.text.x = element_text(angle=45, size=30, hjust=1))+xlab("des")
+```
+
+* Pareto charts always place the __mode__ as the left-most category.
+* If the variable is __nominal__, pareto charts are preferred! __Why__?
+
+Pie Chart
+========================================================
+title:false
+
+```{r pie, echo=FALSE}
+ggplot(toy, aes(x=factor(1), fill=factor(description)))+geom_bar(width=1)+coord_polar(theta="y")+xlab("")+ylab("")
+```
+
+* Resist the temptation to pie charts and use bar charts instead. 
+* __Why__ are they bar charts so much better than pie charts?
+
+Month
+========================================================
+title:false
+
+* __month__ is a __ordinal__ variable. Here is it's distribution (shown as a __frequency table__):
+
+```{r summary2, echo=FALSE}
+summary(toy["month"])
+```
+
+Bar Chart
+========================================================
+title:false
+
+```{r bar2, echo=FALSE}
+qplot(x=month, data=toy, fill=I('steelblue'), col=I('black'),  main="Bar chart of pitches thrown by month")+ theme(text=element_text(size=30), axis.text.x = element_text(angle=45, size=30, hjust=1))
+```
+
+* You probably shouldn't change the ordering of an ordinal variable. 
+* In other words, a pareto chart of an ordinal variable might be misleading!
+
+Pitch speed
+========================================================
+
+* __start_speed:__ The speed of the pitch as it left the hand. This is __quantitative__.
+* To visualize the distribution a __single__ quantitative variable, use a histogram.
+* Since quantitative variables don't have "categories", we have to create them!
+* Although histograms look similar to bar charts, histograms deceivingly hard.
+
+Choosing binwidths
+========================================================
+
+```{r hist, echo=FALSE}
+q1 <- qplot(x=start_speed, data=toy, binwidth=1, fill=I('steelblue'), col=I('black'), main="Histogram when binwidth is 1")
+q2 <- qplot(x=start_speed, data=toy, binwidth=.5, fill=I('steelblue'), col=I('black'),  main="Histogram when binwidth is .5")
+q3 <- qplot(x=start_speed, data=toy, binwidth=.25, fill=I('steelblue'), col=I('black'), main="Histogram when binwidth is .25")
+q4 <- qplot(x=start_speed, data=toy, binwidth=.2, fill=I('steelblue'), col=I('black'), main="Histogram when binwidth is .2")
+grid.arrange(q1, q2, q3, q4, ncol=2)
+```
+***
+
+* Notice that all the 'binwidths' (within each plot) are equal!
+* Which do you think looks best?
+* When doing this in practice, trial and error is essential!
+
+
+Frequencies when binwidth is 1
+========================================================
+incremental:false
+right: 62%
+
+```{r freq, echo=FALSE}
+t(t(table(cut(toy[,"start_speed"], breaks=88:95, right=FALSE))))
+```
+***
+```{r plot, echo=FALSE}
+q1
+```
+
+Numerical summaries
+========================================================
+
+* Often times you'd like to report numerical summaries in addition to graphics.
+* Numerical summaries could be grouped into __measures of center__ and __measures of spread__.
+* The __mean__, __median__, and __mode__ are all measures of center.
+* The mean (`r mean(toy$start_speed)` MPH) is obtained by adding all the values of __start_speed__ and dividing by the number of pitches.
+* The median (`r median(toy$start_speed)` MPH) is obtained by: 
+  1. Rank all of the values from highest to lowest: 88.6, 88.9, 89.1, 89.1, ..., 93.6, 93.7, 94.3
+  2. Find the middle value. See pg 56 the lecture notes for more details on how to find this...
+  
+Mean vs. median
+========================================================
+
+* The mean is influenced by outliers, but the median is robust to outliers. 
+* In other words, the mean is dragged towards the more unusual values.
+* Thus, we sometimes compare these values to assess the direction of skew in a distribution.
+  * If mean < median, then the mean is dragged to the left (skewed left)
+  * If mean > median, then the mean is dragged to the right (skewed right)
+  * If mean = median, the distribution is symmetric (in a perfect world)
+  
+Visual representation
+========================================================
+
+```{r mean, echo=FALSE}
+m <- mean(toy$start_speed)
+m2 <- median(toy$start_speed)
+q4a <- q4+geom_vline(xint=m2, color="green")
+q4a+geom_vline(xint=m, color="red")
+```
+***
+* The mean corresponds to the red line below. The median corrresponds to the green line.
+* What is the __overall shape__ of the distribution?
+
+Boxplot vs Histogram
+========================================================
+left:40%
+
+```{r box, echo=FALSE, fig.height=12}
+box <- qplot(y=start_speed, x=1, data=toy, geom="boxplot")+coord_flip()+xlab("")+ylab("")
+grid.arrange(box+ylim(c(88, 95)), q4a+xlim(c(88, 95)), ncol=1)
+```
+***
+* A __boxplot__ is another visual representation of a distribution, but instead of a __frequency table__, it uses the __5 number summary__.
+* All of these numbers can be thought of as __percentiles__.
+* The __median__ is also known as the 50th percentile.
+* What percentile is the minimum? Maximum?
+* __Q1__ is the median of the first half of the distribution.

@@ -7,6 +7,7 @@ This page will serve as a collection of links to useful learning materials.
 
 * [January 14th](http://cpsievert.github.io/slides/stat226/0114)
 * [January 16th](http://cpsievert.github.io/slides/stat226/0116)
+* [January 21st](http://cpsievert.github.io/slides/stat226/0121)
 
 ### Visual Aides
 
