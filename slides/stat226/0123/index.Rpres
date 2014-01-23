@@ -1,0 +1,154 @@
+Stat 226 - Lecture 4
+========================================================
+date: 01/23/13
+transition: rotate
+incremental: true
+
+Announcements
+========================================================
+
+* Homework 1 is due today. Homework 2 is now available (get started -- it requires __JMP__)!
+* Reading quiz is due Sunday!
+* Project step 1 is due Feburary 10th. I will send an e-mail on how to self-enroll on BB.
+
+Food for thought
+========================================================
+
+* How is a bar chart different from a histogram?
+
+
+
+
+Pareto Chart
+========================================================
+
+<div align="center"><img src="pareto2.jpg" width=800></div>
+
+This is your warning...
+========================================================
+
+<div align="center"><img src="relationship.png" height=400></div>
+
+* But seriously, label axes and put a title on any graphics you create!
+
+Histograms Revisited
+========================================================
+title: false
+
+```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
+library(knitr)
+library(pitchRx)
+library(ggplot2)
+library(stringr)
+library(reshape)
+data(pitches)
+opts_chunk$set(echo=FALSE, fig.height=8, fig.width=10, fig.align='center', warning=FALSE)
+```
+
+```{r head, echo=FALSE, fig.align='center'}
+pitches$month <- gsub("month_", "", str_extract_all(pitches$url, "month_[0-9]+"))
+toy <- subset(pitches, pitcher_name == "Mariano Rivera", select=c(des, pitch_type, start_speed, month))
+names(toy) <- gsub("pitch_type", "type", names(toy))
+names(toy) <- gsub("des", "description", names(toy))
+toy$start_speed <- as.numeric(toy$start_speed) 
+themes <- theme(axis.text.x=element_text(size=25), axis.text.y=element_text(size=25), plot.title = element_text(lineheight=2, face="bold"))
+p <- ggplot(data=toy, aes(x=start_speed))+geom_histogram(aes(y=..density..), binwidth=1, fill=I('steelblue'), col=I('black'))+themes+ggtitle("Distribution of pitch speed by Mariano Rivera in 2011")
+q <- ggplot(data=toy, aes(x=start_speed))+geom_histogram(binwidth=1, fill=I('steelblue'), col=I('black'))+themes+ggtitle("Distribution of pitch speed by Mariano Rivera in 2011")
+q
+tab <- t(t(table(cut(toy[,"start_speed"], breaks=88:95, right=FALSE))))
+tab
+```
+
+***
+* __Histograms__ are essential to this class and statistics in general. 
+* A __histogram__ displays the __distribution__ of a __quantitative__ variable.
+* In simpler terms, it tells us where values of a variable are likely to occur.
+* These are __absolute__ frequencies (counts).
+* In order to make __inferential__ statements about a __population__, we use __relative__ frequencies!
+
+Relative frequencies
+========================================================
+title: false
+
+```{r rel, echo=FALSE}
+p
+n <- dim(toy)[1]
+round(tab/n, 3)
+```
+***
+* To find __relative__ frequencies, divide each count by the total number of observations.
+* Notice how the shape of histogram is preserved. Only the y-axis is changes!
+* Before, we plotted the number of pitches in each bin. Now we have the percent of pitches within each bin.
+* For example, only 0.6% of all these pitches are between 88 and 89 MPH!
+
+Percentiles
+========================================================
+
+```{r percents, echo=FALSE}
+p+geom_vline(xint=90, color="red")
+round(tab/n, 3)
+```
+***
+
+* What percentage of pitches thrown by Rivera are less than 90 MPH?
+* Add up the relative frequencies...0.006 + 0.073 = 0.079 (about 8%)
+* We say that 90 MPH is the 8th __percentile__.
+
+Percentiles continued
+========================================================
+
+```{r percents2, echo=FALSE}
+p+geom_vline(xint=91, color="red")
+round(tab/n, 3)
+```
+***
+
+* What percentage of pitches thrown by Rivera are less than 91 MPH?
+* Add up the relative frequencies...0.006 + 0.073 + .181 = 0.26
+* We say that 91 MPH is the 26th __percentile__.
+
+Foreshadowing
+========================================================
+
+```{r dens}
+pd <- p+geom_density()
+pd
+```
+
+***
+
+* In practice, we find a "smooth curve" based on __sample__ data in order to make __inferential__ statements about __parameters__.
+* For instance, based on this data, I am about 99% confident the __true average pitch speed__ is between 89 and 94 MPH.
+
+Confused yet? Good!
+========================================================
+
+<div align="center">
+<img class="decoded" src="http://gifs.gifbin.com/1238512492_the-happening-wahlberg.gif" width=800 height=600>
+</div>
+
+A Mental Exercise
+========================================================
+
+```{r x, echo=FALSE, fig.height=12}
+x <- rnorm(1000)
+y <- rnorm(1000, sd=5)
+df <- melt(data.frame(x,y))
+ggplot(df, aes(x=value))+geom_histogram(aes(y=..density..), fill=I('steelblue'), col=I('black'))+geom_vline(xint=0, color="red")+facet_wrap(~variable, ncol=1)+themes
+```
+
+***
+* What's the difference between these two histograms?
+* There is more __variability__ in the values of the bottom histogram!
+
+Measures of spread (or variability)
+========================================================
+
+* __Range__: Maximum - Minimum
+* __IQR__: Q3 - Q1
+* __Variance and Standard Deviation__: see pages 75-79 in the lecture notes.
+
+
+
+
+
