@@ -13,11 +13,12 @@ Announcements
 
 Food for thought
 ========================================================
+incremental:false
 
-* How is a bar chart different from a histogram?
-
-
-
+* What's the difference between a bar chart and a histogram?
+* What's the difference between nominal, ordinal and quantitiative variables?
+* Name three different methods for identifying the center of a distribution.
+* What's the difference between a descriptive statement and inferential statement?
 
 Pareto Chart
 ========================================================
