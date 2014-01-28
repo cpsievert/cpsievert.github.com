@@ -1,0 +1,176 @@
+Stat 226 - Lecture 5
+========================================================
+date: 01/28/14
+transition: rotate
+incremental: true
+
+Announcements
+========================================================
+
+* The project is now available on Blackboard. There will be 4 steps. The first step is due Feburary 10th.
+* Keep in mind you will need to collect data associated with the variables in the first step. Come up with a realistic example!
+* Reading quiz on Chapter 12 due this Sunday.
+* Go to office hours if you have problems with JMP!
+* Any questions?
+
+Histograms Revisited
+========================================================
+title: false
+
+```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
+library(knitr)
+library(pitchRx)
+library(ggplot2)
+library(stringr)
+library(reshape)
+data(pitches)
+opts_chunk$set(echo=FALSE, fig.height=8, fig.width=10, fig.align='center', warning=FALSE)
+```
+
+```{r head, echo=FALSE, fig.align='center'}
+pitches$month <- gsub("month_", "", str_extract_all(pitches$url, "month_[0-9]+"))
+toy <- subset(pitches, pitcher_name == "Mariano Rivera", select=c(des, pitch_type, start_speed, month))
+names(toy) <- gsub("pitch_type", "type", names(toy))
+names(toy) <- gsub("des", "description", names(toy))
+toy$start_speed <- as.numeric(toy$start_speed) 
+themes <- theme(axis.text.x=element_text(size=25), axis.text.y=element_text(size=25), plot.title = element_text(lineheight=2, face="bold"))
+p <- ggplot(data=toy, aes(x=start_speed))+geom_histogram(aes(y=..density..), binwidth=1, fill=I('steelblue'), col=I('black'))+themes+ggtitle("Distribution of pitch speed by Mariano Rivera in 2011")
+q <- ggplot(data=toy, aes(x=start_speed))+geom_histogram(binwidth=1, fill=I('steelblue'), col=I('black'))+themes+ggtitle("Distribution of pitch speed by Mariano Rivera in 2011")
+q
+tab <- t(t(table(cut(toy[,"start_speed"], breaks=88:95, right=FALSE))))
+tab
+```
+
+***
+* __Histograms__ are essential to this class and statistics in general. 
+* A __histogram__ displays the __distribution__ of a __quantitative__ variable.
+* In simpler terms, it tells us where values of a variable are likely to occur.
+* These are __absolute__ frequencies (counts).
+* In order to make __inferential__ statements about a __population__, we use __relative__ frequencies!
+
+Relative frequencies
+========================================================
+title: false
+
+```{r rel, echo=FALSE}
+p
+n <- dim(toy)[1]
+round(tab/n, 3)
+```
+***
+* To find __relative__ frequencies, divide each count by the total number of observations.
+* Notice how the shape of histogram is preserved. Only the y-axis is changes!
+* Before, we plotted the number of pitches in each bin. Now we have the percent of pitches within each bin.
+* For example, only 0.6% of all these pitches are between 88 and 89 MPH!
+
+Percentiles
+========================================================
+
+```{r percents, echo=FALSE}
+p+geom_vline(xint=90, color="red")
+round(tab/n, 3)
+```
+***
+
+* What percentage of pitches thrown by Rivera are less than 90 MPH?
+* Add up the relative frequencies...0.006 + 0.073 = 0.079 (about 8%)
+* We say that 90 MPH is the 8th __percentile__.
+
+Percentiles continued
+========================================================
+
+```{r percents2, echo=FALSE}
+p+geom_vline(xint=91, color="red")
+round(tab/n, 3)
+```
+***
+
+* What percentage of pitches thrown by Rivera are less than 91 MPH?
+* Add up the relative frequencies...0.006 + 0.073 + .181 = 0.26
+* We say that 91 MPH is the 26th __percentile__.
+
+Foreshadowing
+========================================================
+
+```{r dens}
+pd <- p+geom_density(adjust = 1.3)
+pd
+```
+
+***
+
+* In practice, we find a "smooth curve" based on __sample__ data in order to make __inferential__ statements about __parameters__.
+* For instance, based on this data, I am about 99% confident the __true average pitch speed__ is between 89 and 94 MPH.
+
+A Mental Exercise
+========================================================
+
+```{r x, echo=FALSE, fig.height=12, fig.width=8}
+library(reshape)
+library(ggplot2)
+x <- rnorm(1000)
+y <- rnorm(1000, sd=5)
+df <- melt(data.frame(x,y))
+themes <- theme(axis.text.x=element_text(size=25), axis.text.y=element_text(size=25), plot.title = element_text(lineheight=1.8, face="bold"))
+ggplot(df, aes(x=value))+geom_histogram(aes(y=..density..), fill=I('steelblue'), col=I('black'))+geom_vline(xint=0, color="red")+facet_wrap(~variable, ncol=1)+themes
+```
+***
+
+* What's the difference between these two histograms?
+
+<li class="fragment"> <div align="center">
+<img class="decoded" src="http://gifs.gifbin.com/1238512492_the-happening-wahlberg.gif" width=800 height=600>
+</div></li>
+
+* There is "more __variation__" or "more __spread__" in the bottom histogram!
+
+Measures of spread (or variability)
+========================================================
+
+* __Range__: Maximum - Minimum
+* __IQR__: Q3 - Q1
+* __Variance and Standard Deviation__: see pages 75-79 in the lecture notes.
+
+Summarizing Measurements
+========================================================
+
+```{r table, results='asis', echo=FALSE}
+library(xtable)
+nominal <- c("Yes", "No", "No", "No")
+ordinal <- c("Yes", "No", "No", "Yes")
+quantitative <- rep("Yes", 4)
+df <- data.frame(nominal, ordinal, quantitative)
+row.names(df) <- c("mode", "mean", "variance", "percentiles")
+print(xtable(df), type="html")
+```
+
+* If you can calculate a __percentile__, you can calculate the __5 number summary__.
+* If you can calculate __variance__, you can calculate __standard deviation__.
+
+Quantitative Measurements
+========================================================
+
+```{r table2, results='asis', echo=FALSE}
+center <- c("median", "mean")
+spread <- c("IQR, Range", "Standard Deviation")
+df2 <- data.frame(center, spread)
+row.names(df2) <- c("skewed", "symmetric")
+print(xtable(df2), type="html")
+```
+
+* Both the mean and standard deviation are influenced by outliers. That is why we don't use them for skewed distributions.
+* Still have to determine whether the distribution is skewed or not. How should we do this?
+
+Your Turn
+========================================================
+incremental:false
+
+* Finish the heights worksheet, then consider the following:
+1. For each of the following data scenarios, determine the appropriate measure of center and measure of spread. To answer the question, think about what values are plausible and whether a histogram would yield a more symmetric or a more skewed distribution.
+  * Household income in the US.
+  * In-state tuition at US public colleges.
+  * Runs per game scored by the Chicago Cubs (or any baseball team)
+  * Points per game scored by the Chicago Bulls (or any basketball team)
+  
+
+
