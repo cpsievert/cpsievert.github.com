@@ -107,7 +107,7 @@ $(function() {
   /* size of thumbnails */
   var thumbsize = "col-md-3";
 
-  var show_code =  true ;
+  var show_code =  false ;
 
   var show_output =  true ;
 
@@ -307,11 +307,10 @@ $(function() {
   $('#wrap').append('<div id="push" />');
   var p = $('p:contains("Author:")');
   var last_p = p.filter(':last');
-  p.detach();
-  last_p.addClass('muted').attr('id','credit');
+  last_p.addClass('text-muted').attr('id','credit');
   last_p.append('<p>Styled with <a href="https://github.com/jimhester/knitrBootstrap">knitrBootstrap</a></p>');
+  last_p = last_p.wrap('<div id="footer"><div class="container">').parent().parent();
   last_p.appendTo("body");
-  last_p.wrap('<div id="footer">');
 
   $('.container > .row').prepend('<div class="col-md-3"><div id="toc" class="well sidebar sidenav affix hidden-print"/></div>');
 
@@ -935,128 +934,7 @@ img.mfp-img {
 }
 
 </style>
-<link href=https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css rel="stylesheet" id='style'>
-<link rel="alternate stylesheet" type="text/css" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" title="Default" media="screen">
-<link rel="alternate stylesheet" type="text/css" href="https://netdna.bootstrapcdn.com/bootswatch/3.0.0/amelia/bootstrap.min.css" title="Amelia" media="screen">
-<link rel="alternate stylesheet" type="text/css" href="https://netdna.bootstrapcdn.com/bootswatch/3.0.0/cerulean/bootstrap.min.css" title="Cerulean" media="screen">
-<link rel="alternate stylesheet" type="text/css" href="https://netdna.bootstrapcdn.com/bootswatch/3.0.0/cosmo/bootstrap.min.css" title="Cosmo" media="screen">
-<link rel="alternate stylesheet" type="text/css" href="https://netdna.bootstrapcdn.com/bootswatch/3.0.0/cyborg/bootstrap.min.css" title="Cyborg" media="screen">
-<link rel="alternate stylesheet" type="text/css" href="https://netdna.bootstrapcdn.com/bootswatch/3.0.0/flatly/bootstrap.min.css" title="Flatly" media="screen">
-<link rel="alternate stylesheet" type="text/css" href="https://netdna.bootstrapcdn.com/bootswatch/3.0.0/journal/bootstrap.min.css" title="Journal" media="screen">
-<link rel="alternate stylesheet" type="text/css" href="https://netdna.bootstrapcdn.com/bootswatch/3.0.0/readable/bootstrap.min.css" title="Readable" media="screen">
-<link rel="alternate stylesheet" type="text/css" href="https://netdna.bootstrapcdn.com/bootswatch/3.0.0/simplex/bootstrap.min.css" title="Simplex" media="screen">
-<link rel="alternate stylesheet" type="text/css" href="https://netdna.bootstrapcdn.com/bootswatch/3.0.0/slate/bootstrap.min.css" title="Slate" media="screen">
-<link rel="alternate stylesheet" type="text/css" href="https://netdna.bootstrapcdn.com/bootswatch/3.0.0/spacelab/bootstrap.min.css" title="Spacelab" media="screen">
-<link rel="alternate stylesheet" type="text/css" href="https://netdna.bootstrapcdn.com/bootswatch/3.0.0/united/bootstrap.min.css" title="United" media="screen">
 
-          <!--<li><a class="style-switch" title="Superhero" href="#" >Superhero</a>  </li> \-->
-          <!--<li><a class="style-switch" title="Spruce" href="#"    >Spruce</a>     </li> \-->
-<script>
-$(function() {
-    $('#bottom-navbar').append(
-    '<ul class="nav navbar-nav navbar-left">\
-      <li class="dropup">\
-        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Bootstrap Style</a>\
-        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">\
-           <li class="active"><a class="style-switch" title="Default" href="#"   >Default</a></li> \
-           <li><a class="style-switch" title="Amelia" href="#"                   >Amelia</a></li> \
-           <li><a class="style-switch" title="Cerulean" href="#"                 >Cerulean</a></li> \
-           <li><a class="style-switch" title="Cosmo" href="#"                    >Cosmo</a></li> \
-           <li><a class="style-switch" title="Cyborg" href="#"                   >Cyborg</a></li> \
-           <li><a class="style-switch" title="Flatly" href="#"                   >Flatly</a></li> \
-           <li><a class="style-switch" title="Journal" href="#"                  >Journal</a></li> \
-           <li><a class="style-switch" title="Readable" href="#"                 >Readable</a></li> \
-           <li><a class="style-switch" title="Simplex" href="#"                  >Simplex</a></li> \
-           <li><a class="style-switch" title="Slate" href="#"                    >Slate</a></li> \
-           <li><a class="style-switch" title="Spacelab" href="#"                 >Spacelab</a></li> \
-           <li><a class="style-switch" title="United" href="#"                   >United</a></li> \
-        </ul>\
-      </li>\
-    </ul>');
-    $('.style-switch').click(function(){
-      var css = $('link[title=' + $(this).attr('title') + ']');
-      $('#style[rel=stylesheet]').attr('href', css.attr('href'));
-      $('.style-switch').closest('li').removeClass('active');
-      $(this).closest('li').addClass('active');
-      return false;
-    });
-  }
-);
-</script>
-
-<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/styles/tomorrow.min.css" id="code-style" rel="stylesheet">
-<link title="Default-Code" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/styles/default.min.css" rel="alternate stylesheet">
-<link title="Dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/styles/dark.min.css" rel="alternate stylesheet">
-<link title="FAR" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/styles/far.min.css" rel="alternate stylesheet">
-<link title="IDEA" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/styles/idea.min.css" rel="alternate stylesheet">
-<link title="Sunburst" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/styles/sunburst.min.css" rel="alternate stylesheet">
-<link title="Zenburn" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/styles/zenburn.min.css" rel="alternate stylesheet">
-<link title="Visual Studio" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/styles/vs.min.css" rel="alternate stylesheet">
-<link title="Ascetic" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/styles/ascetic.min.css" rel="alternate stylesheet">
-<link title="Magula" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/styles/magula.min.css" rel="alternate stylesheet">
-<link title="GitHub" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/styles/github.min.css" rel="alternate stylesheet">
-<link title="Google Code" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/styles/googlecode.min.css" rel="alternate stylesheet">
-<link title="Brown Paper" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/styles/brown_paper.min.css" rel="alternate stylesheet">
-<link title="School Book" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/styles/school_book.min.css" rel="alternate stylesheet">
-<link title="IR Black" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/styles/ir_black.min.css" rel="alternate stylesheet">
-<link title="Solarized - Dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/styles/solarized_dark.min.css" rel="alternate stylesheet">
-<link title="Solarized - Light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/styles/solarized_light.min.css" rel="alternate stylesheet">
-<link title="Arta" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/styles/arta.min.css" rel="alternate stylesheet">
-<link title="Monokai" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/styles/monokai.min.css" rel="alternate stylesheet">
-<link title="XCode" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/styles/xcode.min.css" rel="alternate stylesheet">
-<link title="Pojoaque" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/styles/pojoaque.min.css" rel="alternate stylesheet">
-<link title="Rainbow" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/styles/rainbow.min.css" rel="alternate stylesheet">
-<link title="Tomorrow" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/styles/tomorrow.min.css" rel="alternate stylesheet">
-<link title="Tomorrow Night" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/styles/tomorrow-night.min.css" rel="alternate stylesheet">
-<link title="Tomorrow Night Bright" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/styles/tomorrow-night-bright.min.css" rel="alternate stylesheet">
-<link title="Tomorrow Night Blue" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/styles/tomorrow-night-blue.min.css" rel="alternate stylesheet">
-<link title="Tomorrow Night Eighties" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/styles/tomorrow-night-eighties.min.css" rel="alternate stylesheet">
-
-<script>
-$(function() {
-    $('#bottom-navbar').append(
-    '<ul class="nav navbar-nav">\
-      <li class="dropdown">\
-        <a class="dropdown-toggle" role="button" data-toggle="dropdown" href="#">Code Style</a>\
-        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">\
-          <li class="active"><a class="code-style-switch" title="Default-Code" href="#">Default</a></li>\
-          <li><a class="code-style-switch" title="Dark" href="#"                       >Dark</a></li>\
-          <li><a class="code-style-switch" title="FAR" href="#"                        >FAR</a></li>\
-          <li><a class="code-style-switch" title="IDEA" href="#"                       >IDEA</a></li>\
-          <li><a class="code-style-switch" title="Sunburst" href="#"                   >Sunburst</a></li>\
-          <li><a class="code-style-switch" title="Zenburn" href="#"                    >Zenburn</a></li>\
-          <li><a class="code-style-switch" title="Visual Studio" href="#"              >Visual Studio</a></li>\
-          <li><a class="code-style-switch" title="Ascetic" href="#"                    >Ascetic</a></li>\
-          <li><a class="code-style-switch" title="Magula" href="#"                     >Magula</a></li>\
-          <li><a class="code-style-switch" title="GitHub" href="#"                     >GitHub</a></li>\
-          <li><a class="code-style-switch" title="Google Code" href="#"                >Google Code</a></li>\
-          <li><a class="code-style-switch" title="Brown Paper" href="#"                >Brown Paper</a></li>\
-          <li><a class="code-style-switch" title="School Book" href="#"                >School Book</a></li>\
-          <li><a class="code-style-switch" title="IR Black" href="#"                   >IR Black</a></li>\
-          <li><a class="code-style-switch" title="Solarized - Dark" href="#"           >Solarized - Dark</a></li>\
-          <li><a class="code-style-switch" title="Solarized - Light" href="#"          >Solarized - Light</a></li>\
-          <li><a class="code-style-switch" title="Arta" href="#"                       >Arta</a></li>\
-          <li><a class="code-style-switch" title="Monokai" href="#"                    >Monokai</a></li>\
-          <li><a class="code-style-switch" title="XCode" href="#"                      >XCode</a></li>\
-          <li><a class="code-style-switch" title="Pojoaque" href="#"                   >Pojoaque</a></li>\
-          <li><a class="code-style-switch" title="Rainbow" href="#"                    >Rainbow</a></li>\
-          <li><a class="code-style-switch" title="Tomorrow" href="#"                   >Tomorrow</a></li>\
-          <li><a class="code-style-switch" title="Tomorrow Night" href="#"             >Tomorrow Night</a></li>\
-          <li><a class="code-style-switch" title="Tomorrow Night Bright" href="#"      >Tomorrow Night Bright</a></li>\
-          <li><a class="code-style-switch" title="Tomorrow Night Blue" href="#"        >Tomorrow Night Blue</a></li>\
-          <li><a class="code-style-switch" title="Tomorrow Night Eighties" href="#"    >Tomorrow Night Eighties</a></li>\
-        </ul>\
-      </li>\
-    </ul>');
-    $('.code-style-switch').click(function(){
-      var css = $('link[title="' + $(this).attr('title') + '"]');
-      $('#code-style[rel=stylesheet]').attr('href', css.attr('href'));
-      $('.code-style-switch').closest('li').removeClass('active');
-      $(this).closest('li').addClass('active');
-      return false;
-    });
-});
-</script>
  
 
 </head>
@@ -1069,140 +947,177 @@ $(function() {
 
 <h1>Introduction to XML2R package</h1>
 
+<p>The  <a href="https://github.com/cpsievert/XML2R">XML2R package</a> is meant to simplify scraping <a href="http://en.wikipedia.org/wiki/XML">XML</a> data from XML files hosted on the web. This example page demonstrates the ideas behind <strong>XML2R</strong> by walking through pseudo-source code of the <code>scrape</code> function in the <a href="http://cran.r-project.org/web/packages/pitchRx/">pitchRx</a> package. Similar ideas have been implemented in the <a href="https://github.com/cpsievert/bbscrapeR">bbscrapeR</a> package which provides a high-level API to statistics from <a href="http://www.nba.com/">nba.com</a> and <a href="http://www.wnba.com/">wnba.com</a>.</p>
+
 <h2>Extracting observations</h2>
 
-<p>The  <a href="https://github.com/cpsievert/XML2R">XML2R package</a> is meant to simplify scraping <a href="http://en.wikipedia.org/wiki/XML">XML</a> data from XML files hosted on the web. The main function, <code>XML2Obs</code>, coerces XML content into a list of <em>observations</em>. Here we define an <em>observation</em> as a matrix with one row. One observation will contain all attributes and the XML value for a particular XML lineage. The name of each list element (or each observation) tracks the XML hierarchy so observations can be grouped together in a sensible fashion at a later point. In the code below, we obtain 946 observations from two different XML files that contain data on <a href="http://en.wikipedia.org/wiki/Major_League_Baseball">Major League Baseball</a> games played on June 14th, 2013.</p>
+<p>The main function in <strong>XML2R</strong>, <code>XML2Obs</code>, coerces XML content into a list of <em>observations</em>. An <em>observation</em> is technically a matrix with one row and possibly many columns. One observation includes all XML attributes and the XML value for a particular XML lineage. The name of each list element (or each observation) tracks the XML hierarchy so observations can be grouped together in a sensible fashion at a later point. In the code below, we obtain 946 observations from two different XML files that contain data on <a href="http://en.wikipedia.org/wiki/Major_League_Baseball">Major League Baseball</a> games played on June 14th, 2013.</p>
 
 <div class="chunk" id="ex1"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">library</span><span class="hl std">(XML2R)</span>
 <span class="hl std">pre</span> <span class="hl kwb">&lt;-</span> <span class="hl str">&quot;http://gd2.mlb.com/components/game/mlb/year_2013/month_06/day_14/&quot;</span>
 <span class="hl std">post</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;gid_2013_06_14_phimlb_colmlb_1/inning/inning_all.xml&quot;</span><span class="hl std">,</span>
           <span class="hl str">&quot;gid_2013_06_14_seamlb_oakmlb_1/inning/inning_all.xml&quot;</span><span class="hl std">)</span>
 <span class="hl std">urls</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">paste0</span><span class="hl std">(pre, post)</span>
-<span class="hl std">obs</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">XML2Obs</span><span class="hl std">(urls)</span>
+<span class="hl std">obs</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">XML2Obs</span><span class="hl std">(urls,</span> <span class="hl kwc">as.equiv</span><span class="hl std">=</span><span class="hl num">TRUE</span><span class="hl std">,</span> <span class="hl kwc">quiet</span><span class="hl std">=</span><span class="hl num">TRUE</span><span class="hl std">)</span>
+<span class="hl kwd">table</span><span class="hl std">(</span><span class="hl kwd">names</span><span class="hl std">(obs))</span>
+</pre></div>
+
+<div class="output"><pre class="knitr r">## 
+##                                game                        game//inning        game//inning//bottom//action 
+##                                   2                                  18                                  18 
+##         game//inning//bottom//atbat  game//inning//bottom//atbat//pitch     game//inning//bottom//atbat//po 
+##                                  76                                 255                                   6 
+## game//inning//bottom//atbat//runner           game//inning//top//action            game//inning//top//atbat 
+##                                  66                                  15                                  82 
+##     game//inning//top//atbat//pitch        game//inning//top//atbat//po    game//inning//top//atbat//runner 
+##                                 321                                  10                                  77
 </pre></div>
 
 <p></div></div></p>
 
-<div class="chunk" id="n"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">length</span><span class="hl std">(obs)</span>
-</pre></div>
-
-<div class="output"><pre class="knitr r">## [1] 947
-</pre></div>
-
-<p></div></div></p>
-
-<p>Note that the length of the <code>obs</code> object is one longer than the true number of observations. That&#39;s because an element (named url_map) containing all the relevant file names will be appended to the end of the list. The values in this list can be used to link to the <code>url_key</code> variable back to the exact file name. This structuring helps us avoid unnecesarily repeating long file names in every observation.</p>
-
-<div class="chunk" id="str"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">tail</span><span class="hl std">(obs,</span> <span class="hl num">3</span><span class="hl std">)</span>
-</pre></div>
-
-<div class="output"><pre class="knitr r">## $`game//inning`
-##      num away_team home_team next url_key
-## [1,] "9" "sea"     "oak"     "N"  "url2" 
-## 
-## $game
-##      atBat    deck     hole     ind url_key
-## [1,] "489267" "519299" "455759" "F" "url2" 
-## 
-## $url_map
-##                                                                                                                    url1 
-## "http://gd2.mlb.com/components/game/mlb/year_2013/month_06/day_14/gid_2013_06_14_phimlb_colmlb_1/inning/inning_all.xml" 
-##                                                                                                                    url2 
-## "http://gd2.mlb.com/components/game/mlb/year_2013/month_06/day_14/gid_2013_06_14_seamlb_oakmlb_1/inning/inning_all.xml"
-</pre></div>
-
-<p></div></div></p>
-
-<p>As seen in the output above, the last observation happens at the game level while the second observation happens at the game//inning level. Of course, we can have many observations that belong to a particular level. To get a feel for how many levels we have (and their naming), we can use:</p>
-
-<div class="chunk" id="levels"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">lvls</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">unique</span><span class="hl std">(</span><span class="hl kwd">names</span><span class="hl std">(obs))</span>
-<span class="hl std">lvls</span>
-</pre></div>
-
-<div class="output"><pre class="knitr r">##  [1] "game//inning//top//atbat//pitch"     "game//inning//top//atbat"            "game//inning//bottom//atbat//pitch" 
-##  [4] "game//inning//bottom//atbat"         "game//inning//bottom//atbat//runner" "game//inning"                       
-##  [7] "game//inning//top//atbat//runner"    "game//inning//bottom//atbat//po"     "game//inning//top//atbat//po"       
-## [10] "game//inning//bottom//action"        "game//inning//top//action"           "game"                               
-## [13] "url_map"
-</pre></div>
-
-<p></div></div></p>
+<p>This output tells us that 255 pitches were thrown in the bottom inning and 321 were thrown in the top inning during these two games. Eventually, we will want to combine observations named <code>&#39;game//inning//bottom//atbat//pitch&#39;</code> and <code>&#39;game//inning//top//atbat//pitch&#39;</code> into the same table since they share XML attributes (in other words, the observations share variables). <strong>XML2R</strong> has another function <code>collapse_obs</code> that can be used to aggregate observations into the same table based on their names. </p>
 
 <h2>Renaming observations</h2>
 
-<p>Eventually we&#39;ll want to combine observations from the same level into a common table/matrix/data.frame. Before that, we may want to regard two different levels as equivalent. For example, I know that observations at the &quot;game//inning//top//atbat&quot;  level are essentially the same as observations at the &quot;game//inning//bottom//atbat&quot; level. I may want to <code>rename</code> these observations as &quot;game//inning//atbat&quot; and append a variable for each relevant observation that tracks whether the atbat occured at the &quot;top&quot; or &quot;bottom&quot; of the inning.</p>
+<p>Before aggregating observations into a collection of tables, we sometimes need to <code>re_name</code> observations. As mentioned previously, we have some observations with different names, but they should be put into the same table. By passing these names (that should be considered to be on the same level) to the <code>equiv</code> argument, <code>re_name</code> will automatically determine the difference in the naming scheme and suppress that difference.</p>
 
-<div class="chunk" id="rename"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">tmp</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">rename</span><span class="hl std">(obs,</span> <span class="hl kwc">equiv</span> <span class="hl std">=</span> <span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;game//inning//top//atbat&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;game//inning//bottom//atbat&quot;</span><span class="hl std">))</span>
+<div class="chunk" id="re_name"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">tmp</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">re_name</span><span class="hl std">(obs,</span> <span class="hl kwc">equiv</span><span class="hl std">=</span><span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;game//inning//top//atbat//pitch&quot;</span><span class="hl std">,</span>
+                           <span class="hl str">&quot;game//inning//bottom//atbat//pitch&quot;</span><span class="hl std">),</span> <span class="hl kwc">diff.name</span><span class="hl std">=</span><span class="hl str">&quot;side&quot;</span><span class="hl std">)</span>
+<span class="hl std">tmp</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">re_name</span><span class="hl std">(tmp,</span> <span class="hl kwc">equiv</span><span class="hl std">=</span><span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;game//inning//top//atbat//runner&quot;</span><span class="hl std">,</span>
+                           <span class="hl str">&quot;game//inning//bottom//atbat//runner&quot;</span><span class="hl std">),</span> <span class="hl kwc">diff.name</span><span class="hl std">=</span><span class="hl str">&quot;side&quot;</span><span class="hl std">)</span>
+<span class="hl std">tmp</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">re_name</span><span class="hl std">(tmp,</span> <span class="hl kwc">equiv</span><span class="hl std">=</span><span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;game//inning//top//atbat//po&quot;</span><span class="hl std">,</span>
+                           <span class="hl str">&quot;game//inning//bottom//atbat//po&quot;</span><span class="hl std">),</span> <span class="hl kwc">diff.name</span><span class="hl std">=</span><span class="hl str">&quot;side&quot;</span><span class="hl std">)</span>
+<span class="hl std">tmp</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">re_name</span><span class="hl std">(tmp,</span> <span class="hl kwc">equiv</span><span class="hl std">=</span><span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;game//inning//top//atbat&quot;</span><span class="hl std">,</span>
+                           <span class="hl str">&quot;game//inning//bottom//atbat&quot;</span><span class="hl std">),</span> <span class="hl kwc">diff.name</span><span class="hl std">=</span><span class="hl str">&quot;side&quot;</span><span class="hl std">)</span>
+<span class="hl std">obs2</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">re_name</span><span class="hl std">(tmp,</span> <span class="hl kwc">equiv</span><span class="hl std">=</span><span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;game//inning//top//action&quot;</span><span class="hl std">,</span>
+                           <span class="hl str">&quot;game//inning//bottom//action&quot;</span><span class="hl std">),</span> <span class="hl kwc">diff.name</span><span class="hl std">=</span><span class="hl str">&quot;side&quot;</span><span class="hl std">)</span>
+<span class="hl kwd">table</span><span class="hl std">(</span><span class="hl kwd">names</span><span class="hl std">(obs2))</span>
+</pre></div>
+
+<div class="output"><pre class="knitr r">## 
+##                        game                game//inning        game//inning//action         game//inning//atbat 
+##                           2                          18                          33                         158 
+##  game//inning//atbat//pitch     game//inning//atbat//po game//inning//atbat//runner 
+##                         576                          16                         143
 </pre></div>
 
 <p></div></div></p>
 
-<p>In this case, there is good reason to do this renaming for any name containing &quot;pitch&quot;, &quot;runner&quot;, &quot;action&quot;, or &quot;po&quot;.</p>
+<p>Now we see that 576 pitches were thrown in total. The information we removed is not lost; however, as a new column is appended to the end of each relevant observation. For example, notice how the side column contains the part of the name we just removed:</p>
 
-<div class="chunk" id="rename2"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">pitch</span> <span class="hl kwb">&lt;-</span> <span class="hl std">lvls[</span><span class="hl kwd">grep</span><span class="hl std">(</span><span class="hl str">&quot;pitch&quot;</span><span class="hl std">, lvls)]</span>
-<span class="hl std">tmp</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">rename</span><span class="hl std">(tmp,</span> <span class="hl kwc">equiv</span> <span class="hl std">= pitch,</span> <span class="hl kwc">diff.name</span> <span class="hl std">=</span> <span class="hl str">&quot;inning&quot;</span><span class="hl std">)</span>
-<span class="hl std">runner</span> <span class="hl kwb">&lt;-</span> <span class="hl std">lvls[</span><span class="hl kwd">grep</span><span class="hl std">(</span><span class="hl str">&quot;runner&quot;</span><span class="hl std">, lvls)]</span>
-<span class="hl std">tmp</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">rename</span><span class="hl std">(tmp,</span> <span class="hl kwc">equiv</span> <span class="hl std">= runner,</span> <span class="hl kwc">diff.name</span> <span class="hl std">=</span> <span class="hl str">&quot;inning&quot;</span><span class="hl std">)</span>
-<span class="hl std">action</span> <span class="hl kwb">&lt;-</span> <span class="hl std">lvls[</span><span class="hl kwd">grep</span><span class="hl std">(</span><span class="hl str">&quot;action&quot;</span><span class="hl std">, lvls)]</span>
-<span class="hl std">tmp</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">rename</span><span class="hl std">(tmp,</span> <span class="hl kwc">equiv</span> <span class="hl std">= action,</span> <span class="hl kwc">diff.name</span> <span class="hl std">=</span> <span class="hl str">&quot;inning&quot;</span><span class="hl std">)</span>
-<span class="hl std">po</span> <span class="hl kwb">&lt;-</span> <span class="hl std">lvls[</span><span class="hl kwd">grep</span><span class="hl std">(</span><span class="hl str">&quot;po&quot;</span><span class="hl std">, lvls)]</span>
-<span class="hl std">obs2</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">rename</span><span class="hl std">(tmp,</span> <span class="hl kwc">equiv</span> <span class="hl std">= po,</span> <span class="hl kwc">diff.name</span> <span class="hl std">=</span> <span class="hl str">&quot;inning&quot;</span><span class="hl std">)</span>
-<span class="hl kwd">unique</span><span class="hl std">(</span><span class="hl kwd">names</span><span class="hl std">(obs2))</span>
+<div class="chunk" id="look-ma"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">obs2[</span><span class="hl kwd">grep</span><span class="hl std">(</span><span class="hl str">&quot;game//inning//atbat//po&quot;</span><span class="hl std">,</span> <span class="hl kwd">names</span><span class="hl std">(obs2))][</span><span class="hl num">1</span><span class="hl opt">:</span><span class="hl num">2</span><span class="hl std">]</span>
 </pre></div>
 
-<div class="output"><pre class="knitr r">## [1] "game//inning//atbat//pitch"  "game//inning//atbat"         "game//inning//atbat//runner"
-## [4] "game//inning"                "game//inning//atbat//po"     "game//inning//action"       
-## [7] "game"                        "url_map"
+<div class="output"><pre class="knitr r">## $`game//inning//atbat//po`
+##      des                 
+## [1,] "Pickoff Attempt 1B"
+##      url                                                                                                                    
+## [1,] "http://gd2.mlb.com/components/game/mlb/year_2013/month_06/day_14/gid_2013_06_14_phimlb_colmlb_1/inning/inning_all.xml"
+##      side    
+## [1,] "bottom"
+## 
+## $`game//inning//atbat//po`
+##      des                 
+## [1,] "Pickoff Attempt 1B"
+##      url                                                                                                                    
+## [1,] "http://gd2.mlb.com/components/game/mlb/year_2013/month_06/day_14/gid_2013_06_14_phimlb_colmlb_1/inning/inning_all.xml"
+##      side 
+## [1,] "top"
 </pre></div>
 
 <p></div></div></p>
 
 <h2>Linking observations</h2>
 
-<p>After all that renaming, we now have data on <code class="knitr inline">7</code> different levels. Next, we may want to pool together observations from a common level into a table. Note that is also important that we have an option to link a child observation back to it&#39;s parent. For example, I may want to link a particular pitch (that is, an observation from the &quot;game//inning//atbat//pitch&quot; level) back to the relevant atbat (that is, an observation from the &quot;game//inning//atbat&quot; level).</p>
+<p>After all that renaming, we now have 7 different levels of observations. Let&#39;s examine observations on the <code>game\\inning</code> level:</p>
 
-<p>To help link children back to parents, we can use the <code>add_key</code> function. Here I will use <code>add_key</code> to create a link between an observation at the &quot;game//inning&quot; level and it&#39;s children. A similar link is also created to link observations at the &quot;game//inning//atbat&quot; level to it&#39;s children. Note that links are just another variable that is appended to relevant observations. Here I am naming those variables &quot;inning_key&quot; and &quot;atbat_key&quot;. This linking works assuming that the ordering of observations is preserved from the output of <code>XML2Obs</code> (which preserves the ordering in the original document(s)).</p>
+<div class="chunk" id="inning"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">obs2[</span><span class="hl kwd">grep</span><span class="hl std">(</span><span class="hl str">&quot;^game//inning$&quot;</span><span class="hl std">,</span> <span class="hl kwd">names</span><span class="hl std">(obs2))][</span><span class="hl num">1</span><span class="hl opt">:</span><span class="hl num">3</span><span class="hl std">]</span>
+</pre></div>
 
-<div class="chunk" id="add_key"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">tmp2</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">add_key</span><span class="hl std">(obs2,</span> <span class="hl kwc">parent</span> <span class="hl std">=</span> <span class="hl str">&quot;game//inning&quot;</span><span class="hl std">,</span> <span class="hl kwc">key.name</span> <span class="hl std">=</span> <span class="hl str">&quot;inning_key&quot;</span><span class="hl std">)</span>
-<span class="hl std">obswkey</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">add_key</span><span class="hl std">(tmp2,</span> <span class="hl kwc">parent</span> <span class="hl std">=</span> <span class="hl str">&quot;game//inning//atbat&quot;</span><span class="hl std">,</span> <span class="hl kwc">key.name</span> <span class="hl std">=</span> <span class="hl str">&quot;atbat_key&quot;</span><span class="hl std">)</span>
+<div class="output"><pre class="knitr r">## $`game//inning`
+##      num away_team home_team next
+## [1,] "1" "phi"     "col"     "Y" 
+##      url                                                                                                                    
+## [1,] "http://gd2.mlb.com/components/game/mlb/year_2013/month_06/day_14/gid_2013_06_14_phimlb_colmlb_1/inning/inning_all.xml"
+## 
+## $`game//inning`
+##      num away_team home_team next
+## [1,] "2" "phi"     "col"     "Y" 
+##      url                                                                                                                    
+## [1,] "http://gd2.mlb.com/components/game/mlb/year_2013/month_06/day_14/gid_2013_06_14_phimlb_colmlb_1/inning/inning_all.xml"
+## 
+## $`game//inning`
+##      num away_team home_team next
+## [1,] "3" "phi"     "col"     "Y" 
+##      url                                                                                                                    
+## [1,] "http://gd2.mlb.com/components/game/mlb/year_2013/month_06/day_14/gid_2013_06_14_phimlb_colmlb_1/inning/inning_all.xml"
+</pre></div>
+
+<p></div></div></p>
+
+<p>Before we aggregate observations into tables, we should preserve the parent-to-child relationships in the XML lineage. For example, we want to be able to identify in what inning a particular pitch was thrown.</p>
+
+<div class="chunk" id="add_key"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">obswkey</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">add_key</span><span class="hl std">(obs2,</span> <span class="hl kwc">parent</span> <span class="hl std">=</span> <span class="hl str">&quot;game//inning&quot;</span><span class="hl std">,</span> <span class="hl kwc">recycle</span> <span class="hl std">=</span> <span class="hl str">&quot;num&quot;</span><span class="hl std">,</span> <span class="hl kwc">key.name</span> <span class="hl std">=</span> <span class="hl str">&quot;inning&quot;</span><span class="hl std">)</span>
+</pre></div>
+
+<p></div></div></p>
+
+<p>As it turns out, the <code>away_team</code> and <code>home_team</code> columns are redundant as this information is embeded in the <code>url</code> column. Thus, there is only one other informative attribute on this level which is <code>next</code>. By recycling this value to all of its descendants as well, we remove any need to retain a <code>game//inning</code> table.</p>
+
+<div class="chunk" id="add_key2"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">obswkey</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">add_key</span><span class="hl std">(obswkey,</span> <span class="hl kwc">parent</span> <span class="hl std">=</span> <span class="hl str">&quot;game//inning&quot;</span><span class="hl std">,</span> <span class="hl kwc">recycle</span> <span class="hl std">=</span> <span class="hl str">&quot;next&quot;</span><span class="hl std">)</span>
+</pre></div>
+
+<p></div></div></p>
+
+<p>It is also imperative that we can identify which <code>atbat</code> a particular <code>pitch</code>, <code>runner</code>, and <code>po</code> belongs to. This can be done as follows:</p>
+
+<div class="chunk" id="add_key3"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">obswkey</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">add_key</span><span class="hl std">(obswkey,</span> <span class="hl kwc">parent</span> <span class="hl std">=</span> <span class="hl str">&quot;game//inning//atbat&quot;</span><span class="hl std">,</span> <span class="hl kwc">recycle</span> <span class="hl std">=</span> <span class="hl str">&quot;num&quot;</span><span class="hl std">)</span>
 </pre></div>
 
 <p></div></div></p>
 
 <h2>Collapsing observations</h2>
 
-<p>Finally, we are in a position to pool together observations that have a common name. The <code>collapse</code> function achieves this by row binding observations together and returning a list of matrices. Note that <code>collapse</code> doesn&#39;t require that observations from the same level to have the same set of variables. In the case where variables are missing, <code>NA</code>s will be used as the value.</p>
+<p>Finally, we are in a position to pool together observations that have a common name. The <code>collapse_obs</code> function achieves this by row binding observations together and returning a list of matrices. Note that <code>collapse_obs</code> does not require that observations from the same level to have the same set of variables in order to be binded into a common table. In the case where variables are missing, <code>NA</code>s will be used as the value.</p>
 
-<div class="chunk" id="collapse"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">tables</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">collapse</span><span class="hl std">(obswkey)</span>
-<span class="hl kwd">head</span><span class="hl std">(tables[[</span><span class="hl str">&quot;game//inning//atbat//po&quot;</span><span class="hl std">]])</span>
+<div class="chunk" id="collapse"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">tables</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">collapse_obs</span><span class="hl std">(obswkey)</span>
+<span class="hl com"># As mentioned before, we don't need the 'inning' table</span>
+<span class="hl std">tables</span> <span class="hl kwb">&lt;-</span> <span class="hl std">tables[</span><span class="hl opt">-</span><span class="hl kwd">grep</span><span class="hl std">(</span><span class="hl str">&quot;^game//inning$&quot;</span><span class="hl std">,</span> <span class="hl kwd">names</span><span class="hl std">(tables))]</span>
+<span class="hl std">table.names</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;game&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;action&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;atbat&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;pitch&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;po&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;runner&quot;</span><span class="hl std">)</span>
+<span class="hl std">tables</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">setNames</span><span class="hl std">(tables, table.names)</span>
+<span class="hl kwd">head</span><span class="hl std">(tables[[</span><span class="hl str">&quot;runner&quot;</span><span class="hl std">]])</span>
 </pre></div>
 
-<div class="output"><pre class="knitr r">##      des                  url_key inning   inning_key atbat_key
-## [1,] "Pickoff Attempt 1B" "url1"  "bottom" "3"        "26"     
-## [2,] "Pickoff Attempt 1B" "url1"  "top"    "4"        "29"     
-## [3,] "Pickoff Attempt 1B" "url1"  "top"    "6"        "54"     
-## [4,] "Pickoff Attempt 1B" "url1"  "top"    "7"        "65"     
-## [5,] "Pickoff Attempt 1B" "url1"  "top"    "8"        "72"     
-## [6,] "Pickoff Attempt 1B" "url1"  "bottom" "8"        "77"
+<div class="output"><pre class="knitr r">##      id       start end  event          score rbi earned
+## [1,] "471865" ""    ""   "Home Run"     "T"   "T" "T"   
+## [2,] "429667" ""    "1B" "Walk"         NA    NA  NA    
+## [3,] "429667" "1B"  "2B" "Hit By Pitch" NA    NA  NA    
+## [4,] "435623" ""    "1B" "Hit By Pitch" NA    NA  NA    
+## [5,] "435623" "1B"  ""   "Flyout"       NA    NA  NA    
+## [6,] "429667" "2B"  ""   "Flyout"       NA    NA  NA    
+##      url                                                                                                                    
+## [1,] "http://gd2.mlb.com/components/game/mlb/year_2013/month_06/day_14/gid_2013_06_14_phimlb_colmlb_1/inning/inning_all.xml"
+## [2,] "http://gd2.mlb.com/components/game/mlb/year_2013/month_06/day_14/gid_2013_06_14_phimlb_colmlb_1/inning/inning_all.xml"
+## [3,] "http://gd2.mlb.com/components/game/mlb/year_2013/month_06/day_14/gid_2013_06_14_phimlb_colmlb_1/inning/inning_all.xml"
+## [4,] "http://gd2.mlb.com/components/game/mlb/year_2013/month_06/day_14/gid_2013_06_14_phimlb_colmlb_1/inning/inning_all.xml"
+## [5,] "http://gd2.mlb.com/components/game/mlb/year_2013/month_06/day_14/gid_2013_06_14_phimlb_colmlb_1/inning/inning_all.xml"
+## [6,] "http://gd2.mlb.com/components/game/mlb/year_2013/month_06/day_14/gid_2013_06_14_phimlb_colmlb_1/inning/inning_all.xml"
+##      side     inning next num 
+## [1,] "bottom" "1"    "Y"  "6" 
+## [2,] "top"    "2"    "Y"  "8" 
+## [3,] "top"    "2"    "Y"  "9" 
+## [4,] "top"    "2"    "Y"  "9" 
+## [5,] "top"    "2"    "Y"  "12"
+## [6,] "top"    "2"    "Y"  "12"
 </pre></div>
 
 <p></div></div></p>
 
-<p>At this point, you are probably ready to save this data structure using your favorite method. I strongly recommend writing <code>tables</code> to a database if you plan on repeatedly querying your data. </p>
+<p>At this point, you probably want to save these tables. I strongly recommend writing to a database if you plan on repeatedly querying your data. There are multiple packages that allow one to write tables to a database in R including: <a href="http://cran.r-project.org/web/packages/RSQLite/index.html">RSQLite</a>, <a href="http://cran.r-project.org/web/packages/RMySQL/index.html">RMySQL</a>, <a href="http://cran.r-project.org/web/packages/rmongodb/index.html">rmongodb</a>, and <a href="http://cran.r-project.org/web/packages/DBI/index.html">DBI</a>. Here is a simple way to create a SQLite database using the <a href="http://cran.r-project.org/web/packages/dplyr/index.html">dplyr</a> package and copy our tables to that database:</p>
 
-<h2>Using XPath</h2>
-
-<p>If one is interested in just a subset of the XML document, the <code>xpath</code> option of <code>XML2Obs</code> can be used to specify <a href="http://www.w3schools.com/xpath/xpath_syntax.asp">XPath syntax</a>. Suppose for some reason I only want data that occurs on the &quot;game//inning//bottom&quot; level. </p>
-
-<div class="chunk" id="xpath"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">dat2</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">XML2Obs</span><span class="hl std">(urls,</span> <span class="hl kwc">xpath</span> <span class="hl std">=</span> <span class="hl str">&quot;/game/inning/bottom&quot;</span><span class="hl std">)</span>
-</pre></div>
-
-<p></div></div></p>
-
-<div class="chunk" id="xpath1"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">unique</span><span class="hl std">(</span><span class="hl kwd">names</span><span class="hl std">(dat2))</span>
-</pre></div>
-
-<div class="output"><pre class="knitr r">## [1] "atbat//pitch"  "atbat"         "atbat//runner" "atbat//po"     "action"        "url_map"
+<div class="chunk" id="lies"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">library</span><span class="hl std">(dplyr)</span>
+<span class="hl std">db</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">src_sqlite</span><span class="hl std">(</span><span class="hl str">&quot;my_db.sqlite3&quot;</span><span class="hl std">)</span>
+<span class="hl kwa">for</span> <span class="hl std">(i</span> <span class="hl kwa">in</span> <span class="hl kwd">names</span><span class="hl std">(tables))</span> <span class="hl kwd">copy_to</span><span class="hl std">(db,</span> <span class="hl kwc">df</span> <span class="hl std">= tables[[i]],</span> <span class="hl kwc">name</span> <span class="hl std">= i)</span>
 </pre></div>
 
 <p></div></div></p>

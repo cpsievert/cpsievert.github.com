@@ -1,6 +1,6 @@
 Stat 226 - Lecture 6
 ========================================================
-date: 01/30/13
+date: 01/30/14
 transition: rotate
 incremental: true
 

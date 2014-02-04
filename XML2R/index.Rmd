@@ -8,98 +8,104 @@ library(knitr)
 render_html()
 options(width=120)
 opts_chunk$set(fig.path="figure/", cache.path="cache/", fig.align="center", warning=FALSE, message=FALSE, fig.height=7, fig.width=5)
+library(devtools)
+#install_github('XML2R', 'cpsievert')
 ```
 
 Introduction to XML2R package
 ====================================
 
+The  [XML2R package](https://github.com/cpsievert/XML2R) is meant to simplify scraping [XML](http://en.wikipedia.org/wiki/XML) data from XML files hosted on the web. This example page demonstrates the ideas behind **XML2R** by walking through pseudo-source code of the `scrape` function in the [pitchRx](http://cran.r-project.org/web/packages/pitchRx/) package. Similar ideas have been implemented in the [bbscrapeR](https://github.com/cpsievert/bbscrapeR) package which provides a high-level API to statistics from [nba.com](http://www.nba.com/) and [wnba.com](http://www.wnba.com/).
+
 Extracting observations
 --------------------------
 
-The  [XML2R package](https://github.com/cpsievert/XML2R) is meant to simplify scraping [XML](http://en.wikipedia.org/wiki/XML) data from XML files hosted on the web. The main function, `XML2Obs`, coerces XML content into a list of _observations_. Here we define an _observation_ as a matrix with one row. One observation will contain all attributes and the XML value for a particular XML lineage. The name of each list element (or each observation) tracks the XML hierarchy so observations can be grouped together in a sensible fashion at a later point. In the code below, we obtain 946 observations from two different XML files that contain data on [Major League Baseball](http://en.wikipedia.org/wiki/Major_League_Baseball) games played on June 14th, 2013.
+The main function in **XML2R**, `XML2Obs`, coerces XML content into a list of _observations_. An _observation_ is technically a matrix with one row and possibly many columns. One observation includes all XML attributes and the XML value for a particular XML lineage. The name of each list element (or each observation) tracks the XML hierarchy so observations can be grouped together in a sensible fashion at a later point. In the code below, we obtain 946 observations from two different XML files that contain data on [Major League Baseball](http://en.wikipedia.org/wiki/Major_League_Baseball) games played on June 14th, 2013.
 
-```{r ex1, tidy=FALSE, results='hide'}
+```{r ex1, tidy=FALSE}
 library(XML2R)
 pre <- "http://gd2.mlb.com/components/game/mlb/year_2013/month_06/day_14/"
 post <- c("gid_2013_06_14_phimlb_colmlb_1/inning/inning_all.xml",
           "gid_2013_06_14_seamlb_oakmlb_1/inning/inning_all.xml")
 urls <- paste0(pre, post)
-obs <- XML2Obs(urls)
+obs <- XML2Obs(urls, as.equiv=TRUE, quiet=TRUE)
+table(names(obs))
 ```
 
-```{r n}
-length(obs)
-```
-
-Note that the length of the `obs` object is one longer than the true number of observations. That's because an element (named url_map) containing all the relevant file names will be appended to the end of the list. The values in this list can be used to link to the `url_key` variable back to the exact file name. This structuring helps us avoid unnecesarily repeating long file names in every observation.
-
-```{r str}
-tail(obs, 3)
-```
-
-As seen in the output above, the last observation happens at the game level while the second observation happens at the game//inning level. Of course, we can have many observations that belong to a particular level. To get a feel for how many levels we have (and their naming), we can use:
-
-```{r levels}
-lvls <- unique(names(obs))
-lvls
-```
+This output tells us that 255 pitches were thrown in the bottom inning and 321 were thrown in the top inning during these two games. Eventually, we will want to combine observations named `'game//inning//bottom//atbat//pitch'` and `'game//inning//top//atbat//pitch'` into the same table since they share XML attributes (in other words, the observations share variables). **XML2R** has another function `collapse_obs` that can be used to aggregate observations into the same table based on their names. 
 
 Renaming observations
 --------------------------
 
-Eventually we'll want to combine observations from the same level into a common table/matrix/data.frame. Before that, we may want to regard two different levels as equivalent. For example, I know that observations at the "game//inning//top//atbat"  level are essentially the same as observations at the "game//inning//bottom//atbat" level. I may want to `rename` these observations as "game//inning//atbat" and append a variable for each relevant observation that tracks whether the atbat occured at the "top" or "bottom" of the inning.
+Before aggregating observations into a collection of tables, we sometimes need to `re_name` observations. As mentioned previously, we have some observations with different names, but they should be put into the same table. By passing these names (that should be considered to be on the same level) to the `equiv` argument, `re_name` will automatically determine the difference in the naming scheme and suppress that difference.
 
-```{r rename, message=FALSE}
-tmp <- rename(obs, equiv=c("game//inning//top//atbat", "game//inning//bottom//atbat")) 
+```{r re_name, message=FALSE, tidy=FALSE}
+tmp <- re_name(obs, equiv=c("game//inning//top//atbat//pitch", 
+                           "game//inning//bottom//atbat//pitch"), diff.name="side") 
+tmp <- re_name(tmp, equiv=c("game//inning//top//atbat//runner", 
+                           "game//inning//bottom//atbat//runner"), diff.name="side")  
+tmp <- re_name(tmp, equiv=c("game//inning//top//atbat//po", 
+                           "game//inning//bottom//atbat//po"), diff.name="side") 
+tmp <- re_name(tmp, equiv=c("game//inning//top//atbat", 
+                           "game//inning//bottom//atbat"), diff.name="side") 
+obs2 <- re_name(tmp, equiv=c("game//inning//top//action", 
+                           "game//inning//bottom//action"), diff.name="side") 
+table(names(obs2))
 ```
 
-In this case, there is good reason to do this renaming for any name containing "pitch", "runner", "action", or "po".
+Now we see that 576 pitches were thrown in total. The information we removed is not lost; however, as a new column is appended to the end of each relevant observation. For example, notice how the side column contains the part of the name we just removed:
 
-```{r rename2, message=FALSE}
-pitch <- lvls[grep("pitch", lvls)]
-tmp <- rename(tmp, equiv=pitch, diff.name="inning") 
-runner <- lvls[grep("runner", lvls)]
-tmp <- rename(tmp, equiv=runner, diff.name="inning") 
-action <- lvls[grep("action", lvls)]
-tmp <- rename(tmp, equiv=action, diff.name="inning")  
-po <- lvls[grep("po", lvls)]
-obs2 <- rename(tmp, equiv=po, diff.name="inning")
-unique(names(obs2))
+```{r look-ma}
+obs2[grep("game//inning//atbat//po", names(obs2))][1:2]
 ```
+
 
 Linking observations
 ----------------------------
 
-After all that renaming, we now have data on `r length(unique(names(obs2)))-1` different levels. Next, we may want to pool together observations from a common level into a table. Note that is also important that we have an option to link a child observation back to it's parent. For example, I may want to link a particular pitch (that is, an observation from the "game//inning//atbat//pitch" level) back to the relevant atbat (that is, an observation from the "game//inning//atbat" level).
+After all that renaming, we now have 7 different levels of observations. Let's examine observations on the `game\\inning` level:
 
-To help link children back to parents, we can use the `add_key` function. Here I will use `add_key` to create a link between an observation at the "game//inning" level and it's children. A similar link is also created to link observations at the "game//inning//atbat" level to it's children. Note that links are just another variable that is appended to relevant observations. Here I am naming those variables "inning_key" and "atbat_key". This linking works assuming that the ordering of observations is preserved from the output of `XML2Obs` (which preserves the ordering in the original document(s)).
+```{r inning}
+obs2[grep("^game//inning$", names(obs2))][1:3]
+```
 
-```{r add_key, message=FALSE}
-tmp2 <- add_key(obs2, parent="game//inning", key.name="inning_key")
-obswkey <- add_key(tmp2, parent="game//inning//atbat", key.name="atbat_key")
+Before we aggregate observations into tables, we should preserve the parent-to-child relationships in the XML lineage. For example, we want to be able to identify in what inning a particular pitch was thrown.
+
+```{r add_key}
+obswkey <- add_key(obs2, parent="game//inning", recycle="num", key.name="inning")
+```
+
+As it turns out, the `away_team` and `home_team` columns are redundant as this information is embeded in the `url` column. Thus, there is only one other informative attribute on this level which is `next`. By recycling this value to all of its descendants as well, we remove any need to retain a `game//inning` table.
+
+```{r add_key2}
+obswkey <- add_key(obswkey, parent="game//inning", recycle="next")
+```
+
+It is also imperative that we can identify which `atbat` a particular `pitch`, `runner`, and `po` belongs to. This can be done as follows:
+
+```{r add_key3}
+obswkey <- add_key(obswkey, parent="game//inning//atbat", recycle="num")
 ```
 
 Collapsing observations
 ----------------------------
 
-Finally, we are in a position to pool together observations that have a common name. The `collapse` function achieves this by row binding observations together and returning a list of matrices. Note that `collapse` doesn't require that observations from the same level to have the same set of variables. In the case where variables are missing, `NA`s will be used as the value.
+Finally, we are in a position to pool together observations that have a common name. The `collapse_obs` function achieves this by row binding observations together and returning a list of matrices. Note that `collapse_obs` does not require that observations from the same level to have the same set of variables in order to be binded into a common table. In the case where variables are missing, `NA`s will be used as the value.
 
 ```{r collapse}
-tables <- collapse(obswkey)
-head(tables[["game//inning//atbat//po"]])
+tables <- collapse_obs(obswkey)
+#As mentioned before, we don't need the 'inning' table
+tables <- tables[-grep("^game//inning$", names(tables))]
+table.names <- c("game", "action", "atbat", "pitch", "po", "runner")
+tables <- setNames(tables, table.names)
+head(tables[["runner"]])
 ```
 
-At this point, you are probably ready to save this data structure using your favorite method. I strongly recommend writing `tables` to a database if you plan on repeatedly querying your data. 
+At this point, you probably want to save these tables. I strongly recommend writing to a database if you plan on repeatedly querying your data. There are multiple packages that allow one to write tables to a database in R including: [RSQLite](http://cran.r-project.org/web/packages/RSQLite/index.html), [RMySQL](http://cran.r-project.org/web/packages/RMySQL/index.html), [rmongodb](http://cran.r-project.org/web/packages/rmongodb/index.html), and [DBI](http://cran.r-project.org/web/packages/DBI/index.html). Here is a simple way to create a SQLite database using the [dplyr](http://cran.r-project.org/web/packages/dplyr/index.html) package and copy our tables to that database:
 
-Using XPath
---------------------------
-
-If one is interested in just a subset of the XML document, the `xpath` option of `XML2Obs` can be used to specify [XPath syntax](http://www.w3schools.com/xpath/xpath_syntax.asp). Suppose for some reason I only want data that occurs on the "game//inning//bottom" level. 
-
-```{r xpath, results='hide'}
-dat2 <- XML2Obs(urls, xpath="/game/inning/bottom")
+```{r lies, eval=FALSE}
+library(dplyr) 
+db <- src_sqlite("my_db.sqlite3")
+for (i in names(tables)) copy_to(db, df=tables[[i]], name=i)
 ```
 
-```{r xpath1}
-unique(names(dat2))
-```
