@@ -6,7 +6,7 @@
 Introduction to pitchRx package
 ====================================
 
-The  [pitchRx package](https://github.com/cpsievert/pitchRx) provides tools for collecting Major League Baseball (MLB) Gameday data and visualizing  [PITCHf/x](http://en.wikipedia.org/wiki/PITCHf/x). This page give a few examples of how to use it. You can view the source file used to generate this web page [here](https://github.com/cpsievert/cpsievert.github.com/blob/master/pitchRx/index.Rmd).
+The  [pitchRx package](https://github.com/cpsievert/pitchRx) provides tools for collecting Major League Baseball (MLB) Gameday data and visualizing  [PITCHf/x](http://en.wikipedia.org/wiki/PITCHf/x). This page provides a rough overview of it's scope, but the [RJournal article](https://www.dropbox.com/s/wrbnileguf74s39/RJwrapper.pdf) is more comprehensive. The [source file](https://github.com/cpsievert/cpsievert.github.com/blob/master/pitchRx/index.Rmd) used to generate this page is helpful to see how to embed pitchRx animations in to documents using [knitr](http://yihui.name/knitr/). If coding isn't your thing, you might want to just [play](http://glimmer.rstudio.com/cpsievert/pitchRx/) with my PITCHf/x visualization app!
 
 
 
@@ -17,247 +17,80 @@ The  [pitchRx package](https://github.com/cpsievert/pitchRx) provides tools for 
 Data Collection
 ----------------------------
 
-### Collecting data in bulk
+### Collecting 'smallish' data
 
-**pitchRx** makes it easy to collect Gameday data directly from the source. The main scraping function in **pitchRx**, `scrape`, currently supports four different types of files. Each of the four types have a common file name ending: [miniscoreboard.xml](http://gd2.mlb.com/components/game/mlb/year_2012/month_05/day_01/miniscoreboard.xml), [players.xml](http://gd2.mlb.com/components/game/mlb/year_2012/month_05/day_01/gid_2012_05_01_arimlb_wasmlb_1/players.xml), [inning/inning_all.xml](http://gd2.mlb.com/components/game/mlb/year_2012/month_05/day_01/gid_2012_05_01_arimlb_wasmlb_1/inning/inning_all.xml), and [inning/inning_hit.xml](http://gd2.mlb.com/components/game/mlb/year_2012/month_05/day_01/gid_2012_05_01_arimlb_wasmlb_1/inning/inning_hit.xml). `scrape` extracts information from these files and returns a named list of data frames. 
+**pitchRx** makes it incredibly simple to collect PITCHf/x directly from the source. Here, **pitchRx**'s `scrape` function is used to collect all PITCHf/x data recorded on June 1st, 2013.
 
-<div class="chunk" id="scrape"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">library</span>(pitchRx)
-files &lt;- <span class="hl kwd">c</span>(<span class="hl str">&quot;miniscoreboard.xml&quot;</span>, <span class="hl str">&quot;players.xml&quot;</span>
-          <span class="hl str">&quot;inning/inning_all.xml&quot;</span>, <span class="hl str">&quot;inning/inning_hit.xml&quot;</span>)
-dat &lt;- <span class="hl kwd">scrape</span>(start=<span class="hl str">&quot;2011-01-01&quot;</span>, end=<span class="hl str">&quot;2011-12-31&quot;</span>, suffix = files)
+<div class="chunk" id="scrape"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">library</span><span class="hl std">(pitchRx)</span>
+<span class="hl std">dat</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">scrape</span><span class="hl std">(</span><span class="hl kwc">start</span><span class="hl std">=</span><span class="hl str">&quot;2013-06-01&quot;</span><span class="hl std">,</span> <span class="hl kwc">end</span><span class="hl std">=</span><span class="hl str">&quot;2013-06-01&quot;</span><span class="hl std">)</span>
 </pre></div>
 </div></div>
 
 
-In this example, `dat` is a very large object. It is a list of 10 data frames and the data frame `dat$pitch` alone contains more than a million rows and about 45 columns! For this reason, if the user wants to collect data in bulk, it is highly recommended to query on a bi-annual basis and append the results to a database. There are many database options, but here is a simple example of how to append the `dat$pitch` and `dat$atbat` tables to a [MySQL](http://en.wikipedia.org/wiki/MySQL) database using the [RMySQL](http://cran.r-project.org/web/packages/RMySQL/index.html) package.
-
-<div class="chunk" id="MySQL"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">library</span><span class="hl std">(RMySQL)</span>
-<span class="hl std">drv</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">dbDriver</span><span class="hl std">(</span><span class="hl str">&quot;MySQL&quot;</span><span class="hl std">)</span>
-<span class="hl std">MLB</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">dbConnect</span><span class="hl std">(drv,</span> <span class="hl kwc">user</span><span class="hl std">=</span><span class="hl str">&quot;your_user_name&quot;</span><span class="hl std">,</span> <span class="hl kwc">password</span><span class="hl std">=</span><span class="hl str">&quot;your_password&quot;</span><span class="hl std">,</span>
-                 <span class="hl kwc">dbname</span><span class="hl std">=</span><span class="hl str">&quot;your_database_name&quot;</span><span class="hl std">,</span> <span class="hl kwc">host</span><span class="hl std">=</span><span class="hl str">&quot;your_host&quot;</span><span class="hl std">)</span>
-<span class="hl kwd">dbWriteTable</span><span class="hl std">(MLB,</span> <span class="hl kwc">value</span> <span class="hl std">= dat</span><span class="hl opt">$</span><span class="hl std">pitch,</span> <span class="hl kwc">name</span> <span class="hl std">=</span> <span class="hl str">&quot;pitch&quot;</span><span class="hl std">,</span> <span class="hl kwc">row.names</span> <span class="hl std">=</span> <span class="hl num">FALSE</span><span class="hl std">,</span> <span class="hl kwc">append</span> <span class="hl std">=</span> <span class="hl num">TRUE</span><span class="hl std">)</span>
-<span class="hl kwd">dbWriteTable</span><span class="hl std">(MLB,</span> <span class="hl kwc">value</span> <span class="hl std">= dat</span><span class="hl opt">$</span><span class="hl std">atbat,</span> <span class="hl kwc">name</span> <span class="hl std">=</span> <span class="hl str">&quot;atbat&quot;</span><span class="hl std">,</span> <span class="hl kwc">row.names</span> <span class="hl std">=</span> <span class="hl num">FALSE</span><span class="hl std">,</span> <span class="hl kwc">append</span> <span class="hl std">=</span> <span class="hl num">TRUE</span><span class="hl std">)</span>
+<div class="chunk" id="names"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">names</span><span class="hl std">(dat)</span>
+</pre></div>
+<div class="output"><pre class="knitr r">## [1] "atbat"  "action" "pitch"  "po"     "runner"
+</pre></div>
+<div class="source"><pre class="knitr r"><span class="hl kwd">dim</span><span class="hl std">(dat[[</span><span class="hl str">&quot;pitch&quot;</span><span class="hl std">]])</span>
+</pre></div>
+<div class="output"><pre class="knitr r">## [1] 4682   46
 </pre></div>
 </div></div>
 
 
-No matter how you're storing data, you will probably want to join `data$atbat` with `data$pitch` at some point. For instance, lets combine all information on the 'at-bat and 'pitch' level for every 'four-seam' and 'cutting' fastball thrown by Mariano Rivera and Phil Hughes during the 2011 season:
-
-<div class="chunk" id="joining"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">names</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;Mariano Rivera&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;Phil Hughes&quot;</span><span class="hl std">)</span>
-<span class="hl std">atbats</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">subset</span><span class="hl std">(dat</span><span class="hl opt">$</span><span class="hl std">atbat, pitcher_name</span> <span class="hl opt">==</span> <span class="hl std">name)</span>
-<span class="hl std">pitchFX</span> <span class="hl kwb">&lt;-</span> <span class="hl std">plyr::</span><span class="hl kwd">join</span><span class="hl std">(atbats, dat</span><span class="hl opt">$</span><span class="hl std">pitch,</span> <span class="hl kwc">by</span><span class="hl std">=</span><span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;num&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;url&quot;</span><span class="hl std">),</span> <span class="hl kwc">type</span><span class="hl std">=</span><span class="hl str">&quot;inner&quot;</span><span class="hl std">)</span>
-<span class="hl std">pitches</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">subset</span><span class="hl std">(pitchFX, pitch_type</span> <span class="hl opt">==</span> <span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;FF&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;FC&quot;</span><span class="hl std">))</span>
-</pre></div>
-</div></div>
-
-
-The `pitches` object is used as an example data and can be accessed by simply entering `data(pitches, package="pitchRx")` in your console. If you're using you're MySQL database, you could also recreate `pitches` using this query (if you have multiple years in your database, you'll want to add criteria for the year of interest):
-
-<div class="chunk" id="sql"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">pitches</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">dbGetQuery</span><span class="hl std">(MLB,</span> <span class="hl str">&quot;SELECT * FROM atbat INNER JOIN pitch 
-                      ON (atbat.num = pitch.num AND atbat.url = pitch.url) 
-                      WHERE atbat.pitcher_name = 'Mariano Rivera' 
-                      OR atbat.pitcher_name = 'Phil Hughes'&quot;</span><span class="hl std">)</span>
-</pre></div>
-</div></div>
-
+By default, `scrape` will return a list of <code class="knitr inline">5</code> data frames. The `'pitch'` data frame contains the actual PITCHf/x data which is recorded on a pitch-by-pitch basis. The dimensions of this data frame indicate that <code class="knitr inline">4682</code> pitches were thrown on June 1st, 2013. If your analysis requires PITCHf/x data over many months, you surely don't want to pull all that data into a single `R` session! For this (and other) reasons, `scrape` can write directly to a database (see the "Managing PITCHf/x data" section). 
 
 ### Collecting data by Gameday IDs
 
-`scrape` also has an option named `game.ids` that allows one to query specific game(s) rather than all games between two dates. For example, suppose I want all PITCHf/x data on every game player by the Minnesota Twins in 2011. I can find the relevant Gameday IDs using information from the built in `gids` object:
+In the previous example, `scrape` actually determines the relevant game IDs based on the `start` and `end` date. If the user wants a more complicated query based to specific games, relevant game IDs can be passed to the `game.ids` argument using the built in `gids` data object. 
 
-<div class="chunk" id="gids"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">data</span><span class="hl std">(gids,</span> <span class="hl kwc">package</span><span class="hl std">=</span><span class="hl str">&quot;pitchRx&quot;</span><span class="hl std">)</span>
-<span class="hl std">twins11</span> <span class="hl kwb">&lt;-</span> <span class="hl std">gids[</span><span class="hl kwd">grepl</span><span class="hl std">(</span><span class="hl str">&quot;min&quot;</span><span class="hl std">, gids)</span> <span class="hl opt">&amp;</span> <span class="hl kwd">grepl</span><span class="hl std">(</span><span class="hl str">&quot;2011&quot;</span><span class="hl std">, gids)]</span>
-<span class="hl kwd">head</span><span class="hl std">(twins11)</span>
+<div class="chunk" id="game.ids"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">data</span><span class="hl std">(gids,</span> <span class="hl kwc">package</span><span class="hl std">=</span><span class="hl str">&quot;pitchRx&quot;</span><span class="hl std">)</span>
+<span class="hl kwd">head</span><span class="hl std">(gids)</span>
 </pre></div>
-<div class="output"><pre class="knitr r">## [1] "gid_2011_02_27_bosmlb_minmlb_1" "gid_2011_02_28_minmlb_bosmlb_1"
-## [3] "gid_2011_03_01_bosmlb_minmlb_1" "gid_2011_03_02_minmlb_pitmlb_1"
-## [5] "gid_2011_03_03_minmlb_balmlb_1" "gid_2011_03_04_tbamlb_minmlb_1"
+<div class="output"><pre class="knitr r">## [1] "gid_2008_02_26_fanbbc_phimlb_1" "gid_2008_02_26_flsbbc_detmlb_1"
+## [3] "gid_2008_02_26_umibbc_flomlb_1" "gid_2008_02_26_umwbbc_nynmlb_1"
+## [5] "gid_2008_02_27_cinmlb_phimlb_1" "gid_2008_02_27_colmlb_chamlb_1"
 </pre></div>
 </div></div>
 
 
-<div class="chunk" id="scrape2"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">dat</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">scrape</span><span class="hl std">(</span><span class="hl kwc">game.ids</span><span class="hl std">=twins11)</span>
+As you can see, the `gids` object contains game IDs and those IDs contain relevant dates as well as abbreviations for the home and away team name. Since the away team is always listed first, we could do the following to collect PITCHf/x data from every away game played by the Minnesota Twins in July of 2013.
+
+<div class="chunk" id="scrape2"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">MNaway13</span> <span class="hl kwb">&lt;-</span> <span class="hl std">gids[</span><span class="hl kwd">grep</span><span class="hl std">(</span><span class="hl str">&quot;2013_06_[0-9]{2}_minmlb*&quot;</span><span class="hl std">, gids)]</span>
+<span class="hl std">dat2</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">scrape</span><span class="hl std">(</span><span class="hl kwc">game.ids</span><span class="hl std">=MNaway13)</span>
+</pre></div>
+</div></div>
+
+
+### Managing PITCHf/x data in bulk
+
+Creating and maintaining a PITCHf/x database is a breeze with **pitchRx** and [dplyr](http://cran.r-project.org/web/packages/dplyr/index.html). With a few lines of code (and some patience), all available PITCHf/x data can be obtained directly from its source and stored in a local [SQLite](http://www.sqlite.org/) database:
+
+<div class="chunk" id="sqlite"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">library</span><span class="hl std">(dplyr)</span>
+<span class="hl std">db</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">src_sqlite</span><span class="hl std">(</span><span class="hl str">&quot;pitchfx.sqlite3&quot;</span><span class="hl std">,</span> <span class="hl kwc">create</span><span class="hl std">=</span><span class="hl num">TRUE</span><span class="hl std">)</span>
+<span class="hl kwd">scrape</span><span class="hl std">(</span><span class="hl kwc">start</span><span class="hl std">=</span><span class="hl str">&quot;2008-01-01&quot;</span><span class="hl std">,</span> <span class="hl kwc">end</span><span class="hl std">=</span><span class="hl kwd">Sys.Date</span><span class="hl std">(),</span> <span class="hl kwc">connect</span><span class="hl std">=db</span><span class="hl opt">$</span><span class="hl std">con)</span>
+</pre></div>
+</div></div>
+
+
+The website which hosts PITCHf/x data hosts a wealth of other data that might come in handy for PITCHf/x analysis. The file type which contains PITCHf/x always ends with [inning/inning_all.xml](http://gd2.mlb.com/components/game/mlb/year_2012/month_05/day_01/gid_2012_05_01_arimlb_wasmlb_1/inning/inning_all.xml). `scrape` also has support to collect data from three other types of files: [miniscoreboard.xml](http://gd2.mlb.com/components/game/mlb/year_2012/month_05/day_01/miniscoreboard.xml), [players.xml](http://gd2.mlb.com/components/game/mlb/year_2012/month_05/day_01/gid_2012_05_01_arimlb_wasmlb_1/players.xml), and [inning/inning_hit.xml](http://gd2.mlb.com/components/game/mlb/year_2012/month_05/day_01/gid_2012_05_01_arimlb_wasmlb_1/inning/inning_hit.xml). Data from these files can easily be added to our existing PITCHf/x database:
+
+<div class="chunk" id="add"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">files</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;miniscoreboard.xml&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;players.xml&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;inning/inning_hit.xml&quot;</span><span class="hl std">)</span>
+<span class="hl kwd">scrape</span><span class="hl std">(</span><span class="hl kwc">start</span><span class="hl std">=</span><span class="hl str">&quot;2008-01-01&quot;</span><span class="hl std">,</span> <span class="hl kwc">end</span><span class="hl std">=</span><span class="hl kwd">Sys.Date</span><span class="hl std">(),</span> <span class="hl kwc">suffix</span><span class="hl std">=files,</span> <span class="hl kwc">connect</span><span class="hl std">=db</span><span class="hl opt">$</span><span class="hl std">con)</span>
 </pre></div>
 </div></div>
 
 
 ### Building your own custom scraper
 
-The rest of this section demonstrates how to build a custom Gameday scraper using [XML2R](https://github.com/cpsievert/XML2R) (`scrape` is built on top of this package). For a more detailed look at **XML2R**, [see here](http://cpsievert.github.io/XML2R/). 
-
-#### Obtaining urls
-
-The first (and probably most difficult) step of building a scraper is to obtain the file names of interest. `pitchRx::makeUrls` is convenient for constructing urls that are specific to the [Gameday website](http://gd2.mlb.com/components/game/mlb/). The default functionality of `makeUrls` is to "infer" all the Gameday links that exists between two dates. For example:
-
-<div class="chunk" id="makeUrls"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">urls</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">makeUrls</span><span class="hl std">(</span><span class="hl kwc">start</span><span class="hl std">=</span><span class="hl str">&quot;2012-06-01&quot;</span><span class="hl std">,</span> <span class="hl kwc">end</span><span class="hl std">=</span><span class="hl str">&quot;2012-06-01&quot;</span><span class="hl std">)</span>
-<span class="hl std">urls</span>
-</pre></div>
-<div class="output"><pre class="knitr r">##  [1] "http://gd2.mlb.com/components/game/mlb/year_2012/month_06/day_01/gid_2012_06_01_arimlb_sdnmlb_1"
-##  [2] "http://gd2.mlb.com/components/game/mlb/year_2012/month_06/day_01/gid_2012_06_01_atlmlb_wasmlb_1"
-##  [3] "http://gd2.mlb.com/components/game/mlb/year_2012/month_06/day_01/gid_2012_06_01_balmlb_tbamlb_1"
-##  [4] "http://gd2.mlb.com/components/game/mlb/year_2012/month_06/day_01/gid_2012_06_01_bosmlb_tormlb_1"
-##  [5] "http://gd2.mlb.com/components/game/mlb/year_2012/month_06/day_01/gid_2012_06_01_chnmlb_sfnmlb_1"
-##  [6] "http://gd2.mlb.com/components/game/mlb/year_2012/month_06/day_01/gid_2012_06_01_cinmlb_houmlb_1"
-##  [7] "http://gd2.mlb.com/components/game/mlb/year_2012/month_06/day_01/gid_2012_06_01_lanmlb_colmlb_1"
-##  [8] "http://gd2.mlb.com/components/game/mlb/year_2012/month_06/day_01/gid_2012_06_01_miamlb_phimlb_1"
-##  [9] "http://gd2.mlb.com/components/game/mlb/year_2012/month_06/day_01/gid_2012_06_01_minmlb_clemlb_1"
-## [10] "http://gd2.mlb.com/components/game/mlb/year_2012/month_06/day_01/gid_2012_06_01_nyamlb_detmlb_1"
-## [11] "http://gd2.mlb.com/components/game/mlb/year_2012/month_06/day_01/gid_2012_06_01_oakmlb_kcamlb_1"
-## [12] "http://gd2.mlb.com/components/game/mlb/year_2012/month_06/day_01/gid_2012_06_01_pitmlb_milmlb_1"
-## [13] "http://gd2.mlb.com/components/game/mlb/year_2012/month_06/day_01/gid_2012_06_01_seamlb_chamlb_1"
-## [14] "http://gd2.mlb.com/components/game/mlb/year_2012/month_06/day_01/gid_2012_06_01_slnmlb_nynmlb_1"
-## [15] "http://gd2.mlb.com/components/game/mlb/year_2012/month_06/day_01/gid_2012_06_01_texmlb_anamlb_1"
-</pre></div>
-</div></div>
-
-
-As a side note, `makeUrls` can also be tricked into constructing the urls specific to each day:
-
-<div class="chunk" id="makeUrls2"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">makeUrls</span><span class="hl std">(</span><span class="hl kwc">start</span><span class="hl std">=</span><span class="hl str">&quot;2012-06-01&quot;</span><span class="hl std">,</span> <span class="hl kwc">end</span><span class="hl std">=</span><span class="hl str">&quot;2012-06-05&quot;</span><span class="hl std">,</span> <span class="hl kwc">gid</span><span class="hl std">=</span><span class="hl str">&quot;&quot;</span><span class="hl std">)</span>
-</pre></div>
-<div class="output"><pre class="knitr r">## [1] "http://gd2.mlb.com/components/game/mlb/year_2012/month_06/day_01"
-## [2] "http://gd2.mlb.com/components/game/mlb/year_2012/month_06/day_02"
-## [3] "http://gd2.mlb.com/components/game/mlb/year_2012/month_06/day_03"
-## [4] "http://gd2.mlb.com/components/game/mlb/year_2012/month_06/day_04"
-## [5] "http://gd2.mlb.com/components/game/mlb/year_2012/month_06/day_05"
-</pre></div>
-</div></div>
-
-
-#### Using XML2R
-
-The `urls` object can be used to obtain the file names for every [bench.xml](http://gd2.mlb.com/components/game/mlb/year_2011/month_06/day_12/gid_2011_06_12_texmlb_minmlb_1/bench.xml) file available for June 1st, 2012.
-
-<div class="chunk" id="paste"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">bench.urls</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">paste0</span><span class="hl std">(urls,</span> <span class="hl str">&quot;/bench.xml&quot;</span><span class="hl std">)</span>
-</pre></div>
-</div></div>
-
-
-Next, load the **XML2R** library and use the `XML2Obs` function:
-
-<div class="chunk" id="XML2Obs"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">library</span><span class="hl std">(XML2R)</span>
-<span class="hl std">obs</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">XML2Obs</span><span class="hl std">(bench.urls,</span> <span class="hl kwc">as.equiv</span><span class="hl std">=</span><span class="hl num">TRUE</span><span class="hl std">,</span> <span class="hl kwc">quiet</span><span class="hl std">=</span><span class="hl num">TRUE</span><span class="hl std">)</span>
-<span class="hl kwd">unique</span><span class="hl std">(</span><span class="hl kwd">names</span><span class="hl std">(obs))</span>
-</pre></div>
-<div class="output"><pre class="knitr r">## [1] "bench//away//batters//batter"   "bench//away//pitchers//pitcher"
-## [3] "bench//away"                    "bench//home//batters//batter"  
-## [5] "bench//home//pitchers//pitcher" "bench//home"
-</pre></div>
-</div></div>
-
-
-In short, the `obs` object is a named list and each element corresponds to an "observation" or "record" of data. The `names` of `obs` keeps track of the "level" of information where each observation was obtained. This is important because we eventually `collapse` observations into separate tables based on these levels. In this example, there are currently six different levels of observations. There would have been many more if the `as.equiv` option was `FALSE` since this adds a prefix to `names(obs)` to help differentiate observations that were obtained from different files. This can be useful if you have to `add_key`s for each file. In this example, we don't need to use `add_key` at all, but it can useful in many other cases (see the [XML2R page](http://cpsievert.github.io/XML2R/)).
-
-Note that it would be cumbersome to store observations from the `'bench//away//pitchers//pitcher'` level in a separate table from the `'bench//home//pitchers//pitcher'` (and same for the batter case). This is where the `re_name` function becomes useful:
-
-<div class="chunk" id="re_name"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">tmp</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">re_name</span><span class="hl std">(obs,</span> <span class="hl kwc">equiv</span><span class="hl std">=</span><span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;bench//away//batters//batter&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;bench//home//batters//batter&quot;</span><span class="hl std">),</span>
-               <span class="hl kwc">diff.name</span><span class="hl std">=</span><span class="hl str">&quot;location&quot;</span><span class="hl std">)</span>
-</pre></div>
-<div class="message"><pre class="knitr r">## Renaming all list elements named: 
-## bench//away//batters//batter  OR  bench//home//batters//batter
-## with
-## bench//batters//batter
-</pre></div>
-<div class="source"><pre class="knitr r"><span class="hl std">obs2</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">re_name</span><span class="hl std">(tmp,</span> <span class="hl kwc">equiv</span><span class="hl std">=</span><span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;bench//away//pitchers//pitcher&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;bench//home//pitchers//pitcher&quot;</span><span class="hl std">),</span>
-               <span class="hl kwc">diff.name</span><span class="hl std">=</span><span class="hl str">&quot;location&quot;</span><span class="hl std">)</span>
-</pre></div>
-<div class="message"><pre class="knitr r">## Renaming all list elements named: 
-## bench//away//pitchers//pitcher  OR  bench//home//pitchers//pitcher
-## with
-## bench//pitchers//pitcher
-</pre></div>
-<div class="source"><pre class="knitr r"><span class="hl kwd">unique</span><span class="hl std">(</span><span class="hl kwd">names</span><span class="hl std">(obs2))</span>
-</pre></div>
-<div class="output"><pre class="knitr r">## [1] "bench//batters//batter"   "bench//pitchers//pitcher"
-## [3] "bench//away"              "bench//home"
-</pre></div>
-</div></div>
-
-
-The `re_name` function automatically determines the difference in the names supplied to `equiv` and suppresses that difference in the new name. This information is not lost; however, as this value is appended as an additional column (location) for each observation:
-
-<div class="chunk" id="re_name2"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">obs2[</span><span class="hl kwd">c</span><span class="hl std">(</span><span class="hl num">1</span><span class="hl std">,</span> <span class="hl num">20</span><span class="hl std">)]</span>
-</pre></div>
-<div class="output"><pre class="knitr r">## $`bench//batters//batter`
-##      id       last      b   pos  avg    g   ab   r   h   hr  rbi sb 
-## [1,] "458679" "Bell, J" "S" "3B" ".176" "6" "17" "1" "3" "1" "3" "0"
-##      url                                                                                                        
-## [1,] "http://gd2.mlb.com/components/game/mlb/year_2012/month_06/day_01/gid_2012_06_01_arimlb_sdnmlb_1/bench.xml"
-##      location
-## [1,] "away"  
-## 
-## $`bench//pitchers//pitcher`
-##      id       last     t   w   l   era    g   sv  ip    h   bb  so 
-## [1,] "461212" "Palmer" "R" "0" "0" "9.00" "3" "0" "2.0" "2" "2" "2"
-##      url                                                                                                        
-## [1,] "http://gd2.mlb.com/components/game/mlb/year_2012/month_06/day_01/gid_2012_06_01_arimlb_sdnmlb_1/bench.xml"
-##      location
-## [1,] "home"
-</pre></div>
-</div></div>
-
-
-Simply because of the structure of this XML file, we can use `re_name` again to have a key to merge information on the "bench" level with the "batter/pitcher" level:
-
-<div class="chunk" id="re_name3"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">obs3</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">re_name</span><span class="hl std">(obs2,</span> <span class="hl kwc">equiv</span><span class="hl std">=</span><span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;bench//away&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;bench//home&quot;</span><span class="hl std">),</span> <span class="hl kwc">diff.name</span><span class="hl std">=</span><span class="hl str">&quot;location&quot;</span><span class="hl std">)</span>
-</pre></div>
-<div class="message"><pre class="knitr r">## Renaming all list elements named: 
-## bench//away  OR  bench//home
-## with
-## bench
-</pre></div>
-</div></div>
-
-
-Finally, we can `collapse` the list of observations into a list of matrices and `merge` them accordingly to obtain a `pitcher` and `batter` data frame:
-
-<div class="chunk" id="collapse"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">dat</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">collapse</span><span class="hl std">(obs3)</span>
-<span class="hl std">batter</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">merge</span><span class="hl std">(</span><span class="hl kwc">x</span><span class="hl std">=dat[[</span><span class="hl str">&quot;bench//batters//batter&quot;</span><span class="hl std">]],</span> <span class="hl kwc">y</span><span class="hl std">=dat[[</span><span class="hl str">&quot;bench&quot;</span><span class="hl std">]],</span> <span class="hl kwc">by</span><span class="hl std">=</span><span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;url&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;location&quot;</span><span class="hl std">))</span>
-<span class="hl kwd">head</span><span class="hl std">(batter)</span>
-</pre></div>
-<div class="output"><pre class="knitr r">##                                                                                                         url
-## 1 http://gd2.mlb.com/components/game/mlb/year_2012/month_06/day_01/gid_2012_06_01_arimlb_sdnmlb_1/bench.xml
-## 2 http://gd2.mlb.com/components/game/mlb/year_2012/month_06/day_01/gid_2012_06_01_arimlb_sdnmlb_1/bench.xml
-## 3 http://gd2.mlb.com/components/game/mlb/year_2012/month_06/day_01/gid_2012_06_01_arimlb_sdnmlb_1/bench.xml
-## 4 http://gd2.mlb.com/components/game/mlb/year_2012/month_06/day_01/gid_2012_06_01_arimlb_sdnmlb_1/bench.xml
-## 5 http://gd2.mlb.com/components/game/mlb/year_2012/month_06/day_01/gid_2012_06_01_arimlb_sdnmlb_1/bench.xml
-## 6 http://gd2.mlb.com/components/game/mlb/year_2012/month_06/day_01/gid_2012_06_01_arimlb_sdnmlb_1/bench.xml
-##   location     id         last b pos  avg  g  ab  r  h hr rbi sb tid
-## 1     away 458679      Bell, J S  3B .176  6  17  1  3  1   3  0 ari
-## 2     away 111072    Blanco, H R   C .205 12  39  2  8  0   2  1 ari
-## 3     away 430585        Kubel L  LF .297 46 165 17 49  4  23  1 ari
-## 4     away 150348 McDonald, Jo R  SS .308 24  65  8 20  3   9  0 ari
-## 5     away 407489      Overbay L  1B .345 27  58  7 20  2   6  0 ari
-## 6     home 434633    Baker, Jo L   C .235 17  51  2 12  0   5  2 sdn
-</pre></div>
-<div class="source"><pre class="knitr r"><span class="hl std">pitcher</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">merge</span><span class="hl std">(</span><span class="hl kwc">x</span><span class="hl std">=dat[[</span><span class="hl str">&quot;bench//pitchers//pitcher&quot;</span><span class="hl std">]],</span> <span class="hl kwc">y</span><span class="hl std">=dat[[</span><span class="hl str">&quot;bench&quot;</span><span class="hl std">]],</span> <span class="hl kwc">by</span><span class="hl std">=</span><span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;url&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;location&quot;</span><span class="hl std">))</span>
-<span class="hl kwd">head</span><span class="hl std">(pitcher)</span>
-</pre></div>
-<div class="output"><pre class="knitr r">##                                                                                                         url
-## 1 http://gd2.mlb.com/components/game/mlb/year_2012/month_06/day_01/gid_2012_06_01_arimlb_sdnmlb_1/bench.xml
-## 2 http://gd2.mlb.com/components/game/mlb/year_2012/month_06/day_01/gid_2012_06_01_arimlb_sdnmlb_1/bench.xml
-## 3 http://gd2.mlb.com/components/game/mlb/year_2012/month_06/day_01/gid_2012_06_01_arimlb_sdnmlb_1/bench.xml
-## 4 http://gd2.mlb.com/components/game/mlb/year_2012/month_06/day_01/gid_2012_06_01_arimlb_sdnmlb_1/bench.xml
-## 5 http://gd2.mlb.com/components/game/mlb/year_2012/month_06/day_01/gid_2012_06_01_arimlb_sdnmlb_1/bench.xml
-## 6 http://gd2.mlb.com/components/game/mlb/year_2012/month_06/day_01/gid_2012_06_01_arimlb_sdnmlb_1/bench.xml
-##   location     id       last t w l  era  g sv   ip  h bb so tid
-## 1     away 444520    Breslow L 1 0 2.13 23  0 25.1 16 10 22 ari
-## 2     away 502239     Cahill R 2 5 3.96 10  0 61.1 55 26 42 ari
-## 3     away 518567 Collmenter R 0 2 6.75 10  0 30.2 38  6 25 ari
-## 4     away 543339  Hudson, D R 1 1 5.48  4  0 23.0 27  9 15 ari
-## 5     away 453178 Kennedy, I R 4 5 4.26 11  0 69.2 74 18 59 ari
-## 6     away 407816       Putz R 0 3 6.35 18 11 17.0 20  4 20 ari
-</pre></div>
-</div></div>
-
-
+pitchRx is built on top of the R package [XML2R](http://cran.r-project.org/web/packages/XML2R/index.html). **XML2R** reduces the effort required to organize relational XML content into a collection tables. For this reason, **XML2R** can be useful for building a custom XML scraper. If the reader wants to build their own Gameday scraper, the `pitchRx::makeUrls` function in conjunction with **XML2R** can be very helpful. For a more detailed look at **XML2R**, see the [introductory webpage](http://cpsievert.github.io/XML2R/) and/or the [RJournal paper](https://www.dropbox.com/s/wrbnileguf74s39/RJwrapper.pdf). 
 
 PITCHf/x Visualization
 --------------------
 
 ### 2D animation
 
-Let's animate the `pitches` data frame created in the previous section on a series of 2D scatterplots. The viewer should notice that as the animation progresses, pitches coming closer to them (that is, imagine you are the umpire/catcher - watching the pitcher throw directly at you). In the animation below, the horizontal and vertical location of `pitches` is plotted every tenth of a second until they reach home plate (in real time). Since looking at animations in real time can be painful, this animation delays the time between each frame to a half a second.
+The **pitchRx** comes pre-packaged with a `pitches` data frame with four-seam and cut fastballs thrown by Mariano Rivera and Phil Hughes during the 2011 season. These pitches are used to demonstrate PITCHf/x animations using `animateFX`. The viewer should notice that as the animation progresses, pitches coming closer to them (that is, imagine you are the umpire/catcher - watching the pitcher throw directly at you). In the animation below, the horizontal and vertical location of `pitches` is plotted every tenth of a second until they reach home plate (in real time). Since looking at animations in real time can be painful, this animation delays the time between each frame to a half a second.
 
 
 
@@ -278,7 +111,7 @@ To avoid a cluttered animation, the `avg.by` option averages the trajectory for 
 </div></div></div>
 
 
-Note that when using `animateFX`, the user may want to wrap the expression with `animation::saveHTML` to view the result in a web browser. If you want to include the animation in a document, [knitr](http://yihui.name/knitr/options#chunk_options)'s `fig.show="animate"` chunk option is very useful. 
+Note that when using `animateFX`, the user may want to wrap the expression with `animation::saveHTML` to view the result in a web browser. If you want to include the animation in a document, [knitr](http://yihui.name/knitr/options#chunk_options)'s `fig.show="animate"` chunk option can be very useful. 
 
 ### Interactive 3D plots
 
@@ -296,7 +129,7 @@ Note that when using `animateFX`, the user may want to wrap the expression with 
 
 #### Raw strike-zone densities
 
-Strike-zones capture pitch locations at the moment they cross the plate. `strikeFX`'s default functionality is to plot the relevant *raw density*. Here is the density of called strikes thrown by Rivera and Hughes in 2011 (for both right and left-handed batters).
+Strike-zones capture pitch locations at the moment they cross the plate. `strikeFX`'s default functionality is to plot the *raw density*. Here is the density of called strikes thrown by Rivera and Hughes in 2011 (for both right and left-handed batters).
 
 <div class="chunk" id="strike"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">strikes</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">subset</span><span class="hl std">(pitches, des</span> <span class="hl opt">==</span> <span class="hl str">&quot;Called Strike&quot;</span><span class="hl std">)</span>
 <span class="hl kwd">strikeFX</span><span class="hl std">(strikes,</span> <span class="hl kwc">geom</span><span class="hl std">=</span><span class="hl str">&quot;tile&quot;</span><span class="hl std">,</span> <span class="hl kwc">layer</span><span class="hl std">=</span><span class="hl kwd">facet_grid</span><span class="hl std">(.</span><span class="hl opt">~</span><span class="hl std">stand))</span>
@@ -359,9 +192,8 @@ In the spirit of reproducible research, here is the `sessionInfo` used when crea
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] mgcv_1.7-27       nlme_3.1-113      ggsubplot_0.3.2   XML2R_0.0.3      
-## [5] XML_3.95-0.2      pitchRx_1.0       ggplot2_0.9.3.1   devtools_1.4.1.99
-## [9] knitr_1.5        
+## [1] mgcv_1.7-27       nlme_3.1-113      ggsubplot_0.3.2   pitchRx_1.0      
+## [5] ggplot2_0.9.3.1   devtools_1.4.1.99 knitr_1.5        
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] Cairo_1.5-5        colorspace_1.2-4   dichromat_2.0-0   
@@ -373,7 +205,8 @@ In the spirit of reproducible research, here is the `sessionInfo` used when crea
 ## [19] parallel_3.0.2     plyr_1.8           proto_0.3-10      
 ## [22] RColorBrewer_1.0-5 RCurl_1.95-4.1     reshape2_1.2.2    
 ## [25] rgl_0.93.963       scales_0.2.3       stringr_0.6.2     
-## [28] tools_3.0.2        whisker_0.3-2
+## [28] tools_3.0.2        whisker_0.3-2      XML_3.95-0.2      
+## [31] XML2R_0.0.4
 </pre></div>
 </div></div>
 
