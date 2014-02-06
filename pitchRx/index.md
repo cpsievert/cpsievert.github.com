@@ -6,7 +6,7 @@
 Introduction to pitchRx package
 ====================================
 
-The  [pitchRx package](https://github.com/cpsievert/pitchRx) provides tools for collecting Major League Baseball (MLB) Gameday data and visualizing  [PITCHf/x](http://en.wikipedia.org/wiki/PITCHf/x). This page provides a rough overview of it's scope, but the [RJournal article](https://www.dropbox.com/s/wrbnileguf74s39/RJwrapper.pdf) is more comprehensive. The [source file](https://github.com/cpsievert/cpsievert.github.com/blob/master/pitchRx/index.Rmd) used to generate this page is helpful to see how to embed pitchRx animations in to documents using [knitr](http://yihui.name/knitr/). If coding isn't your thing, you might want to just [play](http://glimmer.rstudio.com/cpsievert/pitchRx/) with my PITCHf/x visualization app!
+The  [pitchRx package](https://github.com/cpsievert/pitchRx) provides tools for collecting Major League Baseball (MLB) Gameday data and visualizing  [PITCHf/x](http://en.wikipedia.org/wiki/PITCHf/x). This page provides a rough overview of it's scope, but the [RJournal article](http://cpsievert.github.io/pitchRx/RJwrapper.pdf) is more comprehensive. The [source file](https://github.com/cpsievert/cpsievert.github.com/blob/master/pitchRx/index.Rmd) used to generate this page is helpful to see how to embed pitchRx animations in to documents using [knitr](http://yihui.name/knitr/). If coding isn't your thing, you might want to just [play](http://glimmer.rstudio.com/cpsievert/pitchRx/) with my PITCHf/x visualization app!
 
 
 
@@ -83,7 +83,7 @@ The website which hosts PITCHf/x data hosts a wealth of other data that might co
 
 ### Building your own custom scraper
 
-pitchRx is built on top of the R package [XML2R](http://cran.r-project.org/web/packages/XML2R/index.html). **XML2R** reduces the effort required to organize relational XML content into a collection tables. For this reason, **XML2R** can be useful for building a custom XML scraper. If the reader wants to build their own Gameday scraper, the `pitchRx::makeUrls` function in conjunction with **XML2R** can be very helpful. For a more detailed look at **XML2R**, see the [introductory webpage](http://cpsievert.github.io/XML2R/) and/or the [RJournal paper](https://www.dropbox.com/s/wrbnileguf74s39/RJwrapper.pdf). 
+pitchRx is built on top of the R package [XML2R](http://cran.r-project.org/web/packages/XML2R/index.html). **XML2R** reduces the effort required to organize relational XML content into a collection tables. For this reason, **XML2R** can be useful for building a custom XML scraper. If the reader wants to build their own Gameday scraper, the `pitchRx::makeUrls` function in conjunction with **XML2R** can be very helpful. For a more detailed look at **XML2R**, see the [introductory webpage](http://cpsievert.github.io/XML2R/) and/or the [RJournal paper](http://cpsievert.github.io/pitchRx/RJwrapper.pdf). 
 
 PITCHf/x Visualization
 --------------------

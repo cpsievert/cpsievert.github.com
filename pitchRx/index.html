@@ -107,7 +107,7 @@ $(function() {
   /* size of thumbnails */
   var thumbsize = "col-md-3";
 
-  var show_code =  true ;
+  var show_code =  false ;
 
   var show_output =  true ;
 
@@ -947,7 +947,7 @@ img.mfp-img {
 
 <h1>Introduction to pitchRx package</h1>
 
-<p>The  <a href="https://github.com/cpsievert/pitchRx">pitchRx package</a> provides tools for collecting Major League Baseball (MLB) Gameday data and visualizing  <a href="http://en.wikipedia.org/wiki/PITCHf/x">PITCHf/x</a>. This page provides a rough overview of it&#39;s scope, but the <a href="https://www.dropbox.com/s/wrbnileguf74s39/RJwrapper.pdf">RJournal article</a> is more comprehensive. The <a href="https://github.com/cpsievert/cpsievert.github.com/blob/master/pitchRx/index.Rmd">source file</a> used to generate this page is helpful to see how to embed pitchRx animations in to documents using <a href="http://yihui.name/knitr/">knitr</a>. If coding isn&#39;t your thing, you might want to just <a href="http://glimmer.rstudio.com/cpsievert/pitchRx/">play</a> with my PITCHf/x visualization app!</p>
+<p>The  <a href="https://github.com/cpsievert/pitchRx">pitchRx package</a> provides tools for collecting Major League Baseball (MLB) Gameday data and visualizing  <a href="http://en.wikipedia.org/wiki/PITCHf/x">PITCHf/x</a>. This page provides a rough overview of it&#39;s scope, but the <a href="http://cpsievert.github.io/pitchRx/RJwrapper.pdf">RJournal article</a> is more comprehensive. The <a href="https://github.com/cpsievert/cpsievert.github.com/blob/master/pitchRx/index.Rmd">source file</a> used to generate this page is helpful to see how to embed pitchRx animations in to documents using <a href="http://yihui.name/knitr/">knitr</a>. If coding isn&#39;t your thing, you might want to just <a href="http://glimmer.rstudio.com/cpsievert/pitchRx/">play</a> with my PITCHf/x visualization app!</p>
 
 <h2>Data Collection</h2>
 
@@ -1021,7 +1021,7 @@ img.mfp-img {
 
 <h3>Building your own custom scraper</h3>
 
-<p>pitchRx is built on top of the R package <a href="http://cran.r-project.org/web/packages/XML2R/index.html">XML2R</a>. <strong>XML2R</strong> reduces the effort required to organize relational XML content into a collection tables. For this reason, <strong>XML2R</strong> can be useful for building a custom XML scraper. If the reader wants to build their own Gameday scraper, the <code>pitchRx::makeUrls</code> function in conjunction with <strong>XML2R</strong> can be very helpful. For a more detailed look at <strong>XML2R</strong>, see the <a href="http://cpsievert.github.io/XML2R/">introductory webpage</a> and/or the <a href="https://www.dropbox.com/s/wrbnileguf74s39/RJwrapper.pdf">RJournal paper</a>. </p>
+<p>pitchRx is built on top of the R package <a href="http://cran.r-project.org/web/packages/XML2R/index.html">XML2R</a>. <strong>XML2R</strong> reduces the effort required to organize relational XML content into a collection tables. For this reason, <strong>XML2R</strong> can be useful for building a custom XML scraper. If the reader wants to build their own Gameday scraper, the <code>pitchRx::makeUrls</code> function in conjunction with <strong>XML2R</strong> can be very helpful. For a more detailed look at <strong>XML2R</strong>, see the <a href="http://cpsievert.github.io/XML2R/">introductory webpage</a> and/or the <a href="http://cpsievert.github.io/pitchRx/RJwrapper.pdf">RJournal paper</a>. </p>
 
 <h2>PITCHf/x Visualization</h2>
 
