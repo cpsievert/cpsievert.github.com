@@ -56,6 +56,7 @@ Finding probabilities for any X
 
 Your Turn
 ========================================================
+incremental:false
 
 * Find the following probabilities using Table A:
 * Given $X \sim N(150, 100)$, find:
@@ -87,9 +88,9 @@ Your Turn
 incremental:false
 
 * Find the value of $z^*$ for each of the following scenarios:
-  * P(Z < z^*) = 0.025 (__Note__: $z^*$ is called the 2.5th percentile)
-  * P(Z < z^*) = 0.975 (__Note__: $z^*$ is called the 97.5th percentile)
-  * P(Z < z^*) = 0.25 (__Note__: $z^*$ is called the 25th percentile)
+  * $P(Z < z^*) = 0.025$ (__Note__: $z^*$ is called the 2.5th percentile)
+  * $P(Z < z^*) = 0.975$ (__Note__: $z^*$ is called the 97.5th percentile)
+  * $P(Z < z^*) = 0.25$ (__Note__: $z^*$ is called the 25th percentile)
 
 Finding percentiles for any X
 ========================================================
@@ -119,6 +120,6 @@ Your Turn
 incremental:false
 
 * Suppose $X \sim N(12, 2^2)$. Find the value of $x^*$ for each of the following scenarios:
-  * P(X < x^*) = 0.33 (__Note__: $z^*$ is called the 33rd percentile)
-  * P(X < x^*) = 0.66 (__Note__: $z^*$ is called the 66th percentile)
-  * P(X < x^*) = 0.01 (__Note__: $z^*$ is called the 1st percentile)
+  * $P(X < x^*) = 0.33$ (__Note__: $z^*$ is called the 33rd percentile)
+  * $P(X < x^*) = 0.66$ (__Note__: $z^*$ is called the 66th percentile)
+  * $P(X < x^*) = 0.01$ (__Note__: $z^*$ is called the 1st percentile)
