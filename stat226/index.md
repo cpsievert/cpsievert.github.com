@@ -13,7 +13,9 @@ This page will serve as a collection of links to useful learning materials.
 * [January 30th](http://cpsievert.github.io/slides/stat226/0130)
 * [Feburary 4th](http://cpsievert.github.io/slides/stat226/0204)
 * [Feburary 6th](http://cpsievert.github.io/slides/stat226/0206)
+* [Feburary 11th](http://cpsievert.github.io/slides/stat226/0211)
 
 ### Visual Aides
 
+* [Standard Normal Probabilities](http://glimmer.rstudio.com/cpsievert/cdf)
 * [Regression Inference](http://glimmer.rstudio.com/cpsievert/regInf2/)
