@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <title>Stat 226 - Lecture 9</title>
+  <title>Stat 226 - Lecture 10</title>
     
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -794,118 +794,9 @@ hljs.initHighlightingOnLoad();
   <div class="slides">
 
 <section data-state="section" data-transition="default" data-transition-speed="default">
-<h1>Stat 226 - Lecture 9</h1><p>02/11/14</p>
+<h1>Stat 226 - Lecture 10</h1><p>02/13/14</p>
 
 <div class="slideContent" >
-
-</div>
-
-</section>
-<section data-transition="default" data-transition-speed="default">
-<h3>Your Turn</h3>
-<div class="slideContent" >
-<ul>
-<li>Find the following probabilities using Table A:</li>
-<li>Given \( X \sim N(150, 100) \), find:
-
-<ul>
-<li>\( P(X < 137) \)</li>
-<li>\( P(X > 137) \)</li>
-<li>\( P(140 < X < 165) \)</li>
-</ul></li>
-<li>Given \( Y \sim N(-10, 3^2) \), find:
-
-<ul>
-<li>\( P(Y > -9) \)</li>
-<li>\( P(-9 < Y < -7) \)</li>
-</ul></li>
-</ul>
-
-</div>
-
-</section>
-<section data-transition="default" data-transition-speed="default">
-<h3>Percentiles</h3>
-<div class="slideContent" >
-<ul>
-<li><strong>Definition</strong>: The \( p^{th} \) percentile is a value, say \( v \), where \( p \) percent of observations are lower than \( v \).</li>
-</ul>
-
-<div align="center">
-<iframe src="http://glimmer.rstudio.com/cpsievert/cdf/" width="650" height="600"></iframe>
-</div>
-
-</div>
-
-</section>
-<section data-transition="default" data-transition-speed="default">
-<h3>Finding Percentiles of Z</h3>
-<div class="slideContent" >
-<ul>
-<li class="fragment">Remember that for the normal distribution, mean = median = mode!</li>
-<li class="fragment">Thus, the median of the <strong>standard</strong> normal is&hellip;<div style="display:inline-block" class="fragment"> 0! </div></li>
-<li class="fragment">Therefore the <strong>50th percentile</strong> of the standard normal is &hellip;<div style="display:inline-block" class="fragment"> 0! </div></li>
-<li class="fragment">If we denote \( Z \sim N(0, 1) \), we just said that \( P(Z < 0) = 1/2 \).</li>
-<li class="fragment">Suppose I want to find the \( 99^{th} \) percentile of \( Z \)&hellip;</li>
-<li class="fragment">We have to find a value \( z^* \) that yields \( P(Z < z^*) = 0.99 \)</li>
-</ul>
-
-</div>
-
-</section>
-<section data-transition="default" data-transition-speed="default">
-<h3>Your Turn</h3>
-<div class="slideContent" >
-<ol>
-<li>Find the value of \( z^* \) for each of the following scenarios:
-
-<ul>
-<li>\( P(Z < z^*) = 0.025 \) (<strong>Note</strong>: \( z^* \) is called the 2.5th percentile)</li>
-<li>\( P(Z < z^*) = 0.975 \) (<strong>Note</strong>: \( z^* \) is called the 97.5th percentile)</li>
-<li>\( P(Z < z^*) = 0.25 \) (<strong>Note</strong>: \( z^* \) is called the 25th percentile)</li>
-</ul></li>
-<li>Find the two values that bound the middle 90% of the standard normal distribution.</li>
-</ol>
-
-</div>
-
-</section>
-<section data-transition="default" data-transition-speed="default">
-<h3>Finding percentiles for any X</h3>
-<div class="slideContent" >
-<ul>
-<li class="fragment">As before, \( X \sim N(\mu, \sigma) \) translates to \( Z \sim N(0,1) \) via a <strong>z-score</strong>:</li>
-</ul>
-
-<div align="center" class="fragment">\[ z = \frac{x-\mu}{\sigma} \]</div>
-
-<ul>
-<li class="fragment">Rearranging this equation a bit gives us:</li>
-</ul>
-
-<div align="center" class="fragment">\[ z \times \sigma + \mu = x \]</div>
-
-<ul>
-<li class="fragment">Thus, if \( z^* \) is the \( p^{th} \) percentile of the <strong>standard</strong> normal, then \( \mu + \sigma \times z^* \) is the \( p^{th} \) percentile of \( X \sim N(\mu, \sigma) \)!</li>
-</ul>
-
-</div>
-
-</section>
-<section data-transition="default" data-transition-speed="default">
-<h3>Average Debt</h3>
-<div class="slideContent" >
-<ul>
-<li class="fragment"><strong>Example:</strong> Let \( X \) be the debt of an ISU undergraduate upon graduation (in thousands of dollars). Suppose \( X \) is known to have a mean of 20 and standard deviation of 5.
-
-<ul>
-<li class="fragment">How much debt does it take to have <strong>more</strong> debt than 95% of other undergraduates?</li>
-<li class="fragment">In other words, what value of \( z^* \) gives us \( P(Z < z^*) = 0.95 \)?</li>
-<li class="fragment">From Table A, \( z^* = \) 1.64 or 1.65 (either one is fine).</li>
-<li class="fragment">Using our &#39;backwards z-score calculation&#39;: \( x = \mu + \sigma \times z^* = 20 + 5 \times 1.65 = \) 28.25</li>
-<li class="fragment">So, if you have $28,500 in debt upon graduating, you have more debt than 95% of graduates!</li>
-</ul></li>
-</ul>
 
 </div>
 
@@ -928,6 +819,49 @@ hljs.initHighlightingOnLoad();
 <li>What monthly revenue figure would imply that 40% of the market receieved a higher revenue?</li>
 </ul></li>
 </ol>
+
+</div>
+
+</section>
+<section data-transition="default" data-transition-speed="default">
+<h3>Translating Random Variables</h3>
+<div class="slideContent" >
+<ul>
+<li class="fragment">By now, we are familiar with translating \( X \sim N(\mu, \sigma^2) \) to \( Z \sim N(0,1) \).</li>
+<li class="fragment">We do this by <strong>shifting</strong> \( X \) by \( \mu \) and <strong>scaling</strong> by \( 1/\sigma \) (ie, \( Z = \frac{X-\mu}{\sigma} \))</li>
+<li class="fragment">As it turns out, <strong>shifting</strong> a normal random variable will always give us another normal random variable!</li>
+<li class="fragment">For instance, suppose \( Y = X - \mu \). Then \( Y \sim \) <div style="display:inline-block" class="fragment"> \( N(0, \sigma^2) \) </div></li>
+<li class="fragment">This is a useful idea if we know the distribution of \( X \), but are asked a question about \( Y \).</li>
+</ul>
+
+</div>
+
+</section>
+<section data-transition="default" data-transition-speed="default">
+<h3>An example</h3>
+<div class="slideContent" >
+<ul>
+<li class="fragment">It is a well known that \( Revenue - Cost \) = <div style="display:inline-block" class="fragment"> \( Profit! \) </div></li>
+<li class="fragment">Suppose you are a used-car dealership owner. You have the opportunity to buy a car for $1000.</li>
+<li class="fragment">You don&#39;t know how much it will sell for, but revenue generated from similar cars can be described by \( X \sim N(1200, 175^2) \).</li>
+<li class="fragment">What is the probability that you will profit off the car?</li>
+<li class="fragment">That is, what is the probability that revenue exceeds cost?</li>
+<li class="fragment">Let \( Y \) be profit. Then \( Y = \) <div style="display:inline-block" class="fragment"> \( X - 1000 \). </div></li>
+<li class="fragment">Therefore, \( Y \sim N( \) <div style="display:inline-block" class="fragment"> \( 200, 175^2) \) </div></li>
+<li class="fragment">So, the probability of profit is \( P(Y > 0) \)!</li>
+</ul>
+
+</div>
+
+</section>
+<section data-transition="default" data-transition-speed="default">
+<h3>Disclaimer</h3>
+<div class="slideContent" >
+<ul>
+<li class="fragment">Everything we&#39;ve done in Chapter 12 requires that <strong>we know</strong> a population is normally distributed.</li>
+<li class="fragment">Of course, we never <strong>actually</strong> know this, but we can use a <strong>sample</strong> to assess whether the normal assumption is reasonable or not.</li>
+<li class="fragment">The demonstrate how we make this assessment, we will study some baseball data :)</li>
+</ul>
 
 </div>
 
