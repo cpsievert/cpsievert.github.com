@@ -192,7 +192,7 @@ In the spirit of reproducible research, here is the `sessionInfo` used when crea
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] mgcv_1.7-27       nlme_3.1-113      ggsubplot_0.3.2   pitchRx_1.0      
+## [1] mgcv_1.7-28       nlme_3.1-113      ggsubplot_0.3.2   pitchRx_1.0      
 ## [5] ggplot2_0.9.3.1   devtools_1.4.1.99 knitr_1.5        
 ## 
 ## loaded via a namespace (and not attached):
@@ -201,10 +201,10 @@ In the spirit of reproducible research, here is the `sessionInfo` used when crea
 ##  [7] grid_3.0.2         gtable_0.1.2       hexbin_1.26.3     
 ## [10] highr_0.3          httr_0.2           labeling_0.2      
 ## [13] lattice_0.20-24    lubridate_1.3.3    MASS_7.3-29       
-## [16] Matrix_1.1-1.1     memoise_0.1        munsell_0.4.2     
+## [16] Matrix_1.1-2       memoise_0.1        munsell_0.4.2     
 ## [19] parallel_3.0.2     plyr_1.8           proto_0.3-10      
 ## [22] RColorBrewer_1.0-5 RCurl_1.95-4.1     reshape2_1.2.2    
-## [25] rgl_0.93.963       scales_0.2.3       stringr_0.6.2     
+## [25] rgl_0.93.996       scales_0.2.3       stringr_0.6.2     
 ## [28] tools_3.0.2        whisker_0.3-2      XML_3.95-0.2      
 ## [31] XML2R_0.0.4
 </pre></div>
