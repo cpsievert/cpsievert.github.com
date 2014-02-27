@@ -25,8 +25,13 @@ This page will serve as a collection of links to useful learning materials.
 
 * [Feburary 18th](http://cpsievert.github.io/slides/stat226/0218)
 
+#### Chapter 14.1
+
+* [Feburary 27th](http://cpsievert.github.io/slides/stat226/0227)
+
 ### Visual Aides
 
 * [Standard Normal Probabilities](http://glimmer.rstudio.com/cpsievert/cdf)
 * [Visualizing Sampling Methods](http://glimmer.rstudio.com/cpsievert/sampling)
+* [Sampling Distributions & CLT](http://glimmer.rstudio.com/cpsievert/CLT)
 * [Regression Inference](http://glimmer.rstudio.com/cpsievert/regInf2/)
