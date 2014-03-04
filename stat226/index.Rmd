@@ -34,4 +34,5 @@ This page will serve as a collection of links to useful learning materials.
 * [Standard Normal Probabilities](http://glimmer.rstudio.com/cpsievert/cdf)
 * [Visualizing Sampling Methods](http://glimmer.rstudio.com/cpsievert/sampling)
 * [Sampling Distributions & CLT](http://glimmer.rstudio.com/cpsievert/CLT)
+* [Law of Large Numbers and Repeated Sampling](http://glimmer.rstudio.com/cpsievert/intervals/)
 * [Regression Inference](http://glimmer.rstudio.com/cpsievert/regInf2/)
