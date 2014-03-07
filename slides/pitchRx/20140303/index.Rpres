@@ -72,7 +72,7 @@ title:false
 </div>
 
 * PITCHf/x was widely adopted in 2008. 
-* The `object.size` for this game is `r object.size(dat, units="Mb")`
+* The `object.size` for this game is `r print(object.size(dat), units="Mb")`
 * Thousands of games are played per year, so we surely don't want to bring all this data at once into an `R` session.
 
 Collecting (and Storing) PITCHf/x
