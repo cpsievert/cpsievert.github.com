@@ -72,8 +72,8 @@ title:false
 </div>
 
 * PITCHf/x was widely adopted in 2008. 
-* The `object.size` for this game is `r print(object.size(dat), units="Mb")`
-* Thousands of games are played per year, so we surely don't want to bring all this data at once into an `R` session.
+* The `object.size` for this game is about 0.5 Mb.
+* Thousands of games are played every year, so we probably don't want to bring multiple years worth of data at once into an `R` session.
 
 Collecting (and Storing) PITCHf/x
 ========================================================
@@ -84,7 +84,7 @@ library(dplyr)
 my_db <- src_sqlite("pitchfx.sqlite3")
 ```
 
-* `scrape` can export data to a database connection in a "chunks".
+* `scrape` can export data to a database connection in "chunks".
 
 ```{r scrape2, eval=FALSE}
 scrape(start = "2008-01-01", end = Sys.Date(), 
@@ -92,7 +92,7 @@ scrape(start = "2008-01-01", end = Sys.Date(),
 ```
 
 * Using `connect` can lead to a drastically improved run-time on machines with limited RAM.
-* If you know how to run `R CMD BATCH` jobs...set it and forget it!
+* If you know how to run `R CMD BATCH`...set it and forget it!
 
 The internals of pitchRx have come along way
 ========================================================
