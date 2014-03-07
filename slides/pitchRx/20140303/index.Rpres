@@ -12,7 +12,7 @@ What is PITCHf/x?
   <img class="decoded" src="http://i.minus.com/i3SXAH4AAxtWS.gif" alt="http://i.minus.com/i3SXAH4AAxtWS.gif">
 </div>
 
-* A system that tracks baseball trajectories from pitcher to batter
+* A system that tracks and records data on baseball trajectories from pitcher to batter.
 
 Plotting trajectories
 ========================================================
@@ -71,6 +71,10 @@ title:false
   <img src="allthedata.png">
 </div>
 
+* PITCHf/x was widely adopted in 2008. 
+* The `object.size` for this game is `r object.size(dat, units="Mb")`
+* Thousands of games are played per year, so we surely don't want to bring all this data at once into an `R` session.
+
 Collecting (and Storing) PITCHf/x
 ========================================================
 
@@ -80,7 +84,7 @@ library(dplyr)
 my_db <- src_sqlite("pitchfx.sqlite3")
 ```
 
-* `scrape` can export data to a database connection in a "streaming fashion".
+* `scrape` can export data to a database connection in a "chunks".
 
 ```{r scrape2, eval=FALSE}
 scrape(start = "2008-01-01", end = Sys.Date(), 
@@ -88,7 +92,7 @@ scrape(start = "2008-01-01", end = Sys.Date(),
 ```
 
 * Using `connect` can lead to a drastically improved run-time on machines with limited RAM.
-* If you know how to run BATCH jobs, you can set it and forget it!
+* If you know how to run `R CMD BATCH` jobs...set it and forget it!
 
 The internals of pitchRx have come along way
 ========================================================
@@ -225,7 +229,7 @@ Right-handed away pitchers
 Differenced probability plots
 ========================================================
 
-* I can use the `density1` and `density2` arguments to look at how probability of a called strike __differs__ in two different cases.
+* Use the `density1` and `density2` arguments to look at how probability of a called strike __differs__ in two different cases.
 
 ```{r diffs, eval=FALSE}
 strikeFX(decisions, model = m, 
@@ -234,8 +238,7 @@ strikeFX(decisions, model = m,
   facet_grid(p_throws ~ stand)
 ```
 
-* This will take our 8 surfaces and reduce them down to 4 since we are differencing based on one of the factors. 
-
+* This takes our 8 surfaces and produces 4 __differenced__ surfaces.
 
 Difference in probability of strike
 ========================================================
@@ -245,14 +248,19 @@ Difference in probability of strike
 </div>
 
 
-
 The future
 ========================================================
 
-* I wrote [a paper](http://cpsievert.github.io/pitchRx/RJwrapper.pdf) on `pitchRx` and `XML2R` that will appear in the next issue of the [R Journal](http://journal.r-project.org/)
+* I wrote [a paper](http://journal.r-project.org/archive/accepted/sievert.pdf) on `pitchRx` and `XML2R` that will appear in the next issue of the [R Journal](http://journal.r-project.org/)
 * I will be contributing to [baseballwithr.wordpress.com](http://baseballwithr.wordpress.com/) alongside [Jim Albert](http://bayes.bgsu.edu/) and [Ben Baumer](http://www.math.smith.edu/~bbaumer/).
 * Possibly start digging into [HITf/x and FIELDf/x](http://m.mlb.com/video/v31405521/heywards-catch-through-bams-new-tracking-technology)?
 
-Thanks for coming! Any questions?
+...and he stumbles to the finish...thanks for coming!
 ========================================================
+
+<div align="center">
+  <img class="decoded" src="http://gifs.gifbin.com/112010/1290165697_baseball-tag.gif">
+</div>
+
+
 
