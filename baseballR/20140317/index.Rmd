@@ -1,0 +1,23 @@
+Are umpires becoming less merciful?
+========================================================
+
+Strike-zone plots seem to be all the rage recently. In fact, this [paper](http://www.sloansportsconference.com/wp-content/uploads/2014/02/2014_SSAC_What-Does-it-Take-to-Call-a-Strike.pdf) was a Research Paper Finalists at the 2014 Sloan Sports Analytics Conference. In a nutshell, the paper shows evidence that the average home plate umpire's decision to call a strike depends on more than pitch locations alone (e.g., the current pitch count). As this [Twitter conversation](https://twitter.com/BMMillsy/status/439441782649401344) resonates, this is not a new idea. In fact, the R package [pitchRx](http://cran.r-project.org/web/packages/pitchRx/) automates the creation of similar plots in 2D (I'll spare you technical details as to why visualizing surfaces in 3D is generally a bad idea).
+
+To be more specific, the Sloan paper examines the difference in the probability of a called strike (given the umpire has to make a ball/strike decision) at a specific location conditional upon different scenarios. For example, the authors found that when the classification is in question, the probability of a called strike is much lower if there are two strikes. This conclusion grasped the attention of a larger audience probably because it points out something we can all relate to and understand -- human nature. According the results of this study, umpires exhibit mercy towards batters that are in danger of getting that dreaded "steeeerike" three call.
+
+I'd like to piggyback off these findings, but ask a slightly more intricate question: "Are umpires becoming less merciful (or more robotic) over time?" As pointed out in this excellent article, there are rumors of [umpires being replaced by machines](http://grantland.com/features/ben-lindbergh-possibility-machines-replacing-umpires/). In actuality, new technology will probably aid decisions made by umpires, but won't replace them. Regardless, umpires must be feeling pressure to make the right (unbiased) call -- especially since the advent of PITCHf/x. 
+
+Without further ado, below is a figure showing the difference in the probability of a called strike in a two strike count versus a non-two strike count for each combination of batter stance and year. The red regions represent a higher probability when there are less than two strikes and blue regions represent a higher probability when there are two strikes.
+
+<div align="center">
+<img src="strike-plot2.png" width="400" height="800"></img>
+</div>
+
+The most striking result (no pun intended :) to me is the lack of red in 2008. In fact, contrary to my initial hypothesis, the red becomes more pronounced throughout the years (and possibly peaks in 2010?). In some regions, the probability when there are already two strikes is 0.3 lower than the probability when there is less than two strikes! It is also quite interesting that the probability is roughly the same when the pitch is thrown on the inside portion of the plate. Given these results, pitchers should be inclined to pick away at the inside corner when there are two strikes.
+
+Although modeling the probability of a called strike is very common, the model used to create this kind of graphic can easily be altered to examine different responses. For example, it might be interesting to look at the probability of a home run/extra base hit/single/strikeout/etc under different scenarios.
+
+Hopefully this post has inspired you to create some similar visuals. Anyone who knows me well knows I am OCD when it comes to reproducible. Thus, it should come at no surprise that I've included all the code used to [create these plots](https://gist.github.com/cpsievert/9459745). 
+
+
+
