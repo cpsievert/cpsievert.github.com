@@ -17,9 +17,9 @@ one to create linked, interactive (even animated) web graphics using ggplot2 cod
 
 This short post demonstrates linked plots using data from the
 [pitchRx](http://cran.r-project.org/web/packages/pitchRx/) package. If you click on the bars in the
-bar chart below, you will see the pitch locations for the corresponding pitch type/pitcher
-combination. I really want to spend more time with animint since it seems to fill a void where
-other similar (and also great) packages like [rCharts](http://rcharts.io/) and
+bar chart below, the corresponding start versus end speed scatterplot should change to reflect the
+current selection. I really want to spend more time with animint since it seems to fill a void
+where other similar (and also great) packages like [rCharts](http://rcharts.io/) and
 [ggvis](http://ggvis.rstudio.com/) currently fall short.
 
 
@@ -35,9 +35,9 @@ viz <- list(bars = ggplot() +
                            fill = pitcher_name, clickSelects = type),
                       position = "dodge", stat = "identity", data = counts),
             scatter = ggplot() +
-              geom_point(aes(px, pz, fill = pitcher_name, showSelected = type),
+              geom_point(aes(start_speed, end_speed, fill = pitcher_name, showSelected = type),
                          alpha = 0.65, data = pitches))
-gg2animint_knitr(viz)
+gg2animint(viz)
 {% endhighlight %}
 
 

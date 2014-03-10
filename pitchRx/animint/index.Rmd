@@ -12,6 +12,5 @@ viz <- list(bars = ggplot() +
             scatter = ggplot() +
               geom_point(aes(start_speed, end_speed, fill = pitcher_name, showSelected = type),
                          alpha = 0.65, data = pitches))
-gg2animint(viz)
 gg2animint_knitr(viz)
 ```
