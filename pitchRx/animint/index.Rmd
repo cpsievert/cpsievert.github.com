@@ -1,4 +1,4 @@
-```{r dat, results='asis', tidy=FALSE}
+```{r dat, results='asis', echo=FALSE, message=FALSE, tidy=FALSE}
 library(pitchRx)
 library(animint)
 data(pitches, package = "pitchRx")
@@ -10,7 +10,8 @@ viz <- list(bars = ggplot() +
                            fill = pitcher_name, clickSelects = type),
                       position = "dodge", stat = "identity", data = counts),
             scatter = ggplot() +
-              geom_point(aes(px, pz, fill = pitcher_name, showSelected = type),
+              geom_point(aes(start_speed, end_speed, fill = pitcher_name, showSelected = type),
                          alpha = 0.65, data = pitches))
+gg2animint(viz)
 gg2animint_knitr(viz)
 ```

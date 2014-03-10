@@ -31,7 +31,7 @@ group: navigation
 ## Professional Experience
 
 * *Intern*, [Statistics Research Department at AT&T Labs](http://stats.research.att.com/) Summer 2013
-	* Authored the R package [LDAviz](https://github.com/kshirley/LDAviz) with [Kenny Shirley](http://www2.research.att.com/~kshirley/). You can see a live version of the app I created [here](http://glimmer.rstudio.com/cpsievert/LDAviz/).
+	* Authored the R package [LDAviz](https://github.com/kshirley/LDAviz) with [Kenny Shirley](http://www2.research.att.com/~kshirley/).
 	
 <p></p>
 
@@ -47,16 +47,17 @@ group: navigation
     
 --- 
     
-## Computational Skills
-* Statistical Stuff:
-	* Proficient with [R](http://www.r-project.org), experience with [SAS](http://www.sas.com/company/about/history.html) & [JMP](http://www.jmp.com/)
-    * Author of the R packages [pitchRx](http://cran.r-project.org/web/packages/pitchRx/), [LDAviz](https://github.com/kshirley/LDAviz), & [XML2R](https://github.com/cpsievert/XML2R). 
+## Computational Chops
+* Author of the [R](http://cran.r-project.org/) packages [pitchRx](http://cran.r-project.org/web/packages/pitchRx/), [XML2R](http://cran.r-project.org/web/packages/XML2R/index.html), [bbscrapeR](https://github.com/cpsievert/bbscrapeR), & [LDAviz](https://github.com/kshirley/LDAviz). My favorite R packages include [ggplot2](http://cran.r-project.org/web/packages/ggplot2/index.html), [plyr](http://cran.r-project.org/web/packages/plyr/index.html), [shiny](http://cran.r-project.org/web/packages/shiny/index.html), [knitr](http://cran.r-project.org/web/packages/knitr/index.html), and [devtools](http://cran.r-project.org/web/packages/devtools/index.html).
 * Other Stuff:
-	* MySQL, XML, HTML, JavaScript, D3js, git, AWK, Microsoft Excel
-* Report Generation:
-	* LaTeX, knitr, Markdown, pandoc
+	* LaTeX, Markdown, HTML, XML, JavaScript, D3js, SQL, Excel, git, AWK, grep.
 * Operating Systems:
-	* Mac (50%), Unix (30%), Windows (20%)
+	* Mac OS X (50%), Unix/Linux (40%), Windows (10%).
+  
+---
+  
+## Publications
+* Carson Sievert (2014). [Taming PITCHf/x Data with pitchRx and XML2R](http://journal.r-project.org/archive/accepted/sievert.pdf). [The R Journal](http://journal.r-project.org/). 6(1).
 	
 ---
 	
