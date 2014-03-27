@@ -181,17 +181,17 @@ hljs.initHighlightingOnLoad();
 <body>
 <h1>Starting and updating a PITCHf/x database with pitchRx and dplyr</h1>
 
-<p>First of all, let me say that I am truly honored Jim Albert has asked me to join Ben Baumer in contributing to this blog. I hope to share some useful knowledge I&#39;ve gained in relation to baseball data and R over the past couple years. Most of my experience comes from developing the R package <a href="http://cran.r-project.org/web/packages/pitchRx/">pitchRx</a> which provides tools for collecting, storing and visualizing PITCHf/x data. If your interested, my <a href="http://journal.r-project.org/archive/accepted/">RJournal</a> article is available online, but you also can catch the tl;dr version on the <a href="http://cpsievert.github.io/pitchRx/">introduction page</a>.</p>
+<p>First of all, let me say that I am truly honored Jim Albert invited me to join Ben Baumer in contributing to this blog. I hope to share some useful knowledge I&#39;ve gained in relation to baseball data and R over the past couple years. Most of my experience comes from developing the R package <a href="http://cran.r-project.org/web/packages/pitchRx/">pitchRx</a> which provides tools for collecting, storing and visualizing PITCHf/x data. If your interested, my pitchRx paper is available online via the <a href="http://journal.r-project.org/archive/accepted/">RJournal</a>, but you also can catch the cliff notes <a href="http://cpsievert.github.io/pitchRx/">here</a>.</p>
 
 <h2>Setting up a PITCHf/x Database</h2>
 
-<p>For my first post, I want to clearly line out how to get up and running with a PITCHf/x database. I know that working with a database can be intimidating, but trust me, your hard work will pay off as we enter the <a href="http://grantland.com/the-triangle/mlb-advanced-media-play-tracking-bob-bowman-interview/">FIELDf/x era</a>. There are a lot of database options, but most are difficult and/or time consuming to setup. Luckily, the <a href="http://cran.r-project.org/web/packages/dplyr/index.html">dplyr</a> package makes it incredibly simple to create a <a href="https://sqlite.org/">SQLite</a> database.</p>
+<p>For my first post, I want to clearly explain how to get up and running with a PITCHf/x database. I know that working with a database can be intimidating, but trust me, your hard work will pay off as we enter the <a href="http://grantland.com/the-triangle/mlb-advanced-media-play-tracking-bob-bowman-interview/">FIELDf/x era</a>. There are a lot of database options, but most are difficult and/or time consuming to setup. Luckily, the <a href="http://cran.r-project.org/web/packages/dplyr/index.html">dplyr</a> package makes it incredibly simple to create a <a href="https://sqlite.org/">SQLite</a> database.</p>
 
 <pre><code class="r">library(dplyr)
 my_db &lt;- src_sqlite(&quot;pitchRx.sqlite3&quot;, create = TRUE)
 </code></pre>
 
-<p>This will create a file in the current directory named &#39;pitchRx.sqlite3&#39;. This is the SQLite database. There are many <a href="http://stackoverflow.com/questions/835069/which-sqlite-administration-console-do-you-recommend">SQLite interfaces</a>, but we will do everything from within the <code>R</code> session. The <code>my_db</code> object contains various information about this database as well as a connection. Before we write data to this database, make sure the database is empty (i.e., it has no tables).</p>
+<p>This will create a file in the current directory named &#39;pitchRx.sqlite3&#39;. This is the SQLite database. There are many <a href="http://stackoverflow.com/questions/835069/which-sqlite-administration-console-do-you-recommend">SQLite interfaces</a>, but we will do everything from within the <code>R</code> session. Most importantly, the <code>my_db</code> object contains a connection that allows us to interact with the database from within <code>R</code>! Before we write data to this database, make sure the database is empty (i.e., it has no tables).</p>
 
 <pre><code class="r">my_db
 </code></pre>
@@ -200,19 +200,19 @@ my_db &lt;- src_sqlite(&quot;pitchRx.sqlite3&quot;, create = TRUE)
 ## tbls:
 </code></pre>
 
-<p>Using the <code>scrape</code> function in the pitchRx package, we can collect and store data in <code>my_db</code> using the database connection (<code>my_db$con</code>). Note that this will also work with a <a href="http://en.wikipedia.org/wiki/MySQL">MySQL</a> database connection.</p>
+<p>Using the <code>scrape</code> function in the pitchRx package, we can collect and store data in <code>my_db</code> using the database connection (<code>my_db$con</code>). Note that approach also works with a <a href="http://en.wikipedia.org/wiki/MySQL">MySQL</a> database connection.</p>
 
 <pre><code class="r">library(pitchRx)
 scrape(start = &quot;2008-01-01&quot;, end = Sys.Date(), connect = my_db$con)
 </code></pre>
 
-<p>This snippet of code will collect all available PITCHf/x from today all the way back to the 2008 season (from files such as <a href="http://gd2.mlb.com/components/game/mlb/year_2011/month_04/day_04/gid_2011_04_04_minmlb_nyamlb_1/inning/inning_all.xml">this</a>). This is a lot of data &ndash; it takes a few hours to run &ndash; but your patience will pay off as you will soon have data on every pitch, atbat, and other &ldquo;plays&rdquo; over the past six years. It is also possible to obtain supplementary data on games, players, coaches, umpires, and even locations of balls hit into play from other files using the <code>suffix</code> argument (here are <a href="http://gd2.mlb.com/components/game/mlb/year_2011/month_04/day_04/gid_2011_04_04_minmlb_nyamlb_1/inning/inning_hit.xml">some</a> <a href="http://gd2.mlb.com/components/game/mlb/year_2011/month_04/day_04/gid_2011_04_04_minmlb_nyamlb_1/players.xml">example</a> <a href="http://gd2.mlb.com/components/game/mlb/year_2011/month_04/day_04/miniscoreboard.xml">files</a>):</p>
+<p>This snippet of code will download, manipulate, and store all available PITCHf/x starting with the 2008 season and all the way up to today. <a href="http://gd2.mlb.com/components/game/mlb/year_2011/month_04/day_04/gid_2011_04_04_minmlb_nyamlb_1/inning/inning_all.xml">Here</a> is an example of just one of thousands of files it will query. Please note is a lot of data &ndash; it takes a few hours to run &ndash; but your patience will pay off as you will soon have data on every pitch, atbat, and other &ldquo;plays&rdquo; over the past six years. One may also obtain supplementary data on games, players, coaches, umpires, and even locations of balls hit into play from other files using the <code>suffix</code> argument (here are <a href="http://gd2.mlb.com/components/game/mlb/year_2011/month_04/day_04/gid_2011_04_04_minmlb_nyamlb_1/inning/inning_hit.xml">some</a> <a href="http://gd2.mlb.com/components/game/mlb/year_2011/month_04/day_04/gid_2011_04_04_minmlb_nyamlb_1/players.xml">example</a> <a href="http://gd2.mlb.com/components/game/mlb/year_2011/month_04/day_04/miniscoreboard.xml">files</a>):</p>
 
 <pre><code class="r">files &lt;- c(&quot;inning/inning_hit.xml&quot;, &quot;miniscoreboard.xml&quot;, &quot;players.xml&quot;)
 scrape(start = &quot;2008-01-01&quot;, end = Sys.Date(), suffix = files, connect = my_db$con)
 </code></pre>
 
-<p>After this code is done running, let&#39;s glance at the different tables in our database.</p>
+<p>Once this code is done running, you should have these tables in your database:</p>
 
 <pre><code class="r">my_db
 </code></pre>
@@ -226,7 +226,7 @@ scrape(start = &quot;2008-01-01&quot;, end = Sys.Date(), suffix = files, connect
 
 <h2>Updating your PITCHf/x Database</h2>
 
-<p>For those of you that want to keep your database up-to-date throughout the season, one option is to use appropriate <code>start</code> and <code>end</code> values. However, this can lead to unintended results when scraping data for a particular day when game(s) have yet to be played. I see at least two immediate work-arounds: (1) only <code>scrape</code> data for a particular day <em>after</em> all the games are played (2) <a href="http://stackoverflow.com/questions/18932/how-can-i-remove-duplicate-rows?lq=1">remove duplicate rows</a> from your tables after updating.</p>
+<p>For those of you that want to keep your database up-to-date throughout the season, one option is to use appropriate <code>start</code> and <code>end</code> values. However, this can lead to unintended results when scraping data on a particular day where game(s) have yet to be played. I see at least two immediate work-arounds: (1) only <code>scrape</code> data for a particular day <em>after</em> all the games are played (2) <a href="http://stackoverflow.com/questions/18932/how-can-i-remove-duplicate-rows?lq=1">remove duplicate rows</a> from your tables after updating.</p>
 
 <p>No matter what route you take, the first thing you&#39;ll want is the date of the most recent data point in your database. Doing this is easy if you have the &#39;game&#39; table from the <a href="http://gd2.mlb.com/components/game/mlb/year_2011/month_04/day_04/miniscoreboard.xml">miniscoreboard.xml</a> files since it has an &#39;original_date&#39; column which can be used to find the most recent date.</p>
 
@@ -242,7 +242,14 @@ scrape(start = max.date + 1, end = Sys.Date(), connect = my_db$con)
 scrape(start = max.date + 1, end = Sys.Date(), suffix = files, connect = my_db$con)
 </code></pre>
 
-<p>For my next post, I plan on demonstrating some basic database queries using dplyr&#39;s grammar for data manipulation. In the meantime, you might find it helpful you review dplyr&#39;s <a href="http://cran.r-project.org/web/packages/dplyr/vignettes/databases.html">database</a> vignette</p>
+<p>For my next post, I&#39;ll demonstrate how to grab data from our database using dplyr&#39;s grammar for data manipulation. In the meantime, you might find it helpful you review dplyr&#39;s <a href="http://cran.r-project.org/web/packages/dplyr/vignettes/databases.html">database</a> vignette. If you have any questions or run into problems using pitchRx, please leave a comment below or post an issue on <a href="https://github.com/cpsievert/pitchRx/issues?state=open">GitHub</a>. </p>
+
+<p><strong>DISCLAIMER</strong>: CRAN&#39;s current version of pitchRx (1.2) does not have support for collecting 2014 data. If you&#39;d like to collect 2014 data, please install version 1.3 (or above) from GitHub. The <a href="http://cran.r-project.org/web/packages/devtools/devtools.pdf">devtools</a> package makes it really easy to do so:</p>
+
+<pre><code class="r">library(devtools)
+install_github(&quot;cpsievert/pitchRx&quot;)
+library(pitchRx)
+</code></pre>
 
 </body>
 

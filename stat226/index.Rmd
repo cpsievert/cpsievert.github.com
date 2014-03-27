@@ -1,5 +1,6 @@
-Stat 226 Home Page
-========================================================
+
+
+# Stat 226 Home Page
 
 This page will serve as a collection of links to useful learning materials.
 
@@ -35,4 +36,5 @@ This page will serve as a collection of links to useful learning materials.
 * [Visualizing Sampling Methods](http://glimmer.rstudio.com/cpsievert/sampling)
 * [Sampling Distributions & CLT](http://glimmer.rstudio.com/cpsievert/CLT)
 * [Law of Large Numbers and Repeated Sampling](http://glimmer.rstudio.com/cpsievert/intervals/)
+* [Visualizing p-values and Hypothesis Tests](http://glimmer.rstudio.com/cpsievert/testing2/)
 * [Regression Inference](http://glimmer.rstudio.com/cpsievert/regInf2/)
