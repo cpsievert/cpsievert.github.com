@@ -25,13 +25,23 @@ knitWP <- function(file) {
   post.content <- paste(capture.output(print(post.content$children$html$children$body,
                                              indent = FALSE, tagSeparator = "")), collapse = "\n")
   post.content <- gsub("<?.body>", "", post.content)
-  #post.content <- gsub("<p>", "<p style=\"text-align: justify;\">", post.content)
-  post.content <- gsub("<?pre><code class=\"r\">", "\\[/code language=\"R\" \\]",
+  post.content <- gsub("</embed>", "", gsub("<embed.*?>", "", post.content)) #remove any embedded animations
+  post.content <- gsub("</script>", "", gsub("<script.*?>", "", post.content)) #remove any JS scripts
+  post.content <- gsub("<pre><code class=\"r\">", "\\[code language=\"R\" \\]",
                        post.content)
-  post.content <- gsub("<?pre><code class=\"no-highlight\">", "\\1\\\n ",
+  post.content <- gsub("<pre class=\"r\"><code>", "\\\n\\[code language=\"R\" \\]\\\n",
+                       post.content)
+  post.content <- gsub("<pre><code>", "\\\n\\[code language=\"R\" \\]\\\n",
+                       post.content)
+  post.content <- gsub("<pre><code class=\"no-highlight\">", "\\1\\\n ",
                        post.content)
   post.content <- gsub("<?/code></pre>", "\\\n\\[/code\\]", post.content)
+  post.content <- gsub("&quot;", "'", post.content)
+  post.content <- gsub("&apos;", "'", post.content)
+  post.content <- gsub("&lt;", "<", post.content)
+  post.content <- gsub("&gt;", ">", post.content)
+  post.content <- gsub("&amp;", "&", post.content)
   return(post.content)
 }
 
-knitWP("index.html")
+writeLines(knitWP("index.html"), con = "wordpress.html")
