@@ -1,0 +1,10 @@
+base
+DBI
+devtools
+dplyr
+ggplot2
+knitr
+pitchRx
+Rcpp
+RSQLite
+RSQLite.extfuns

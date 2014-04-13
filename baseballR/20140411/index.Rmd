@@ -1,0 +1,175 @@
+---
+title: Modifying and Querying a PITCHf/x database with dplyr
+author: "Carson Sievert"
+date: "April 9, 2014"
+output: html_document
+---
+
+In [my last post](http://baseballwithr.wordpress.com/2014/03/24/422/), we got up and running with a PITCHf/x database. This time, I'll share some thoughts on querying this database. I am by no means a database expert, so please share ideas for improvement if you have them. Before we get started, let me share some opinions I've gathered while developing [pitchRx](http://cran.r-project.org/web/packages/pitchRx/).
+
+## A bit of my philosophy
+
+When handling such a large and complex data source, there are a number of benefits to using a database. In my opinion, the biggest benefit is the ability to work around memory limitations on your machine. That is, if you `read.table` or `read.csv` every time you want to run a large scale analysis, you will most likely exhaust RAM which will force your machine to be sluggish. Another benefit is a more reproducible workflow with less overhead due to managing loads of spreadsheets. I hope this post helps moitvate `pitchRx` users to think carefully about the data required for a particular analysis and construct an appropriate database query when necessary.
+
+`pitchRx` tries not to make assumptions about the particular type of analysis that you'd like to run. Its main goal is to provide PITCHf/x data in its raw form. `pitchRx` does add some columns for sake of convenience (such as the pitch count and pitcher/batter names), but some of you may want to modify this raw form yourself. I encourage `pitchRx` users to perform modifications and also let me know if something important is missing or could be improved. That being said, one should be careful when making modifcations before performing a [database update](http://baseballwithr.wordpress.com/2014/03/24/422/). To demonstrate, this post will also show you how to add a date column to a table since we often want to query data based on a certain time period.
+
+## Let's get started
+
+For now, I recommend installing my fork of `dplyr` (I added an option for [computing permanent tables](https://groups.google.com/forum/#!topic/manipulatr/y-ql80zMv0Q) outside of R). This small change is very likely to be included in future versions of `dplyr`; so once it is, you won't have to install `dplyr` from my GitHub repo anymore. Also, in order for installation to run smoothly, you will probably have to install bigrquery first.
+
+```{r setup, echo = FALSE, message = FALSE, warning = FALSE}
+library(knitr)
+opts_chunk$set(cache = TRUE)
+```
+
+```{r install, results = 'hide', message = FALSE}
+library(devtools)
+install_github("hadley/bigrquery")
+install_github("cpsievert/dplyr")
+library(dplyr)
+```
+
+After installation, you'll want to establish a database connection. Note that my database is saved under my `~/pitchfx` directory as "pitchRx.sqlite".
+
+```{r connect, message = FALSE}
+setwd("~/pitchfx")
+db <- src_sqlite("pitchRx.sqlite3")
+db
+```
+
+## When in doubt, start with atbat
+
+I view the atbat table as an intermediary for the database, since it has a direct link to the most tables. Thus, in most cases, it makes sense to first subset the atbat table based on our level of interest then join it will another table. Before we explore some common subsetting operations, let's grab the atbat table. 
+
+```{r atbats}
+atbats <- tbl(db, "atbat")
+```
+
+It's important to note that we haven't actually brought this data into R. `dplyr` is smart enough to postpone data collection until it's absolutely necessary. In fact, `atbats` is currently a list containing meta-information that `dplyr` will use to (eventually) perform an SQL query. To emphasize my point, let's take a look at the SQL query associated with `atbats`.
+
+```{r query1}
+atbats$query
+```
+
+This query would pull the entire atbat table into R if we were to `collect(atbats)`. The neat thing about `dplyr` is that we can modify `atbats` as if it were a data frame before performing an expensive query.
+
+### Appending a date column
+
+Although tables returned by `pitchRx` do not explicitly contain a date column, dates are embedded between the 5th and 15th character of values in the "gameday_link" column. This allows us to append a date column using `dplyr`'s `mutate` function.
+
+```{r date}
+atbat_date <- mutate(atbats, date = substr(gameday_link, 15L, -10L))
+atbat_date$query
+```
+
+One lofty goal of `dplyr` is to provide a set of high level verbs that abstract out common SQL operations. This allows `dplyr` to be agnostic in regards to where your data actually lives. While this is often very nice, one also has to be careful of various "gotchas" when mapping R functions to SQL functions. For example, arguments to the `substr` function in R are not exactly the same as arguments to the SQL core function `SUBSTR`. For this reason, you might find the [core function reference](http://sqlite.org/lang_corefunc.html) helpful at some point (at least I did when writing this post :). Using `dplyr`'s `compute` function, we can perform this query without actually bringing the resulting "atbat_date" table into R.
+
+```{r compute}
+compute(atbat_date, name = "atbat_date", temporary = FALSE)
+db # Note the new atbat_date table
+```
+
+Once this table is computed, there is no reason to hang onto the original atbat table. We can easily remove this table using the [DBI](http://cran.r-project.org/web/packages/DBI/index.html) package (R's database interface). Both `pitchRx` and `dplyr` import this package, so it will be installed already.
+
+```{r dbi}
+library(DBI)
+dbRemoveTable(db$con, name = "atbat")
+db # Note removal of atbat table
+```
+
+It is also a good idea to rename the new "atbat_date" table as "atbat" so that `pitchRx` can recognize it when [updating the database](http://baseballwithr.wordpress.com/2014/03/24/422/). `DBI`'s `dbSendQuery` function allows us to send arbitrary queries to the database, so let's use it to rename the table.
+
+```{r rename}
+dbSendQuery(db$con, "ALTER TABLE atbat_date RENAME TO atbat")
+db # Now atbat has a date column
+```
+
+Unfortunately, if we peform a database update, new records will have missing values in the date column, so we will have to append this date column after each update. This is far from optimal, so I've put it on my TODO list to add support in future versions of pitchRx.
+
+## Subsetting by date
+
+Assuming we have data on multiple years, we could grab 2013 data in the following manner. Also, before we perform an SQL query, we can check the `<PLAN>` using `explain`:
+
+```{r filter_date}
+atbat13 <- filter(tbl(db, "atbat"), date >= '2013_01_01' & date <= '2014_01_01') 
+explain(atbat13)
+```
+
+Notice the `SCAN TABLE atbat` part under `<PLAN>`. This means that SQL will actually check each record to see if it meets our date criteria when the query is performed. We can do much better than this if we know a little about [indicies and query planning](http://www.sqlite.org/queryplanner.html). If we create an index on the date column, SQL no longer has to check every record and can perform a [binary search](http://en.wikipedia.org/wiki/Binary_search_algorithm) instead. Let's use `dbSendQuery` again, this time to create an index on the date column.
+
+```{r key1}
+dbSendQuery(db$con, "CREATE INDEX date_idx ON atbat(date)")
+explain(atbat13)
+```
+
+Now that we have an index on the date column, the `<PLAN>` section now says `SEARCH TABLE atbat USING INDEX` and as a result, our query will be faster. Note that **indices only have to be created once**, so now that we have `date_idx`, we can use it for other queries.
+
+## Extracting data by player
+
+In addition to dates, we often restrict our analysis to the player level. Thankfully, `pitchRx` adds player names to the atbat table so we can subset the atbats by name rather than ID. Suppose I'm interested in gathering every pitch thrown by Clayton Kershaw in 2013. I can simply apply another `filter` to `atbat13`:
+
+```{r atbat13}
+kershaw13 <- filter(atbat13, pitcher_name == "Clayton Kershaw")
+```
+
+Since we are subsetting by pitcher name, it's a good idea to create another index on the pitcher_name column.
+
+```{r key2}
+dbSendQuery(db$con, "CREATE INDEX pitcher_idx ON atbat(pitcher_name)")
+explain(kershaw13)
+```
+
+### Joining atbat with pitch
+
+Remember that the pitch table is the one that contains the valuable PITCHf/x information so we usually want to join this data with the relevant atbat information.
+
+```{r join}
+pitches <- tbl(db, "pitch")
+k13 <- inner_join(pitches, kershaw13, by = c("num", "gameday_link"))
+```
+
+Note that I have included both the "num" and "gameday_link" as columns to join by. The "gameday_link" column gives us an indication of which game a particular pitch/atbat came from and the "num" column keeps track of the atbat within a game. Together, these columns create a [unique key](http://en.wikipedia.org/wiki/Unique_key) which allows us to join these tables. Note that an [inner join](http://en.wikipedia.org/wiki/Join_%28SQL%29#Inner_join) will drop records that don't match on the unique key. In other words, this join will drop pitches where Kershaw *was not* the pitcher. 
+
+For reasons similar to before, this query will be much, much faster if we create an index for the pitch table corresponding to the unique key.
+
+```{r join_keys}
+dbSendQuery(db$con, "CREATE INDEX pitch_idx ON pitch(gameday_link, num)")
+```
+
+Finally, let's `collect` the query and be amazed at how fast we get a result.
+
+```{r collect}
+kershaw <- collect(k13)
+```
+
+### Chaining operations in dplyr
+
+`dplyr`'s `%.%` operator allows 'piping' of objects through a series of operations. This `%.%` guy can save us a lot of typing and produces much cleaner code when chaining many operations together. For example, I could grab all of Verlander's pitches in 2013 like so:
+
+```{r verlander}
+atbats <- tbl(db, "atbat") %.%
+  filter(date >= '2013_01_01' & date <= '2014_01_01') %.%
+  filter(pitcher_name == 'Justin Verlander')
+pitches <- tbl(db, "pitch")  
+verlander <- collect(inner_join(pitches, atbats, by = c("num", "gameday_link")))
+```
+
+### Animating pitches
+
+I know you're dying for some graphics at this point, so let's use the `animateFX` function from the `pitchRx` package to animate "average" trajectories for each one of Kershaw's pitch types. If you want to create some of these animations yourself, I recommend using the `saveHTML` function from the [animation](http://cran.r-project.org/web/packages/animation/) package so you can view the animation in a a web browser.
+
+```{r set_hook, echo=FALSE}
+opts_knit$set(animation.fun = hook_r2swf)
+```
+
+```{r aniKershaw, fig.show="animate", interval=0.5, fig.height=6, fig.width=12, warning=FALSE}
+library(pitchRx)
+animateFX(kershaw, avg.by = "pitch_type", layer = list(theme_bw(), facet_grid(.~stand)))
+```
+
+And now Verlander's:
+
+```{r aniVerlander, fig.show="animate", interval=0.5, fig.height=6, fig.width=12, warning=FALSE}
+animateFX(verlander, avg.by = "pitch_type", layer = list(theme_bw(), facet_grid(. ~ stand)))
+```
+
