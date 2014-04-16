@@ -5,49 +5,55 @@ date: "March 31, 2014"
 output: html_document
 ---
 
-I recently had the pleasure of participating in [rOpenSci's hackathon](https://github.com/ropensci/hackathon/) hosted at GitHub. I've been working with [topic models](http://en.wikipedia.org/wiki/Topic_model) recently, which is a way to summarize and extract meaning from large amounts of unstructured textual data. For this reason, I was attracted to rOpenSci's [elife package](https://github.com/ropensci/elife) which makes it easy to extract [elife](http://elife.elifesciences.org/) articles via the [elife API](http://dev.elifesciences.org/). In this post, I will demonstrate how to pull every currently available elife abstract and use topic models to explore the content.
+I recently had the pleasure of participating in [rOpenSci's hackathon](https://github.com/ropensci/hackathon/). To be honest, I was quite nervous to work among such notables, but I immediately felt welcome thanks to a warm and personable group. [Alyssa Frazee](http://alyssafrazee.com/) has a [great post summarizing the event](http://simplystatistics.org/2014/04/10/the-ropensci-hackathon-ropenhack/), so check that out if you haven't already. Once again, many thanks to rOpenSci for making it possible!
 
-```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
+In addition to learning and socializing at the hackathon, I wanted to ensure my time was productive, so I worked on a mini-project related to my research in text mining. rOpenSci has plethora of [R packages](http://ropensci.org/packages/index.html) for extracting literary content off the web, including [elife](https://github.com/ropensci/elife), which is a lightweight interface to the [elife API](http://dev.elifesciences.org/). This package is not yet available on CRAN, but we can easily install from GitHub thanks to devtools.
+
+```{r setup, echo = FALSE, message = FALSE}
 library(knitr)
-opts_chunk$set(eval=FALSE, message=FALSE)
+opts_chunk$set(eval = FALSE)
 ```
 
 #### Installing the package
 
 ```{r devtools}
 library(devtools)
-install_github("RopenSci/elife")
+install_github("ropensci/elife")
 library(elife)
 ```
 
-#### Obtain DOIs
+#### Brief Overview of Topic Models
 
-Since we're interested in every available abstract, let's first obtain every DOI.
+My research in text mining is focused on a particular type of [topic model](http://en.wikipedia.org/wiki/Topic_model) known as [Latent Dirichlet Allocation](http://en.wikipedia.org/wiki/Latent_Dirichlet_allocation) (LDA). In general, a topic model discovers topics (e.g., hidden themes) within a collection of documents. For example, if a given document is generated from a hypothetical "statistics topic", there might be a 10% chance a given word in that document is "model", a 5% chance that word is "probability", a 1% that word is "algorithm", etc. Whereas, if a document is generated from a hypothetical "computer science topic", there might be a 4% chance a given word in that document is "model", a 2% chance that word is "probability", a 16% that word is "algorithm", etc. In other words, each topic is defined by a probability mass function over each possible word.
+
+LDA takes this example one step further and allows for each document to be generated from a mixture of topics. For example, a particular document could be 60% statistics, 10% computer science, 20% mathematics, etc. Whereas, a different document could be 30% statistics, 30% computer science, 15% mathematics, etc. Within the LDA literature, fitting models to abstracts of academic articles is quite common, so I thought it would be neat to do the same with abstracts from elife articles. 
+
+#### Get all the elife abstracts!
+
+In order to grab all the abstracts, first we'll grab all the [DOIs](http://en.wikipedia.org/wiki/Digital_object_identifier) that point to currently available articles. Note that we can do more complicated queries of specific articles with `searchelife` (the `help(searchelife)` page has some nice examples).
 
 ```{r dois}
 dois <- searchelife(terms = "*", searchin = "article_title", boolean = "matches")
 ```
 
-These DOIs can be used to obtain all sorts of meta data related to these articles. For our purposes, we'll just grab abstracts.
+The `dois` can now be used to obtain all sorts of meta data associated with these articles using `elife_doi`. In this case, I just want the abstracts.
 
 ```{r abs}
-abs <- NULL
-for (i in 1:length(dois)) {
-  ab <- elife_doi(dois[i], ret = "abstract")
-  abs <- c(abs, ab)
-}
+abs <- sapply(dois, function(x) elife_doi(x, ret = "abstract"))
 ```
 
-From here, we have what we need to fit a topic model to these abstracts. I don't want to cover gorey details here, but if you're interested in how I fit this model, feel free to check out [the code](). Instead, let's jump right into exploring the topic model output.
+From here, we have what we need to fit the topic model. I don't want to focus on technical details here, but if you are interested in the statistics involved, I recommend reading [my post on xkcd comics](http://cpsievert.github.io/xkcd/). This post also covers the method I use to determine an optimal number of topics. I've provided all the code used to fit the model [here](https://github.com/cpsievert/cpsievert.github.com/blob/master/elife/elife.R), but let's skip to the fun part and jump right into exploring the model output.
 
-The window below is an interactive visualization of a [Latent Dirichlet Allocation](http://en.wikipedia.org/wiki/Latent_Dirichlet_allocation) (LDA) model using elife abstracts. The aim of this visualization is to aid interpretation of topics. Topic interpretation tends to be difficult since each topic has a probability distribution over every unique word in the collection of text. With this interactive visualization, one can examine the most "relevant" words for a given topic by hovering/clicking over the appropriate circle. For an example, go ahead and click on the circle below labeled "11". 
+The window below is an interactive visualization of the LDA output derived from elife abstracts. The aim of this visualization is to aid interpretation of topics. Topic interpretation tends to be difficult since each topic is defined by a probability distribution with support over many of words. With this interactive visualization, one can focus on the most "relevant" words for any topic by hovering/clicking over the appropriate circle. We will define "relevance" shortly, but for now, go ahead and click on the circle towards the bottom labeled "11".
 
-<iframe src="coming soon" width="800" height = "1000"></iframe>
+<iframe src="https://cpsievert.shinyapps.io/LDAelife/" width="1400" height = "800"></iframe>
 
-Now that topic 11 is selected, we see that "relat", "evolut", "similar", and "divert" are the top 4 most relevant words within topic 11 (in the bar chart on the right). Note that before the model was fit [stemming](http://en.wikipedia.org/wiki/Stemming) was performed. Thus, a word like "relat" could stand for "relation", "relations", "relationship", etc. You might now be asking: "That's great, I can see this topic is related to the evolution of species, but how is relevance of a word for a given topic defined?" 
+Now that topic 11 is selected, in the bar chart to the right, we see "relat", "evolut", and "similar" are the top 3 most relevant words. Towards the bottom of the bar chart, we see "resid" which is the 30th most relevant. Note that before the model was fit [stemming](http://en.wikipedia.org/wiki/Stemming) was performed. Thus, a word like "relat" could stand for "relation", "relations", "relationship", etc. You might now be thinking: "That's great, I can see this topic is related to evolutionary biology, but why are these words ranked in this order?"
 
-To understand relevance, its helpful to know that the width of the red bars represent the frequency within topic 11 and the gray bars represent the frequency within the entire collection of text. Many people define relevance as the probability of a word given the topic (the red bars), but this tends to over-rank common words. We could also define relevance as the probability within topic divided by the overall frequency of the word (ratio of red to gray), but this tends to over-rank rare words. A sensible thing to do is to take a compromise between these two approaches. The "Value of Lambda" slider in the window above controls this compromise where a value of one ranks solely by the width of red bars and a value of zero ranks by the ratio of red to gray.
+The topic specific word rankings are determined by a measure known as *relevance*. Relevance is a compromise between the probability of a word given the topic (the width of the red bars) and the probability within topic divided by the overall frequency of the word (the ratio of red to gray). Note the "Value of lambda" slider which controls this compromise. A value of 1 for lambda will rank words solely on the width of the red bars (which tends to over-rank common words). A value of 0 for lambda will rank words solely on the ratio of red to gray (which tends to over-rank rare words). A recent study has shown evidence for an optimal value of lambda around 0.6 which is the default value.
 
-The "topic landscape" on the left-hand side gives us a sense of topic similarity by approximating distances between topics. To produce the point locations, it first computes a distance between these topic specific distributions over words, then scales the distances down to two dimensions. By default, the area of the circles are proportional to the prevalence of each topic in the collection of text. In some sense, we can verify the context of topic similarity by hovering over a word label on the bar chart which resizes circles to be proportional to the distribution over topics for that given word. For example, if we hover over "evolut" (one of the relevant words for topic 11), we see that this word is largely associated with topic 11 and 20. If we now select topic 20, it becomes immediately obvious this topic could be population genetics.
+The "topic landscape" on the left-hand side provides a sense of topic similarity by approximating distances between topics. To produce the point locations, pairwise distances between topic specific word distributions are computed according to the currently selected measure in the "Topical Distance Calculation" menu. Those distances are next scaled down to two dimensions using the currently select algorithm in the "Multidimensional Scaling Method" menu. By default, the circle sizes are proportional to the prevalence of each topic in the collection of text. 
 
-There are certainly many other interesting conclusions we can draw using this interactive visualization. I hope you take the time to explore and leave a comment with findings or questions below. If you're interested in making a similar model with different data, [rOpenSci has a bunch of R packages](http://ropensci.org/packages/index.html) that provide easy access to full text of academic articles. If you'd like to make a similar interactive visualization of your model, check out the [LDAvis](https://github.com/cpsievert/LDAvis/) package.
+Hovering over labels on the bar chart allows us to explore different contexts for the same word. Upon hovering over a word, circles in the topic landscape will change according to the distribution over topics for that given word. For example, if we hover over "evolut" (the 2nd most relevant word for topic 11 when lambda is 0.6), we see that it has large mass under topic 11 and 20. If we now click on topic 20, the most relevant words suggest this is a "population genetics" topic. Interestingly, if we hover over "adapt" (the 29th most relevant word for topic 20 when lambda is 0.6), we see that it has large mass under topic 1 and 20. Now, if we hover over topic 1, we see a "general life science" topic. 
+
+There are certainly many other things to discover using this interactive visualization. I hope you take the time to explore and leave a comment with findings or questions below. If you are interested in text mining, or open science in general, definitely check out [rOpenSci's R packages](http://ropensci.org/packages/index.html). If you'd like to make a similar interactive visualization, check out the [LDAvis](https://github.com/cpsievert/LDAvis/) package.
