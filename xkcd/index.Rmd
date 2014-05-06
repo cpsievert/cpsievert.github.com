@@ -41,7 +41,7 @@ w_i | z_i, \phi^{(z_i)} &\sim Multinomial(\phi^{(z_i)}, 1)
 \end{align*}
 $$
 
-It's also common to use symmetric hyperparameters $\alpha$ and $\beta$, so these are usually thought of as scalar values. The benefit here is that we can integrate out $\phi$ and $\theta$ and use a collapsed Gibbs algorithm to obtain samples from the target distribution $p(\textbf{z}|\textbf{w}, T)$. Posterior samples of $\textbf{z}$ can then be used to construct estimates of $\phi$ and $\theta$. This algorithm has many implementations, but I chose to use the [R](http://cran.r-project.org/) package [LDAviz](https://github.com/kshirley/LDAviz) for model fitting and post-processing.
+It's also common to use symmetric hyperparameters $\alpha$ and $\beta$, so these are usually thought of as scalar values. The benefit here is that we can integrate out $\phi$ and $\theta$ and use a collapsed Gibbs algorithm to obtain samples from the target distribution $p(\textbf{z}|\textbf{w}, T)$. Posterior samples of $\textbf{z}$ can then be used to construct estimates of $\phi$ and $\theta$. This algorithm has many implementations, but I chose to use the [R](http://cran.r-project.org/) package [LDAtools](https://github.com/kshirley/LDAtools) for model fitting and post-processing.
 
 Finding an optimal number of topics
 ---------------------------------------
@@ -69,7 +69,7 @@ Thankfully xkcd keeps an [archive](http://xkcd.com/archive/) of all their comics
 Fitting the model
 -------------------------------
 
-The collapsed Gibbs sampler implemented in [LDAviz](https://github.com/kshirley/LDAviz) was used to fit models with 5, 10, ..., 50 topics. For each one of these 10 models, three chains (with randomized starting values) were each run for 1000 iterations. Convergence was monitored by tracking the log-likelihood and computing the potential scale reduction factor using the [coda](http://cran.r-project.org/web/packages/coda/index.html) package. As seen below, the reduction factor for each model is very close to 1 (thus, we a evidence of convergence for each model).
+The collapsed Gibbs sampler implemented in [LDAtools](https://github.com/kshirley/LDAtools) was used to fit models with 5, 10, ..., 50 topics. For each one of these 10 models, three chains (with randomized starting values) were each run for 1000 iterations. Convergence was monitored by tracking the log-likelihood and computing the potential scale reduction factor using the [coda](http://cran.r-project.org/web/packages/coda/index.html) package. As seen below, the reduction factor for each model is very close to 1 (thus, we a evidence of convergence for each model).
 
 ```{r Rhats, echo=FALSE, results='asis'}
 load("Rhats.rda")
@@ -142,4 +142,4 @@ Hopefully you (the reader) will take time to explore different topics and find i
 Acknowledgements
 -------------------------------
 
-Special thanks to my collaborator [Kenny Shirley](http://www2.research.att.com/~kshirley/) for helpful comments and his work on [LDAviz](https://github.com/kshirley/LDAviz).
+Special thanks to my collaborator [Kenny Shirley](http://www2.research.att.com/~kshirley/) for helpful comments and his work on [LDAtools](https://github.com/kshirley/LDAtools).
