@@ -1,0 +1,73 @@
+```{r col}
+library(colorspace)
+map <- function(L = 50, x) {
+  y <- (x - 180)/1.8 
+  hex(LUV(L, y, -y))
+}
+colorz <- map(x = seq(0, 360, 60))
+
+# maps values between (0, 360) to (-100, 100)
+kershaw$spin <- with(kershaw, (spin_dir - 180)/1.8)
+```
+
+**dplyr**'s `%.%` operator extends this chaining operations idea by 'piping' objects through a series of operations. This `%.%` guy can save us a lot of typing and produces much cleaner code when chaining many operations together. For example, I could have created `atbat13` from `atbats` using the following:
+
+```{r pipes}
+atbat13b <- atbats %.%
+  mutate(year = substr(gameday_link, 9L, -4L)) %.% 
+  filter(year == "2013")
+pitch13b$query # see -- produces the same query!
+
+# Testing
+lee <- filter(atbats, pitcher_name == "Cliff Lee")
+compute(lee, name = "lee", temporary = FALSE)
+leed <- tbl(db, "lee") %.%
+  mutate(date = substr(gameday_link, 15L, -10L))
+filter(leed, date >= '2012_03_06' & date <= '2012_03_11')
+```
+
+[Last time](http://baseballwithr.wordpress.com/2014/04/13/modifying-and-querying-a-pitchfx-database-with-dplyr/) I posted, we focused on querying data from our PITCHf/x database. This time, I'll use this approach to grab some data and gain some insight using strikezone plots. In particular, I like to follow up Jim's great post on [visualizing Cliff Lee's pitches](http://baseballwithr.wordpress.com/2014/03/31/visualizing-cliff-lees-pitches-in-the-2013-season/), but focus on an important issue in strikezone plots -- overplotting. 
+
+
+For this analysis, I'll need a few columns from the "pitch" and "atbat" table in the database.
+
+```{r select}
+pitches <- select(tbl(db, "pitch"), px, pz, pitch_type, num, gameday_link)
+```
+
+
+To demonstrate, suppose I would like to know which pitchers are responsible for the most pitches in our database. In order to do so, I will first 'split' the data into chunks -- one for each pitcher using the `group_by` function.
+
+
+```{r group}
+pitchfx2 <- group_by(pitchfx, pitcher_name)
+```
+
+The equivalent using the `%.%` operator would be:
+
+```{r group2}
+pitchfx2 <- pitchfx %.% 
+  group_by(pitcher_name)
+```
+
+You might be asking: "What's the point"? Well, piping objects like this can save us a lot of typing and produces much cleaner code when chaining many operations.
+
+```{r que}
+pitchfx %.% 
+  group_by(pitcher_name) %.%
+  summarise(count = n()) %.%
+  arrange(desc(count))
+```
+
+##
+It is often convenient to combine data on the pitch level with data on the atbat level. An `inner_join` performed on the "num" and "gameday_link" columns gives us a way to link these two tables into a single table.
+
+```{r join}
+atbats <- select(tbl(db, "atbat"), pitcher_name, stand, num, gameday_link)
+pitchfx <- inner_join(pitches, atbats, by = c("num", "gameday_link"))
+pitchfx$query
+```
+
+
+Behind the scenes dplyr is building an SQL query that it will eventually execute when necessary. The really neat thing is most of the dplyr functionality doesn't care whether you're working with a remote database or a data frame within an R session.
+
