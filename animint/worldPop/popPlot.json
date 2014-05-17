@@ -1,0 +1,193 @@
+{
+ "geoms": {
+ "geom1_tallrect_lines": {
+ "geom": "tallrect",
+"classed": "geom1_tallrect_lines",
+"aes": {
+ "xmin": "xmin",
+"xmax": "xmax",
+"clickSelects": "year" 
+},
+"params": {
+ "alpha":    0.5 
+},
+"subset_order": [],
+"types": {
+ "xmin": "numeric",
+"xmax": "numeric",
+"clickSelects": "integer",
+"group": "integer" 
+},
+"chunks": 1,
+"total": 1,
+"chunk_order": [],
+"nest_order": [],
+"nextgeom": "geom2_line_lines" 
+},
+"geom2_line_lines": {
+ "geom": "line",
+"classed": "geom2_line_lines",
+"aes": {
+ "x": "year",
+"y": "population",
+"group": "subcontinent" 
+},
+"params": {
+ "size":      4 
+},
+"subset_order": [],
+"types": {
+ "x": "numeric",
+"y": "numeric",
+"group": "integer" 
+},
+"chunks": 1,
+"total": 1,
+"chunk_order": [],
+"nest_order": [
+ "group" 
+] 
+},
+"geom3_bar_bars": {
+ "geom": "rect",
+"classed": "geom3_bar_bars",
+"aes": {
+ "x": "subcontinent",
+"y": "population",
+"showSelected": "year" 
+},
+"params": [],
+"subset_order": [],
+"types": {
+ "y": "numeric",
+"x": "numeric",
+"showSelected": "integer",
+"group": "integer",
+"xmin": "numeric",
+"xmax": "numeric",
+"ymin": "numeric",
+"ymax": "numeric" 
+},
+"chunks": {
+ "1950": 1,
+"1955": 2,
+"1960": 3,
+"1965": 4,
+"1970": 5,
+"1975": 6,
+"1980": 7,
+"1985": 8,
+"1990": 9,
+"1995": 10,
+"2000": 11,
+"2005": 12,
+"2010": 13,
+"2015": 14,
+"2020": 15,
+"2025": 16,
+"2030": 17,
+"2035": 18,
+"2040": 19,
+"2045": 20,
+"2050": 21 
+},
+"total": 21,
+"chunk_order": [
+ "year" 
+],
+"nest_order": [],
+"nextgeom": "geom4_text_bars" 
+},
+"geom4_text_bars": {
+ "geom": "text",
+"classed": "geom4_text_bars",
+"aes": {
+ "x": "subcontinent",
+"y": "population",
+"label": "title",
+"showSelected": "year" 
+},
+"params": {
+ "parse": false 
+},
+"subset_order": [
+ "showSelected" 
+],
+"types": {
+ "y": "numeric",
+"x": "numeric",
+"label": "factor",
+"showSelected": "integer" 
+},
+"chunks": 1,
+"total": 1,
+"chunk_order": [],
+"nest_order": [
+ "showSelected" 
+] 
+} 
+},
+"selectors": {
+ "year": {
+ "selected": "1950",
+"update": [
+ "geom1_tallrect_lines",
+"geom3_bar_bars",
+"geom4_text_bars" 
+],
+"chunks": "year" 
+} 
+},
+"plots": {
+ "lines": {
+ "geoms": [
+ "geom1_tallrect_lines",
+"geom2_line_lines" 
+],
+"axis": {
+ "x": [ 0.0671, 0.28355,    0.5, 0.71645, 0.9329 ],
+"xlab": [ "1950", "1975", "2000", "2025", "2050" ],
+"xrange": [ 1942.2, 2057.8 ],
+"xname": "year",
+"xline": true,
+"xticks": true,
+"y": [ 0.045305, 0.21996, 0.39462, 0.56928, 0.74394, 0.9186 ],
+"ylab": [ "0e+00", "1e+06", "2e+06", "3e+06", "4e+06", "5e+06" ],
+"yrange": [ -2.5939e+05, 5.466e+06 ],
+"yname": "population",
+"yline": true,
+"yticks": true 
+},
+"legend": {},
+"options": {
+ "width":    400,
+"height":    400 
+} 
+},
+"bars": {
+ "geoms": [
+ "geom3_bar_bars",
+"geom4_text_bars" 
+],
+"axis": {
+ "x": [ 0.045455, 0.22008, 0.39472, 0.56935, 0.74398, 0.91861 ],
+"xlab": [ "0e+00", "1e+06", "2e+06", "3e+06", "4e+06", "5e+06" ],
+"xrange": [ -2.6029e+05, 5.4661e+06 ],
+"xname": "population",
+"xline": true,
+"xticks": true,
+"y": [ 0.042254, 0.11268, 0.1831, 0.25352, 0.32394, 0.39437, 0.46479, 0.53521, 0.60563, 0.67606, 0.74648, 0.8169, 0.88732, 0.95775 ],
+"ylab": [ "Lesser Antilles", "Oceania", "Greater Antilles", "Isthmic Central America", "Central America", "(Former) Soviet Union", "Eastern Europe", "South America", "Western Europe", "North America", "Europe", "The Americas", "Africa", "Asia" ],
+"yrange": [    0.4,   14.6 ],
+"yname": "subcontinent",
+"yline": true,
+"yticks": true 
+},
+"legend": {},
+"options": {
+ "width":    400,
+"height":    400 
+} 
+} 
+} 
+}
