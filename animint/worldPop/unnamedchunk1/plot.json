@@ -257,7 +257,7 @@
 },
 "legend": {},
 "options": {
- "width":    400,
+ "width":    350,
 "height":    400 
 } 
 },
@@ -292,7 +292,6 @@
 "pointshape":     16,
 "pointsize":      4,
 "pointalpha":    0.6,
-"pointorder": 2,
 "label": [ "estimate" ] 
 },
 {
@@ -300,14 +299,13 @@
 "pointshape":     16,
 "pointsize":      4,
 "pointalpha":    0.6,
-"pointorder": 1,
 "label": [ "actual" ] 
 } 
 ] 
 } 
 },
 "options": {
- "width":    400,
+ "width":    350,
 "height":    400 
 } 
 },
@@ -338,7 +336,6 @@
 "polygoncolour": "#000000",
 "polygonsize":    0.5,
 "polygonlinetype":      1,
-"polygonorder": 14,
 "label": [ "Asia" ] 
 },
 {
@@ -346,7 +343,6 @@
 "polygoncolour": "#000000",
 "polygonsize":    0.5,
 "polygonlinetype":      1,
-"polygonorder": 13,
 "label": [ "Africa" ] 
 },
 {
@@ -354,7 +350,6 @@
 "polygoncolour": "#000000",
 "polygonsize":    0.5,
 "polygonlinetype":      1,
-"polygonorder": 12,
 "label": [ "The Americas" ] 
 },
 {
@@ -362,7 +357,6 @@
 "polygoncolour": "#000000",
 "polygonsize":    0.5,
 "polygonlinetype":      1,
-"polygonorder": 11,
 "label": [ "Europe" ] 
 },
 {
@@ -370,7 +364,6 @@
 "polygoncolour": "#000000",
 "polygonsize":    0.5,
 "polygonlinetype":      1,
-"polygonorder": 10,
 "label": [ "North America" ] 
 },
 {
@@ -378,7 +371,6 @@
 "polygoncolour": "#000000",
 "polygonsize":    0.5,
 "polygonlinetype":      1,
-"polygonorder": 9,
 "label": [ "Western Europe" ] 
 },
 {
@@ -386,7 +378,6 @@
 "polygoncolour": "#000000",
 "polygonsize":    0.5,
 "polygonlinetype":      1,
-"polygonorder": 8,
 "label": [ "South America" ] 
 },
 {
@@ -394,7 +385,6 @@
 "polygoncolour": "#000000",
 "polygonsize":    0.5,
 "polygonlinetype":      1,
-"polygonorder": 7,
 "label": [ "Eastern Europe" ] 
 },
 {
@@ -402,7 +392,6 @@
 "polygoncolour": "#000000",
 "polygonsize":    0.5,
 "polygonlinetype":      1,
-"polygonorder": 6,
 "label": [ "(Former) Soviet Union" ] 
 },
 {
@@ -410,7 +399,6 @@
 "polygoncolour": "#000000",
 "polygonsize":    0.5,
 "polygonlinetype":      1,
-"polygonorder": 5,
 "label": [ "Central America" ] 
 },
 {
@@ -418,7 +406,6 @@
 "polygoncolour": "#000000",
 "polygonsize":    0.5,
 "polygonlinetype":      1,
-"polygonorder": 4,
 "label": [ "Isthmic Central America" ] 
 },
 {
@@ -426,7 +413,6 @@
 "polygoncolour": "#000000",
 "polygonsize":    0.5,
 "polygonlinetype":      1,
-"polygonorder": 3,
 "label": [ "Greater Antilles" ] 
 },
 {
@@ -434,7 +420,6 @@
 "polygoncolour": "#000000",
 "polygonsize":    0.5,
 "polygonlinetype":      1,
-"polygonorder": 2,
 "label": [ "Oceania" ] 
 },
 {
@@ -442,14 +427,13 @@
 "polygoncolour": "#000000",
 "polygonsize":    0.5,
 "polygonlinetype":      1,
-"polygonorder": 1,
 "label": [ "Lesser Antilles" ] 
 } 
 ] 
 } 
 },
 "options": {
- "width":    200,
+ "width":    100,
 "height":    400 
 } 
 } 

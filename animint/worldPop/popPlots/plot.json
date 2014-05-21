@@ -6,8 +6,7 @@
 "aes": {
  "x": "subcontinent",
 "y": "population",
-"showSelected": "year",
-"clickSelects": "subcontinent" 
+"showSelected": "year" 
 },
 "params": [],
 "subset_order": [],
@@ -15,7 +14,6 @@
  "y": "numeric",
 "x": "numeric",
 "showSelected": "integer",
-"clickSelects": "factor",
 "group": "integer",
 "xmin": "numeric",
 "xmax": "numeric",
@@ -80,64 +78,38 @@
  "showSelected" 
 ] 
 },
-"geom3_tallrect_lines": {
- "geom": "tallrect",
-"classed": "geom3_tallrect_lines",
+"geom3_vline_lines": {
+ "geom": "vline",
+"classed": "geom3_vline_lines",
 "aes": {
- "xmin": "xmin",
-"xmax": "xmax",
+ "xintercept": "year",
 "clickSelects": "year" 
 },
 "params": {
- "alpha":    0.5 
+ "size":     12,
+"alpha":    0.5 
 },
 "subset_order": [],
 "types": {
- "xmin": "numeric",
-"xmax": "numeric",
+ "xintercept": "numeric",
 "clickSelects": "integer",
-"group": "integer" 
+"group": "integer",
+"xend": "numeric",
+"x": "numeric" 
 },
 "chunks": 1,
 "total": 1,
 "chunk_order": [],
 "nest_order": [],
-"nextgeom": "geom4_point_lines" 
+"nextgeom": "geom4_line_lines" 
 },
-"geom4_point_lines": {
- "geom": "point",
-"classed": "geom4_point_lines",
-"aes": {
- "x": "year",
-"y": "population",
-"colour": "type" 
-},
-"params": {
- "na.rm": false,
-"size":      4,
-"alpha":   0.25 
-},
-"subset_order": [],
-"types": {
- "colour": "rgb",
-"x": "numeric",
-"y": "numeric",
-"fill": "rgb" 
-},
-"chunks": 1,
-"total": 1,
-"chunk_order": [],
-"nest_order": [],
-"nextgeom": "geom5_line_lines" 
-},
-"geom5_line_lines": {
+"geom4_line_lines": {
  "geom": "line",
-"classed": "geom5_line_lines",
+"classed": "geom4_line_lines",
 "aes": {
  "x": "year",
 "y": "population",
-"group": "subcontinent",
-"clickSelects": "subcontinent" 
+"group": "subcontinent" 
 },
 "params": {
  "size":      4,
@@ -147,15 +119,39 @@
 "types": {
  "x": "numeric",
 "y": "numeric",
-"group": "integer",
-"clickSelects": "factor" 
+"group": "integer" 
 },
 "chunks": 1,
 "total": 1,
 "chunk_order": [],
 "nest_order": [
  "group" 
-] 
+],
+"nextgeom": "geom5_point_lines" 
+},
+"geom5_point_lines": {
+ "geom": "point",
+"classed": "geom5_point_lines",
+"aes": {
+ "x": "year",
+"y": "population",
+"fill": "type",
+"colour": "type" 
+},
+"params": {
+ "na.rm": false 
+},
+"subset_order": [],
+"types": {
+ "fill": "rgb",
+"colour": "rgb",
+"x": "numeric",
+"y": "numeric" 
+},
+"chunks": 1,
+"total": 1,
+"chunk_order": [],
+"nest_order": [] 
 } 
 },
 "selectors": {
@@ -164,16 +160,9 @@
 "update": [
  "geom1_bar_bars",
 "geom2_text_bars",
-"geom3_tallrect_lines" 
+"geom3_vline_lines" 
 ],
 "chunks": "year" 
-},
-"subcontinent": {
- "selected": "Africa",
-"update": [
- "geom1_bar_bars",
-"geom5_line_lines" 
-] 
 } 
 },
 "plots": {
@@ -204,14 +193,14 @@
 },
 "lines": {
  "geoms": [
- "geom3_tallrect_lines",
-"geom4_point_lines",
-"geom5_line_lines" 
+ "geom3_vline_lines",
+"geom4_line_lines",
+"geom5_point_lines" 
 ],
 "axis": {
- "x": [ 0.0671, 0.28355,    0.5, 0.71645, 0.9329 ],
+ "x": [ 0.045455, 0.27273,    0.5, 0.72727, 0.95455 ],
 "xlab": [ "1950", "1975", "2000", "2025", "2050" ],
-"xrange": [ 1942.2, 2057.8 ],
+"xrange": [   1945,   2055 ],
 "xname": "year",
 "xline": true,
 "xticks": true,
@@ -229,19 +218,17 @@
 "title": "type",
 "entries": [
  {
- "pointcolour": "#00BFC4",
+ "pointfill": "#00BFC4",
+"pointcolour": "#00BFC4",
 "pointshape":     16,
-"pointsize":      4,
-"pointalpha":   0.25,
-"pointorder": 2,
+"pointsize":      2,
 "label": [ "estimate" ] 
 },
 {
- "pointcolour": "#F8766D",
+ "pointfill": "#F8766D",
+"pointcolour": "#F8766D",
 "pointshape":     16,
-"pointsize":      4,
-"pointalpha":   0.25,
-"pointorder": 1,
+"pointsize":      2,
 "label": [ "actual" ] 
 } 
 ] 

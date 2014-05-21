@@ -1,12 +1,19 @@
 library(knitr)
+library(rmarkdown)
 library(servr)
 
-# Function to knit a Rmd file and serve the html with local file server
-knit2serv <- function(dir = "~/Desktop/github/local/cpsievert.github.com/animint", 
-                      subdir, filename = subdir, port = 4000) {
+render2serv <- function(dir = "~/Desktop/github/local/cpsievert.github.com/animint", 
+                        subdir, filename = subdir, port = 4000, fun = rmarkdown::render, ...) {
+  knit_meta() #clear metadata
   Dir = if (missing(subdir)) dir else file.path(dir, subdir)
-  knit2html(file.path(Dir, paste0(filename, ".Rmd")), output = file.path(Dir, paste0(filename, ".html")))
+  wd = getwd()
+  setwd(Dir)
+  fun(input = paste0(filename, ".Rmd"))
+  setwd(wd) #go back to original working directory
   httd(Dir, launch.browser = TRUE)
 }
-knit2serv(subdir = "worldPop")
-knit2serv(subdir = "knitr")
+
+# For some reason, self_contained works on Firefox and Safari but not Chrome
+render2serv(subdir = "worldPop", output_format = "html_document", 
+            output_options = list(self_contained = FALSE), envir = new.env())
+
