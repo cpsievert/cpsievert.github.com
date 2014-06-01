@@ -19,7 +19,7 @@ HTML/SVG output. To do this, animint first
 [compiles](https://github.com/tdhock/animint/wiki/Compiler-details) a list of ggplot objects and
 extracts the parts necessary for
 [rendering](https://github.com/tdhock/animint/wiki/Renderer-details) output. Although the language
-is incredibly expressive and powerful for users, as anyone any ggplot2 developer tell you, the
+is incredibly expressive and powerful for users, as any ggplot2 developer could tell you, the
 structure underlying a ggplot object is quite complicated (sometimes, [even the original author
 needs help](https://twitter.com/hadleywickham/status/317279035937923072)).
 

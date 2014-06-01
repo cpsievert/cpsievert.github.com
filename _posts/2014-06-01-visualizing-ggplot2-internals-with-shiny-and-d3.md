@@ -19,8 +19,8 @@ HTML/SVG output. To do this, animint first
 [compiles](https://github.com/tdhock/animint/wiki/Compiler-details) a list of ggplot objects and
 extracts the parts necessary for
 [rendering](https://github.com/tdhock/animint/wiki/Renderer-details) output. Although the language
-is incredibly expressive and powerful for users, as anyone any ggplot2 developer tell you, the
-structure underlying a ggplot object is very complicated (sometimes, [even the original author
+is incredibly expressive and powerful for users, as any ggplot2 developer could tell you, the
+structure underlying a ggplot object is quite complicated (sometimes, [even the original author
 needs help](https://twitter.com/hadleywickham/status/317279035937923072)).
 
 
@@ -49,8 +49,8 @@ str(p)
 ##   ..$ gear: num [1:32] 4 4 4 3 3 3 3 4 4 4 ...
 ##   ..$ carb: num [1:32] 4 4 1 1 2 1 4 2 2 4 ...
 ##  $ layers     :List of 2
-##   ..$ :Classes 'proto', 'environment' <environment: 0x7fb466be8c00> 
-##   ..$ :Classes 'proto', 'environment' <environment: 0x7fb466ef3030> 
+##   ..$ :Classes 'proto', 'environment' <environment: 0x7fb464c35e38> 
+##   ..$ :Classes 'proto', 'environment' <environment: 0x7fb46a466c08> 
 ##  $ scales     :Reference class 'Scales' [package "ggplot2"] with 1 fields
 ##   ..$ scales: list()
 ##   ..and 21 methods, of which 9 are possibly relevant:
@@ -68,7 +68,7 @@ str(p)
 ##  $ facet      :List of 7
 ##   ..$ facets  :List of 1
 ##   .. ..$ am: symbol am
-##   .. ..- attr(*, "env")=<environment: 0x7fb46ab73d48> 
+##   .. ..- attr(*, "env")=<environment: 0x7fb464b97068> 
 ##   .. ..- attr(*, "class")= chr "quoted"
 ##   ..$ free    :List of 2
 ##   .. ..$ x: logi FALSE
@@ -231,8 +231,8 @@ str(ggplot_build(p))
 ##   .. ..$ gear: num [1:32] 4 4 4 3 3 3 3 4 4 4 ...
 ##   .. ..$ carb: num [1:32] 4 4 1 1 2 1 4 2 2 4 ...
 ##   ..$ layers     :List of 2
-##   .. ..$ :Classes 'proto', 'environment' <environment: 0x7fb466f805f8> 
-##   .. ..$ :Classes 'proto', 'environment' <environment: 0x7fb469ca5720> 
+##   .. ..$ :Classes 'proto', 'environment' <environment: 0x7fb46cded4b0> 
+##   .. ..$ :Classes 'proto', 'environment' <environment: 0x7fb464f90f88> 
 ##   ..$ scales     :Reference class 'Scales' [package "ggplot2"] with 1 fields
 ##   .. ..$ scales:List of 3
 ##   .. .. ..$ :List of 17
@@ -349,7 +349,7 @@ str(ggplot_build(p))
 ##   ..$ facet      :List of 7
 ##   .. ..$ facets  :List of 1
 ##   .. .. ..$ am: symbol am
-##   .. .. ..- attr(*, "env")=<environment: 0x7fb46ab73d48> 
+##   .. .. ..- attr(*, "env")=<environment: 0x7fb464b97068> 
 ##   .. .. ..- attr(*, "class")= chr "quoted"
 ##   .. ..$ free    :List of 2
 ##   .. .. ..$ x: logi FALSE
