@@ -1,0 +1,55 @@
+---
+layout: post
+title: "Visualizing ggplot2 internals with shiny and D3"
+author: Carson Sievert
+categories: [interactive visualization]
+tags: [animint, ggplot2, shiny, D3]
+---
+{% include JB/setup %}
+
+
+TL;DR -- I built [this shiny app](https://cpsievert.shinyapps.io/ggtree/) to visualize ggplot2
+internals.
+
+I'm fortunate enough to be participating in the Google's Summer of Code program where I'm helping
+develop the R package [animint](https://github.com/tdhock/animint). This package is one of
+[many](http://ggvis.rstudio.com/) [attempts](http://rcharts.io/) to bring interactive web graphics
+to the R console. Animint's approach is somewhat unique in it's translation of ggplot2 code to
+HTML/SVG output. To do this, animint first
+[compiles](https://github.com/tdhock/animint/wiki/Compiler-details) a list of ggplot objects and
+extracts the parts necessary for
+[rendering](https://github.com/tdhock/animint/wiki/Renderer-details) output. Although the language
+is incredibly expressive and powerful for users, as anyone any ggplot2 developer tell you, the
+structure underlying a ggplot object is quite complicated (sometimes, [even the original author
+needs help](https://twitter.com/hadleywickham/status/317279035937923072)).
+
+```{r ggplot2}
+library(ggplot2)
+p <- ggplot(mtcars, aes(mpg, wt)) +
+ geom_point(colour='grey50', size = 4) +
+ geom_point(aes(colour = cyl)) + facet_wrap(~am, nrow = 2)
+str(p)
+```
+
+Of course, this structure gets much more complicated after we "build" the plot --
+
+```{r built}
+str(ggplot_build(p))
+```
+
+As I started this project, I became frustrated trying to understand/navigate through the nested
+list-like structure of ggplot objects. As you can imagine, it isn't an optimal approach to print
+out the structure everytime you want to checkout a particular element. Out of this frustration came
+an idea to build [this tool](https://cpsievert.shinyapps.io/ggtree/) to help interact with and
+visualize this structure. Thankfully, my wonderful GSoC mentor [Toby Dylan
+Hocking](http://sugiyama-www.cs.titech.ac.jp/~toby/) agreed that this project could bring value to
+the ggplot2 community and encouraged me to pursue it.
+
+By default, this tool presents a [radial Reingold–Tilford
+Tree](http://bl.ocks.org/mbostock/4339184) of this nested list structure, but also has options to
+use the [collapsable](http://bl.ocks.org/mbostock/4339083) or
+[cartesian](http://bl.ocks.org/mbostock/4339184) versions. It also leverages the
+[shinyAce](https://github.com/trestletech/shinyAce) package which allows users to send arbitrary
+ggplot2 code to a [shiny](http://shiny.rstudio.com/) server thats evaluate the results and
+re-renders the visuals. I'm quite happy with the results as I think this tool is a great way to
+quickly grasp the internal building blocks of ggplot(s). Please share your thoughts below!
