@@ -11,7 +11,7 @@ tags: [animint, ggplot2, shiny, D3]
 TL;DR -- I built [this shiny app](https://cpsievert.shinyapps.io/ggtree/) to visualize ggplot2
 internals.
 
-I'm fortunate enough to be participating in the Google's Summer of Code program where I'm helping
+I'm fortunate enough to be participating in Google's Summer of Code program where I'm helping
 develop the R package [animint](https://github.com/tdhock/animint). This package is one of
 [many](http://ggvis.rstudio.com/) [attempts](http://rcharts.io/) to bring interactive web graphics
 to the R console. Animint's approach is somewhat unique in it's translation of ggplot2 code to
@@ -49,8 +49,8 @@ str(p)
 ##   ..$ gear: num [1:32] 4 4 4 3 3 3 3 4 4 4 ...
 ##   ..$ carb: num [1:32] 4 4 1 1 2 1 4 2 2 4 ...
 ##  $ layers     :List of 2
-##   ..$ :Classes 'proto', 'environment' <environment: 0x7fb464c35e38> 
-##   ..$ :Classes 'proto', 'environment' <environment: 0x7fb46a466c08> 
+##   ..$ :Classes 'proto', 'environment' <environment: 0x7fd2bd6b3e30> 
+##   ..$ :Classes 'proto', 'environment' <environment: 0x7fd2bd69a190> 
 ##  $ scales     :Reference class 'Scales' [package "ggplot2"] with 1 fields
 ##   ..$ scales: list()
 ##   ..and 21 methods, of which 9 are possibly relevant:
@@ -68,7 +68,7 @@ str(p)
 ##  $ facet      :List of 7
 ##   ..$ facets  :List of 1
 ##   .. ..$ am: symbol am
-##   .. ..- attr(*, "env")=<environment: 0x7fb464b97068> 
+##   .. ..- attr(*, "env")=<environment: 0x7fd2bd719378> 
 ##   .. ..- attr(*, "class")= chr "quoted"
 ##   ..$ free    :List of 2
 ##   .. ..$ x: logi FALSE
@@ -231,8 +231,8 @@ str(ggplot_build(p))
 ##   .. ..$ gear: num [1:32] 4 4 4 3 3 3 3 4 4 4 ...
 ##   .. ..$ carb: num [1:32] 4 4 1 1 2 1 4 2 2 4 ...
 ##   ..$ layers     :List of 2
-##   .. ..$ :Classes 'proto', 'environment' <environment: 0x7fb46cded4b0> 
-##   .. ..$ :Classes 'proto', 'environment' <environment: 0x7fb464f90f88> 
+##   .. ..$ :Classes 'proto', 'environment' <environment: 0x7fd2ba475fc8> 
+##   .. ..$ :Classes 'proto', 'environment' <environment: 0x7fd2be8f2340> 
 ##   ..$ scales     :Reference class 'Scales' [package "ggplot2"] with 1 fields
 ##   .. ..$ scales:List of 3
 ##   .. .. ..$ :List of 17
@@ -349,7 +349,7 @@ str(ggplot_build(p))
 ##   ..$ facet      :List of 7
 ##   .. ..$ facets  :List of 1
 ##   .. .. ..$ am: symbol am
-##   .. .. ..- attr(*, "env")=<environment: 0x7fb464b97068> 
+##   .. .. ..- attr(*, "env")=<environment: 0x7fd2bd719378> 
 ##   .. .. ..- attr(*, "class")= chr "quoted"
 ##   .. ..$ free    :List of 2
 ##   .. .. ..$ x: logi FALSE
