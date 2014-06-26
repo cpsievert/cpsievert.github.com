@@ -106,7 +106,7 @@ vocab &lt;- model2$getVocabulary()</code></pre>
 </div>
 <div id="ldavis" class="section level3">
 <h3>LDAvis</h3>
-<p>LDAvis comes with a <code>check.inputs</code> function to ensure the model output won’t break the visualization. In addition, <code>check.inputs</code> reorders the columns of the <span class="math">\(\phi\)</span> matrix according to the <code>topic.proportions</code>. Here we label these columns so that ‘1’ stands for the topic that is responsible for the highest share of the corpus.</p>
+<p>LDAvis comes with a <code>check.inputs</code> function that ensures visualization inputs are valid. In addition, <code>check.inputs</code> also reorders the columns of the <span class="math">\(\phi\)</span> matrix according to the <code>topic.proportions</code>. Here we label these columns so that ‘1’ stands for the topic that is responsible for the highest share of the corpus.</p>
 <pre class="r"><code># LDAvis can be installed from GitHub via `devtools::install_github(&quot;cpsievert/LDAvis&quot;)`
 library(LDAvis)
 out &lt;- check.inputs(K = 25, W = length(vocab), phi = phi, 
@@ -114,38 +114,12 @@ out &lt;- check.inputs(K = 25, W = length(vocab), phi = phi,
                     vocab = vocab, topic.proportion = topic.proportions)
 # Relabel topics so that topic &quot;1&quot; has highest topic proportion.
 colnames(out$phi) &lt;- seq_len(out$K)</code></pre>
-<p>Now that the “inputs” look OK, <code>createJSON</code> converts them into a JSON object that will be used to drive the visualization.</p>
+<p>Now that the “inputs” look OK, <code>createJSON</code> converts them into a JSON object that is used to drive the interactive visualization.</p>
 <pre class="r"><code>json &lt;- with(out, createJSON(K = 25, phi, term.frequency, 
                    vocab, topic.proportion))</code></pre>
-<pre><code>## [1] &quot;Looping through topics to compute top-30 most relevant terms for grid of lambda values&quot;
-## [1] 1
-## [1] 2
-## [1] 3
-## [1] 4
-## [1] 5
-## [1] 6
-## [1] 7
-## [1] 8
-## [1] 9
-## [1] 10
-## [1] 11
-## [1] 12
-## [1] 13
-## [1] 14
-## [1] 15
-## [1] 16
-## [1] 17
-## [1] 18
-## [1] 19
-## [1] 20
-## [1] 21
-## [1] 22
-## [1] 23
-## [1] 24
-## [1] 25</code></pre>
 <p>Lastly, the <code>serVis</code> function will write a number of files including index.html which can be viewed in a web browser or embeded within other pages via an HTML <code>&lt;iframe&gt;</code>. See <a href="http://www2.research.att.com/~kshirley/lda/index.html">here</a> for more info regarding reading the using the visualization.</p>
 <pre class="r"><code>serVis(json, out.dir = 'vis', open.browser = FALSE)</code></pre>
-<iframe src="vis/index.html" width="1400" height="800"></iframe> 
+<iframe src="vis/index.html" width="1200" height="700"></iframe> 
 
 
 
