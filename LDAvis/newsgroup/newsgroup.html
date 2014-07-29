@@ -55,7 +55,14 @@ code > span.er { font-weight: bold; }
 
 <body>
 
-<div class="container">
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
+<div class="container-fluid main-container">
 
 
 <div id="header">
@@ -109,7 +116,7 @@ z &lt;-<span class="st"> </span><span class="kw">with</span>(Newsgroupdata, <spa
                             topic.proportion, <span class="dt">n.terms=</span><span class="dv">30</span>, <span class="dt">dist.measure =</span> <span class="st">&quot;JS&quot;</span>))</code></pre>
 <p>Now that we have <code>json</code>, we can use <code>serVis</code> function to spit out files required to view the interactive webpage. One can even use this function to upload files as <a href="https://gist.github.com/cpsievert/70ca32cd3f4af8fe4cd4">a gist</a> which can then be viewed via <a href="http://bl.ocks.org/cpsievert/raw/70ca32cd3f4af8fe4cd4/">bl.ocks.org</a>.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">serVis</span>(json, <span class="dt">out.dir =</span> <span class="st">&quot;newsgroup&quot;</span>, <span class="dt">open.browser =</span> <span class="ot">FALSE</span>)</code></pre>
-<p>Now, to embed the resulting <a href="/newsgroup/index.html">/newsgroup/index.html</a> webpage within this page, we can make use of the HTML <code>iframe</code>s.</p>
+<p>Now, we can embed <a href="/LDAvis/newsgroup/newsgroup/index.html">the result</a> within this page using an HTML <code>iframe</code>.</p>
 <iframe src = "newsgroup/index.html" width=1200 height=700></iframe>
 
 <p>The <code>createJSON</code> function also takes an argument allowing us to change how the distance between topics is measured. Notice how using symmetric Kullback-Leibler (as opposed to Jensen-Shannon) divergence alters the locations of points on the left-hand side of the visualization.</p>

@@ -1,0 +1,110 @@
+---
+title: "LDAVis: A Method for Visualizing and Interpreting Topics"
+author: "Carson Sievert & Kenny Shirley"
+date: "August 3rd, 2014"
+output:
+  ioslides_presentation:
+    incremental: true
+    widescreen: true
+---
+
+```{r setup, echo=FALSE, warning=FALSE, message=FALSE}
+library(knitr)
+opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+```
+
+
+# What is a topic model?
+
+---
+
+> - <b>Topic models 'discover <font color="red">to</font><font color="blue">pi</font><font color="green">cs</font>' that occur in a collection of text:</b>
+
+> - <q><font color="red">Statistics</font> may be <font color="blue">dull</font>, but it has its <font color="red">moments.</font></q>
+
+<div class="columns-2">
+* 67% <font color="red">topic A</font>, 33% <font color="blue">topic B</font>.
+
+> - <q><font color="blue">Please</font> <font color="green">laugh.</font></q>
+
+* 50% <font color="blue">topic B</font>, 50% <font color="green">topic C</font>.
+
+> - <q><font color="green">Laugh</font>ing is <font color="green">good</font>.</q>
+
+* 100% <font color="green">topic C</font>.
+<img src = "ggplot.png" width = 400 height = 500>
+</div>
+
+## Towards topic interpretation
+
+* Each topic owns a _different_ probability mass function over the _same_ set of words (i.e. vocabulary).
+* __<font color="red">Problem</font>:__ Topics are not easily interpretable and vocabulary size is often very large. <b>Where should we put our focus?</b>
+* Typically, one produces a ranked list of words deemed important for understanding a given topic; but <b>how should we measure importance?</b>
+* __<font color="blue">Measure 1</font>:__ $p(w_i|z_j)$ -- probability of word $w_i$ given each topic $z_j$.
+  * __<font color="red">Drawback</font>:__ common words tend to appear near the top of such lists for multiple topics, making it hard to differentiate topics.
+* __<font color="blue">Measure 2</font>:__ $\text{lift} = \frac{p(w_i|z_j)}{p(w_i)}$ where $p(w_i)$ is overall probability of word $w_i$.
+  * __<font color="red">Drawback</font>:__ Rare words tend to receive too high of a ranking.
+* We believe that a compromise between these two measures can aid topic interpretation:
+$$
+\lambda * p(w_i|z_j) + (1 - \lambda) * \text{lift}
+$$
+
+---
+
+<div align = "center">
+  <img src="lambda.png" width = "700" height = "600">
+</div>
+
+## A few remarks
+
+* We anticipate this 'optimal' value of $\lambda$ will vary for different datasets.
+* For this reason, it is nice to have an _interactive_ tool to _quickly_ explore rankings based different values of $\lambda$.
+* The `R` package [LDAvis](https://github.com/cpsievert/LDAvis) makes it easy to create an interactive visualizations to aid topic interpretation using these ideas.
+
+---
+
+[A demo](http://cpsievert.github.io/LDAvis/newsgroup/newsgroup/index.html)
+
+<iframe src = "http://cpsievert.github.io/LDAvis/newsgroup/newsgroup/index.html" width = 1200 height = 800></iframe>
+
+
+## From Wikipedia:
+
+<q>
+In machine learning and natural language processing, a topic model is a type of statistical (mixture) model for discovering the abstract 'topics' that occur in a collection of documents.
+</q>
+
+<div class="notes">
+Helpful for summarizing large amounts of unstructured text.
+</div>
+
+## What is a 'topic'?
+
+* Each word occurrence can be conceptually connected to a latent (i.e., un-observable) multinomial random variable.
+* Each value of this latent random variable represents a different 'topic'.
+* Given I observe
+
+
+* Each topic owns a _different_ probability mass function over the _same_ set of words (i.e. vocabulary).
+
+
+```{r table, results='asis'}
+probs <- matrix(c(0.1, 0.05, 0.01, 0.04, 0.02, 0.16), nrow = 3, ncol = 2)
+row.names(probs) <- c("model", "probability", "algorithm")
+colnames(probs) <- c("statistics", "computer science")
+kable(probs, format = 'html')
+```
+
+
+
+---
+
+
+
+## Introducing LDAvis
+
+- `R` package to aid topic interpretation through interactive visualization.
+
+
+<EMBED SRC="LDAvis.mov" width="320" height="256" autoplay="true" loop="false" pluginspage="http://www.apple.com/quicktime/">
+
