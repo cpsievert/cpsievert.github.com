@@ -5,12 +5,12 @@ library(RWordPress)
 library(knitr)
 
 # set you username and password below
-options(WordpressLogin = c(username = 'password'),
-        WordpressURL = 'http://baseballwithr.wordpress.com/xmlrpc.php')
+#options(WordpressLogin = c(username = 'password'),
+#        WordpressURL = 'http://baseballwithr.wordpress.com/xmlrpc.php')
 
 knit2wp(input = 'index.Rmd',            # name of Rmd file to knit
-        title = 'Give me a title!',     # put title here as opposed to within in the Rmd file
-        categories = c('R', 'pitchRx'),
+        title = 'Acquire minor league play-by-play data with pitchRx',     # put title here as opposed to within in the Rmd file
+        categories = c('R', 'pitchRx', 'openWAR'),
         shortcode = c(TRUE, TRUE),      # ensures proper code highlighting
         publish = FALSE)
 
