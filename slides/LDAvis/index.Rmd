@@ -1,11 +1,15 @@
 ---
-title: "LDAVis: A Method for Visualizing and Interpreting Topics"
+title: 'LDAVis: A Method for Visualizing and Interpreting Topics'
 author: "Carson Sievert & Kenny Shirley"
-date: "August 3rd, 2014"
+date: "Follow along -- http://cpsievert.github.com/slides/LDAvis"
 output:
   ioslides_presentation:
-    incremental: true
-    widescreen: true
+    incremental: yes
+    widescreen: yes
+    mathjax: local
+    self_contained: false
+  beamer_presentation:
+    incremental: yes
 ---
 
 ```{r setup, echo=FALSE, warning=FALSE, message=FALSE}
@@ -18,7 +22,7 @@ opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 
 ---
 
-> - <b>Topic models discover 'topics' that occur in a collection of text:</b>
+* <b>Topic models discover 'topics' that occur in a collection of text:</b>
 
 > - <q><font color="red">Statistics</font> may be <font color="blue">dull</font>, but it has its <font color="red">moments.</font></q>
 
@@ -52,7 +56,7 @@ $$
 ## User study
 
 <div align = "center">
-  <img src="study.png" width = "700" height = "400">
+  <img src="study.png" width = "900" height = "500">
 </div>
 
 ---
