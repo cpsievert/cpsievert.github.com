@@ -5,6 +5,8 @@ date: "August 26, 2014"
 output: html_document
 ---
 
+**NOTE:** Ironically, some plots below may not render by default if you use Google Chrome, so please use Firefox or Safari. If you insist on Chrome, please close all Chrome instances and then restart Chrome using the flag –allow-file-access-from-files. In Windows, you do this using cmd, the command prompt.
+
 This post demonstrates some new features of the R package [animint](https://github.com/tdhock/animint) (facets, fixed cartesian coordinates, & knitr integration) using [PITCHf/x data](http://en.wikipedia.org/wiki/PITCHf/x). **animint** translates [ggplot2](http://cran.r-project.org/web/packages/ggplot2/index.html)'s grammar of graphics implementation to [SVG](http://en.wikipedia.org/wiki/Scalable_Vector_Graphics) and adds aesthetics/options to enable interactive animations. 
 
 ```{r setup, echo = FALSE, message = FALSE}
