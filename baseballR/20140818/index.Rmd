@@ -2,7 +2,9 @@
 title: "Interactive animations of PITCHf/x with animint and pitchRx"
 author: "Carson Sievert"
 date: "August 26, 2014"
-output: html_document
+output: 
+  html_document:
+    self_contained: false
 ---
 
 **NOTE:** Ironically, some plots below may not render by default if you use Google Chrome, so please use Firefox or Safari. If you insist on Chrome, please close all Chrome instances and then restart Chrome using the flag –allow-file-access-from-files. In Windows, you do this using cmd, the command prompt.
@@ -22,7 +24,7 @@ The R package [pitchRx](https://github.com/cpsievert/pitchRx) provides some util
 
 ```{r getLocations}
 # This gist requires dplyr, tidyr, & pitchRx; and will install any that are not installed already
-source_gist(id = "da555f08f3c9ba2c0b8e")
+devtools::source_gist(id = "da555f08f3c9ba2c0b8e")
 data(pitches, package = "pitchRx")
 dat <- getLocations(pitches, pitcher_name, pitch_type, summarise = TRUE)
 head(dat)
@@ -35,6 +37,7 @@ The `frame` co-variate keeps track of time since the pitcher released the ball (
 By plotting height from the ground (`z`) and the horizontal location relative to home plate (`x`) for each `frame` and stitching those plots into an animation, we acheive the effect of a pitcher throwing the baseball at the viewer. We *could* acheive this by subsetting `dat` and printing a scatterplot of the x/z coordinates for each value of `frame` (which is effectively what `pitchRx::animateFX` does). Or, we can leverage **animint**'s `showSelected` aesthetic and map it to the `frame` variable. This essentially says: 'only show the data corresponding to the currently selected value of `frame`'.
 
 ```{r avg_by_plot}
+library(animint)
 p <- ggplot() + 
   geom_point(aes(x = x, y = z, color = pitch_type, 
                   showSelected = frame), data = dat) + 
