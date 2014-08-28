@@ -7,8 +7,6 @@ output:
     self_contained: false
 ---
 
-**NOTE:** Ironically, some plots below may not render by default if you use Google Chrome, so please use Firefox or Safari. If you insist on Chrome, please close all Chrome instances and then restart Chrome using the flag –allow-file-access-from-files. In Windows, you do this using cmd, the command prompt.
-
 This post demonstrates some new features of the R package [animint](https://github.com/tdhock/animint) (facets, fixed cartesian coordinates, & knitr integration) using [PITCHf/x data](http://en.wikipedia.org/wiki/PITCHf/x). **animint** translates [ggplot2](http://cran.r-project.org/web/packages/ggplot2/index.html)'s grammar of graphics implementation to [SVG](http://en.wikipedia.org/wiki/Scalable_Vector_Graphics) and adds aesthetics/options to enable interactive animations. 
 
 ```{r setup, echo = FALSE, message = FALSE}
@@ -20,12 +18,12 @@ opts_chunk$set(message = FALSE)
 
 ## Collect and manipulate PITCHf/x data
 
-The R package [pitchRx](https://github.com/cpsievert/pitchRx) provides some utilities for collecting and manipulating PITCHf/x data. **pitchRx** comes prepackaged with every four-seam and cutting fastball from Mariano Rivera and Phil Hughes over the 2011 season (but you can collect whatever you want with `pitchRx::scrape`). **pitchRx** also provides a function `getSnapshots` that returns the spatial location of each pitch over a sequence of time points (in a 3D array). In [this gist](https://gist.github.com/cpsievert/da555f08f3c9ba2c0b8e), I provide a function -- `getLocations` -- that will `getSnapshots`, but return a `data.frame` (which is more convenient for plotting). t can also match an arbitrary number of 'co-variates' with those snapshots, and (optionally) average PITCHf/x parameters over those co-variates.
+The R package [pitchRx](https://github.com/cpsievert/pitchRx) provides some utilities for collecting and manipulating PITCHf/x data. **pitchRx** comes prepackaged with every four-seam and cutting fastball from Mariano Rivera and Phil Hughes over the 2011 season (but you can collect whatever you want with `pitchRx::scrape`). **pitchRx** also provides a function `getSnapshots` that returns the spatial location of each pitch over a sequence of time points (in a 3D array). In [this gist](https://gist.github.com/cpsievert/da555f08f3c9ba2c0b8e), I provide a function -- `getLocations` -- that will `getSnapshots`, but return a `data.frame` (which is more convenient for plotting). It can also match an arbitrary number of 'co-variates' with those snapshots, and (optionally) average PITCHf/x parameters over those co-variates.
 
 ```{r getLocations}
 # This gist requires dplyr, tidyr, & pitchRx; and will install any that are not installed already
 devtools::source_gist(id = "da555f08f3c9ba2c0b8e")
-data(pitches, package = "pitchRx")
+data(pitches, package = "pitchRx") #loads prepackaged data
 dat <- getLocations(pitches, pitcher_name, pitch_type, summarise = TRUE)
 head(dat)
 ```
