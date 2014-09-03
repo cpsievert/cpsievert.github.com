@@ -1,0 +1,150 @@
+{
+ "geoms": {
+ "geom1_point_strike": {
+ "geom": "point",
+"classed": "geom1_point_strike",
+"aes": {
+ "x": "px",
+"y": "pz",
+"colour": "pitch_type" 
+},
+"params": {
+ "na.rm": false,
+"alpha":    0.3 
+},
+"subset_order": [
+ "PANEL" 
+],
+"types": {
+ "colour": "rgb",
+"x": "numeric",
+"y": "numeric",
+"PANEL": "factor",
+"fill": "rgb" 
+},
+"chunks": 1,
+"total": 1,
+"chunk_order": [],
+"nest_order": [
+ "PANEL" 
+] 
+} 
+},
+"selectors": [],
+"plots": {
+ "strike": {
+ "strips": {
+ "right": [ [
+ "L" 
+],
+[
+ "R" 
+] ],
+"top": [ [
+ "Mariano Rivera" 
+],
+[
+ "Phil Hughes" 
+] ] 
+},
+"layout": {
+ "PANEL": [ "1", "2", "3", "4" ],
+"ROW": [ 1, 1, 2, 2 ],
+"COL": [ 1, 2, 1, 2 ],
+"stand": [ "L", "L", "R", "R" ],
+"pitcher_name": [ "Mariano Rivera", "Phil Hughes", "Mariano Rivera", "Phil Hughes" ],
+"SCALE_X": [ 1, 1, 1, 1 ],
+"SCALE_Y": [ 1, 1, 1, 1 ],
+"AXIS_Y": [ true, false, true, false ],
+"AXIS_X": [ false, false, true, true ],
+"coord_fixed": [ true, true, true, true ],
+"width_proportion": [ 0.43402, 0.43402, 0.43402, 0.43402 ],
+"height_proportion": [    0.5,    0.5,    0.5,    0.5 ],
+"xdisplace": [ 0.065976,    0.5, 0.065976,    0.5 ],
+"ydisplace": [      0,      0,    0.5,    0.5 ] 
+},
+"geoms": [
+ "geom1_point_strike" 
+],
+"axis1": {
+ "x": [ 0.14367, 0.31598, 0.48828, 0.66059, 0.8329 ],
+"xlab": [ "-2", "-1", "0", "1", "2" ],
+"xrange": [ -2.8338, 2.9698 ],
+"xline": true,
+"xticks": true,
+"y": [ 0.095112, 0.39425, 0.69339, 0.99254 ],
+"ylab": [ "0", "2", "4", "6" ],
+"yrange": [ -0.6359, 6.0499 ],
+"yline": true,
+"yticks": true 
+},
+"axis2": {
+ "x": [ 0.14367, 0.31598, 0.48828, 0.66059, 0.8329 ],
+"xlab": [ "-2", "-1", "0", "1", "2" ],
+"xrange": [ -2.8338, 2.9698 ],
+"xline": true,
+"xticks": true,
+"y": [ 0.095112, 0.39425, 0.69339, 0.99254 ],
+"ylab": [ "0", "2", "4", "6" ],
+"yrange": [ -0.6359, 6.0499 ],
+"yline": true,
+"yticks": true 
+},
+"axis3": {
+ "x": [ 0.14367, 0.31598, 0.48828, 0.66059, 0.8329 ],
+"xlab": [ "-2", "-1", "0", "1", "2" ],
+"xrange": [ -2.8338, 2.9698 ],
+"xline": true,
+"xticks": true,
+"y": [ 0.095112, 0.39425, 0.69339, 0.99254 ],
+"ylab": [ "0", "2", "4", "6" ],
+"yrange": [ -0.6359, 6.0499 ],
+"yline": true,
+"yticks": true 
+},
+"axis4": {
+ "x": [ 0.14367, 0.31598, 0.48828, 0.66059, 0.8329 ],
+"xlab": [ "-2", "-1", "0", "1", "2" ],
+"xrange": [ -2.8338, 2.9698 ],
+"xline": true,
+"xticks": true,
+"y": [ 0.095112, 0.39425, 0.69339, 0.99254 ],
+"ylab": [ "0", "2", "4", "6" ],
+"yrange": [ -0.6359, 6.0499 ],
+"yline": true,
+"yticks": true 
+},
+"xtitle": "px",
+"ytitle": "pz",
+"xlabs": [ "-2", "-1", "0", "1", "2" ],
+"ylabs": [ "0", "2", "4", "6" ],
+"legend": {
+ "pitch_type": {
+ "guide": "legend",
+"geoms": "point",
+"title": "pitch_type",
+"entries": [
+ {
+ "pointcolour": "#00BFC4",
+"pointshape":     16,
+"pointsize":      2,
+"pointalpha":    0.3,
+"label": [ "FF" ] 
+},
+{
+ "pointcolour": "#F8766D",
+"pointshape":     16,
+"pointsize":      2,
+"pointalpha":    0.3,
+"label": [ "FC" ] 
+} 
+] 
+} 
+},
+"options": {
+ "width":    400,
+"height":    400 
+} 
+} 
+} 
+}

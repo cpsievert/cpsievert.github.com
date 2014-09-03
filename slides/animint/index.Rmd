@@ -1,0 +1,268 @@
+---
+title: "Producing interactive animations with animint"
+author: "Carson Sievert"
+date: "September 2, 2014"
+output: 
+  ioslides_presentation:
+    incremental: true
+    widescreen: true
+    self_contained: false
+---
+
+## Google Summer of Code
+
+* Students propose a free and open-source software coding project to Google.
+    * The R project has a number of projects that you may choose from.
+* A mentoring organization (e.g., the R project) evaluates applications and decides which proposals to accept.
+    * Of course, it helps if you know mentors (Susan and Yihui were both mentors this summer).
+* Google decides how many projects to fund for each organization (the R project had 17 projects this summer)
+* I __highly recommend__ applying (even if you plan on taking the written prelim the same summer)!
+
+## Lessons learned
+
+* Contributing to a mature project is really hard! 
+* <p></p><div align="center"><img class="decoded" src="no-cake-4-u.gif" width="600" height="400"></div>
+
+## Lessons learned
+
+* Making contributions is easier when you have tests in place that ensure you haven't broken anything!
+* <p></p><div align="center"><img class="decoded" src="merge.gif" width="600" height="400"></div>
+
+## What is animint?
+
+* R package that leverages ggplot2's grammar of graphics implementation to simplify the creation of web-based interactive graphics and animations.
+<div class="columns-2">
+* Toby Dylan Hocking is animint's maintainer <div align="center"><img src="https://avatars1.githubusercontent.com/u/932850?v=2&s=400" width=300 height=200></div>
+* Susan Vanderplas is an author and major contributor <div align="center"><img src="https://avatars2.githubusercontent.com/u/2127125?v=2&s=460" width=300 height=200></div>
+</div>
+
+## Of course, PITCHf/x data
+
+<div align="center">
+  <img class="decoded" src="pitchfx.gif" width="800" height="500">
+</div>
+
+## Making copieeeessss
+
+<div align="center">
+  <img class="decoded" src="copies.gif" width="800" height="400">
+</div>
+
+```{r setup, echo = FALSE, message = FALSE}
+library(knitr)
+opts_chunk$set(message = FALSE)
+```
+
+## Strike-zone plot with ggplot2
+
+<div class="columns-2">
+```{r strike, fig.align='left'}
+library(pitchRx)
+# load some data
+data(pitches, package = "pitchRx") 
+# create plot
+p <- ggplot() +
+  geom_point(alpha = 0.3, data = pitches,
+             aes(px, pz, color = pitch_type)) +
+  facet_grid(stand~pitcher_name) + 
+  coord_equal()
+# print plot
+p
+```
+</div>
+
+## How does animint work?
+
+* __animint__ has two main components: a _compiler_ (the R side) and a _renderer_ (the JS side).
+    * The _compiler_ extracts essential components of a _built_ ggplot object and writes them to a JSON object.
+    * The _renderer_ reads the JSON object and draws the plot.
+* It turns out that ggplot objects are incredibly complex, so I built [this thing](https://cpsievert.shinyapps.io/ggtree) to help me visualize the nested structure.
+
+```{r shiny, eval=FALSE, echo=FALSE}
+#In case shinyapps is down
+shiny::runGitHub(repo = "shiny_apps", username = "cpsievert", subdir = "ggtree")
+shiny::runApp("~/Desktop/github/local/shiny_apps/ggtree")
+```
+
+## Convert your ggplots to animint plots!
+
+> - `animint2dir` takes a _list_ of ggplots, creates the relevant HTML/JS files and places them in a directory that can be viewed with a browser.
+
+```{r animint2dir, eval=FALSE}
+library(animint)
+plist <- list(strike = p)
+animint2dir(plist, "some-directory")
+```
+
+> - If you have a GitHub account, you can easily share with others by uploading the HTML/JS files [as a gist](https://gist.github.com/cpsievert/ab9767de8f26b97bf658) and viewing [the result via bl.ocks.org](http://bl.ocks.org/cpsievert/raw/ab9767de8f26b97bf658/)
+
+```{r animint2gist, eval=FALSE}
+animint2gist(plist)
+```
+
+---
+
+> - In knitr, you can embed animint plots by attaching a class of `"animint"`
+
+```{r lies, echo=FALSE}
+library(animint)
+plist <- list(strike = p)
+```
+
+<div align="center">
+```{r strike-knitr}
+structure(plist, class = "animint")
+```
+</div>
+
+
+## Computing pitch trajectories with PITCHf/x
+
+```{r getLocations}
+devtools::source_gist(id = "da555f08f3c9ba2c0b8e")
+locs <- getLocations(pitches, pitcher_name, pitch_type, summarise = TRUE)
+head(locs)
+```
+
+> - `frame` keeps track of time since the pitcher released the ball (in thousands of a second). 
+> - As `frame` becomes larger, the distance from home plate (`y`) becomes smaller.
+
+---
+
+```{r avg_by_plot, fig.align='center'}
+p <- ggplot() + geom_point(aes(x = x, y = z, color = pitch_type, showSelected = frame), 
+                            data = locs) + facet_grid(. ~ pitcher_name) + ylim(0, 7) + 
+                xlim(-3, 3) + coord_equal() + xlab("") + ylab("Height from ground") 
+p
+```
+
+## Simple animation
+
+> - To convert this plot into an SVG-based animation, we'll group a few animint specific options and the plot itself into a list. 
+
+```{r add_options}
+plist <- list(strikezone = p + theme_animint(width = 800),            
+              # animate over frame (remember, this also a showSelected variable)
+              time = list(variable = "frame", ms = 100),
+              # use smooth transitions
+              duration = list(frame = 250))
+```
+
+## Simple animation
+
+```{r animint}
+structure(plist, class = "animint")
+```
+
+## From animation to interaction
+
+* We've just used the `time` option to automatically loop through values of the `showSelected` variable `frame`.
+* Instead of animating over time, we can use the `clickSelects` aesthetic to let the user select values via mouseclick.
+* When used correctly, this allows one to create visualizations that reflect the popular mantra: "Overview first, zoom and filter, then details on demand"
+
+## Overview with zoom & filter
+
+```{r ggstrike}
+# reusable components of a faceted strike-zone plot
+ggstrike <- function() {
+  ggplot() + facet_grid(pitcher_name ~ stand) +
+  ylim(0, 7) + xlim(-3, 3) + coord_equal() + xlab("") + 
+  ylab("")
+}
+# overview (not filtered by anything)
+strike <- ggstrike() + theme(legend.position = "none") +
+      geom_point(data = pitches, aes(x = px, y = pz, color = pitch_type))
+# filter by date
+strike_date <- ggstrike() + geom_point(data = pitches, aes(x = px, y = pz, color = pitch_type, 
+                                        showSelected = date))
+```
+
+---
+
+Another plot is required to select dates via a mouseclick. Here we create a time series of the number of pitches thrown (by pitch_type and pitcher_name) and add transparent vertical bars that one may click on to select different dates:
+
+```{r zoom-filter}
+# track the number of pitches per game (for each pitcher-type combination)
+library(dplyr)
+n_pitches <- pitches %>% group_by(pitch_type, pitcher_name, date) %>% summarise(count = n()) %>% 
+  mutate(group = paste(pitcher_name, pitch_type, sep = ": ")) %>%
+  mutate(dated = as.Date(date, format = "%Y_%m_%d")) %>%
+  data.frame %>% mutate(max_n = max(count))
+
+# time series plot with clickSelects
+series <- ggplot() + 
+  geom_line(aes(x = dated, y = count, colour = pitch_type, 
+                linetype = pitcher_name, group = group), data = n_pitches) + 
+  stat_identity(aes(x = dated, y = max_n, clickSelects = date, alpha = 0.2), 
+                geom = "bar", data = n_pitches) + scale_alpha(guide = 'none') +
+  xlab("") + ylab("Number of pitches") + theme_animint(width = 800, height = 200)
+
+plist2 <- list(strike = strike, strikeDate = strike_date, series = series)
+```
+
+---
+
+```{r, echo=FALSE}
+structure(plist2, class = "animint")
+```
+
+## Details on demand
+
+> - Instead of averaging pitch trajectories, let's get the trajectory of every pitch!
+
+```{r int-ani}
+locs2 <- getLocations(pitches, pitcher_name, pitch_type, date, end_speed, summarise = FALSE) %>%
+  mutate(end_speed = paste0("End Speed: ", end_speed, " MPH"))
+head(locs2)
+```
+
+---
+
+```{r lab, echo=FALSE}
+pitches$pitch_id <- seq_len(dim(pitches)[1])
+```
+
+```{r label}
+strike2 <- ggstrike() + theme(legend.position = "none") +
+  geom_point(data = pitches, aes(x = px, y = pz, color = pitch_type, 
+### <b>                                 
+              showSelected = date, clickSelects = pitch_id))
+### </b>  
+
+ani <- ggplot() + 
+  geom_point(aes(x = x, y = z, color = pitch_type, 
+### <b>
+                  showSelected = pitch_id, showSelected2 = frame), 
+### </b>
+             data = locs2) + 
+  geom_text(aes(x = 0, y = 7, label = end_speed, 
+### <b>
+                showSelected = pitch_id, showSelected2 = frame),
+### </b>
+            data = locs2) + 
+  ylim(0, 7) + xlim(-3, 3) + coord_equal() + xlab("") + 
+  ylab("Height from ground")
+
+plist3 <- list(strike2 = strike2,
+               ani = ani,
+               series = series,
+               time = list(variable = "frame", ms = 100),
+               duration = list(frame = 250))
+```
+
+---
+
+```{r, echo=FALSE}
+structure(plist3, class = "animint")
+```
+
+
+## Thanks for coming!
+
+> - I hope you find time to play with animint!
+
+<div align="center">
+  <img class="decoded" src="bear.gif" width="800" height="400">
+</div>
+
+
