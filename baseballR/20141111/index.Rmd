@@ -1,0 +1,19 @@
+This post takes a deeper dive into the model from my last post, ['A probabilistic model for interpreting strike-zone expansion'](http://baseballwithr.wordpress.com/2014/10/23/a-probabilistic-model-for-interpreting-strike-zone-expansion-7/). In that post, we restricted focus to pitches thrown around the knees, but as it turns out, we can condition on *any* location. For that reason, I made [this interactive visualization](http://cpsievert.github.io/baseballR/20141111/viz) which allows one to condition on any pitch location (within a reasonable resolution) by clicking on different cell in the strikezone plots on the left-hand side.
+
+When clicking (i.e., conditioning) on different cells, two quantities dynamically update.
+
+1. The (estimated) odds of a called strike in 2014 compared to 2008 under various scenarios is displayed as text in each cell matching the selected location. It's worth noting that the odds is equal to the (estimated) probability of a called strike in 2014 **divided by** the (estimated) probability of a called strike in 2008 whereas the color represents 2008 **minus** 2014.
+
+2. Approximate 95% confidence intervals for the probability of a called strike under various scenarios. These intervals update dynamically on right-hand side of the viz based on the currently selected location.
+
+By default, the location `px=0; pz=1.7` is selected (which explains why the odds in [the static figure of my last post](https://baseballwithr.files.wordpress.com/2014/10/probs.png) match the odds displayed by default for left handed batters). Instead of providing just the point estimate for the probability of a called strike, the interactive graphic provides a sense uncertainty in estimates. In fact, if you hover over a particular interval, the actual lower and upper bounds should appear next to your mouse.
+
+You won't need to hover to notice that the intervals in a 0-2 count are much wider than those in a 0-0 count (because there is a larger sample size) which means we can be more confident in estimates produced under the latter case. To be precise, we are 95% confident that the first pitch odds are between 2.14 and 2.54, but for an 0-2 count, we are 95% confident the odds are between 1.7 and 10.5. As a result, there is not enough evidence to suggest the odds is significantly different in a 0-0 count versus a 0-2 count. Note that the user can obtain the 95% confidence interval for the odds by hovering over the cell of interest (shown below). 
+
+<p><a href="https://baseballwithr.files.wordpress.com/2014/11/0-0.png"><img src="https://baseballwithr.files.wordpress.com/2014/11/0-0.png" alt="attendance" width="400" height="400" class="alignnone size-full wp-image-810" /></a></p>
+
+<p><a href="https://baseballwithr.files.wordpress.com/2014/11/0-2.png"><img src="https://baseballwithr.files.wordpress.com/2014/11/0-2.png" alt="attendance" width="400" height="400" class="alignnone size-full wp-image-810" /></a></p>
+
+There are clearly many more scenarios we can inspect using this visualization and I hope the reader takes time to play and leave any interesting observations in the comments. The visualization was actually created fairly quickly and easily thanks to [animint](https://github.com/tdhock/animint). If you're curious about the details, feel free to peruse [the source code]().
+
+
