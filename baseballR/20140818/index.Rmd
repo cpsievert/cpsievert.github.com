@@ -114,7 +114,8 @@ series <- ggplot() +
 
 plist2 <- list(strike = strike,
                strikeDate = strike_date,
-               series = series)
+               series = series,
+               selector.types = list(date = "multiple"))
 
 structure(plist2, class = "animint")
 ```
@@ -148,7 +149,9 @@ plist3 <- list(strike2 = strike2,
                ani = ani,
                series = series,
                time = list(variable = "frame", ms = 100),
-               duration = list(frame = 250))
+               duration = list(frame = 250),
+               selector.types = list(date = "multiple",
+                                     pitch_id = "multiple"))
 
 structure(plist3, class = "animint")
 ```

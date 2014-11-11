@@ -101,10 +101,13 @@ plist &lt;- list(strikezone = p + theme_animint(width = 800),
 <p>If you’re using an interactive environment, you can now enter <code>animint2dir(plist)</code> or <code>animint2gist(plist)</code> to view/share this plot. However, when using <a href="http://cran.r-project.org/web/packages/knitr/index.html">knitr</a> and R Markdown to create an HTML page (such as this one), just attach a class of ‘animint’ to your list and <strong>knitr</strong> will know how to embed the plot.</p>
 <pre class="r"><code>structure(plist, class = &quot;animint&quot;)</code></pre>
 <script type="text/javascript" src="animint/vendor/d3.v3.js"></script>
-<script type="text/javascript" src="animint/animint.js"></script><p></p>
-<div id="animint"></div>
-<script>var plot = new animint('#animint', 'animint/plot.json');</script>
+<script type="text/javascript" src="animint/animint.js"></script>
+<p>
+</p>
+<div id="animint">
 
+</div>
+<script>var plot = new animint('#animint', 'animint/plot.json');</script>
 </div>
 <div id="interactive-plots" class="section level2">
 <h2>Interactive plots</h2>
@@ -147,13 +150,16 @@ series &lt;- ggplot() +
 
 plist2 &lt;- list(strike = strike,
                strikeDate = strike_date,
-               series = series)
+               series = series,
+               selector.types = list(date = &quot;multiple&quot;))
 
 structure(plist2, class = &quot;animint&quot;)</code></pre>
-<p></p>
-<div id="zoomfilter"></div>
-<script>var plot = new animint('#zoomfilter', 'zoomfilter/plot.json');</script>
+<p>
+</p>
+<div id="zoomfilter">
 
+</div>
+<script>var plot = new animint('#zoomfilter', 'zoomfilter/plot.json');</script>
 </div>
 </div>
 <div id="interactive-animation" class="section level2">
@@ -196,15 +202,17 @@ plist3 &lt;- list(strike2 = strike2,
                ani = ani,
                series = series,
                time = list(variable = &quot;frame&quot;, ms = 100),
-               duration = list(frame = 250))
+               duration = list(frame = 250),
+               selector.types = list(date = &quot;multiple&quot;,
+                                     pitch_id = &quot;multiple&quot;))
 
 structure(plist3, class = &quot;animint&quot;)</code></pre>
-<p></p>
-<div id="intani"></div>
+<p>
+</p>
+<div id="intani">
+
+</div>
 <script>var plot = new animint('#intani', 'intani/plot.json');</script>
-
-
-
 </div>
 
 
@@ -224,7 +232,7 @@ $(document).ready(function () {
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    script.src  = "https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
     document.getElementsByTagName("head")[0].appendChild(script);
   })();
 </script>

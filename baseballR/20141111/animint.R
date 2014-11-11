@@ -3,8 +3,8 @@ library(animint)
 library(dplyr)
 # load the model and data from this post:
 # http://baseballwithr.wordpress.com/2014/10/23/a-probabilistic-model-for-interpreting-strike-zone-expansion-7/
-load("~/Desktop/github/local/cpsievert.github.com/baseballR/20141021/model2.rdata")
-load("~/Desktop/github/local/cpsievert.github.com/baseballR/20141021/dat2.rdata")
+load("~/pitchfx/model2.rdata")
+load("~/pitchfx/dat2.rdata")
 
 # make predictions over a (somewhat) arbitrary grid
 grid <- expand.grid(px = seq(-2, 2, by = 0.5), pz = seq(0.7, 4.2, by = 0.5),
