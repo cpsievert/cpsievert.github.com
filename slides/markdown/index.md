@@ -289,9 +289,7 @@ For non-RStudio users...
 ========================================================
 incremental:false
 right:53%
-
-    Title
-    ================
+    
     This is an R Markdown document.
     
     ```{{r}}
@@ -300,18 +298,26 @@ right:53%
     
     You can also embed plots, for example:
     
-    ```{{r fig.width=7, fig.height=6}}
+    ```{{r fig.width=7}}
     plot(cars)
     ```
 ***
 
-Try saving the content to the left as "index.Rmd". Then run the code below to replicate "knit HTML".
+Save the content to the left in your working directory as "index.Rmd". Then run the code below to replicate "knit HTML".
 
 
 ```r
 library(knitr)
-setwd(<working directory>)
 knit2html("index.Rmd")
+browseURL("index.html")
+```
+
+This is actually equivalent to:
+
+
+```r
+library(rmarkdown)
+render("index.Rmd")
 browseURL("index.html")
 ```
 
@@ -323,12 +329,18 @@ incremental:false
 
 
 ```r
-library(knitr)
-library(markdown)
-setwd(<working directory>)
 knit("index.Rmd") #generates 'index.md' file
+library(markdown)
 markdownToHTML("index.md", "index.html", stylesheet='custom.css')
 ```
+
+* If you have `rmarkdown`, there are some nice templates you can use (File -> New File -> R Markdown -> From Template)
+
+Your Turn
+========================================================
+
+* Go to: File -> New File -> R Markdown
+* Try out different output formats and pick one that you like!
 
 The power of code chunks
 ========================================================
@@ -405,7 +417,7 @@ kable(head(cars), 'html')
 ***
 You can also embed plots, for example:
 
-![plot of chunk unnamed-chunk-4](index-figure/unnamed-chunk-4-1.png) 
+![plot of chunk unnamed-chunk-5](index-figure/unnamed-chunk-5-1.png) 
 
 
 Interactive Plots
