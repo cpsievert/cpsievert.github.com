@@ -6,22 +6,22 @@ incremental: true
 
 Follow along at - http://cpsievert.github.io/slides/markdown
 
-Why Markdown?
+Why use Markdown?
 ========================================================
 
-<div align="center">
-<img class="decoded" src="internet.gif" width=800 height=600>
-</div>
+* Easy to learn and use.
+* Focus on __content__, rather than __coding__ and debugging __errors__.
+* It's flexible. Markdown was created to simplify HTML, but with the right tools, your Markdown files can easily be converted to many different formats!
+* Fastest way to internet! <p></p> <div align="center"><img class="decoded" src="internet.gif" width=400 height=300></div>
 
-All the cool kids use it...
+What is Markdown?
 ========================================================
 
-* GitHub, StackOverflow, Reddit and many other websites use Markdown.
-* Many popular blogging frameworks support Markdown.
-* Thanks to the R package __knitr__, it's easy to create __reproducible__ and __dynamic__ web documents!
-  * Later we will integrate `R` code with Markdown, but you are not limited to `R` code!
-* Thanks to __slidify__ and RStudio presentations, one can also easily create HTML5 presentations (like this one)!
-* Thanks to tools like __pandoc__, your Markdown files can easily be converted to many different formats!
+* Markdown is a particular type of markup language.
+* Markup languages are designed produce documents from plain text.
+* Some of you may be familiar with _LaTeX_. This is another (less human friendly) markup language for creating pdf documents.
+* _LaTeX_ gives you much greater control, but it is restricted to pdf and has a __much__ greater learning curve.
+* As I mentioned, there are tools (mainly [pandoc](http://johnmacfarlane.net/pandoc/)) that allow you to render markdown in different formats (for example, HTML/pdf/word)
 
 Yes, even word documents...
 ========================================================
@@ -30,26 +30,22 @@ Yes, even word documents...
 <img src="word.jpg" width=800 height=600>
 </div>
 
+knitr + markdown + pandoc = rmarkdown
+========================================================
+
+* `rmarkdown` is a new package from RStudio that merges a lot of technologies in an exciting way.
+* In fact, in RStudio now, you integrate R code into your Markdown document and render as HTML/pdf/Word in the click of a button! <p></p> <div align="center"><img src="button.png" width=200 height=200></div>
+* You can even embed your shiny apps in HTML documents generated with `rmarkdown`!
+
 Some Examples
 ========================================================
 
 * [R learning resources at UCLA by Joshua Wiley et al](http://www.ats.ucla.edu/stat/r/)
 * [Advanced R programming by Hadley](http://adv-r.had.co.nz/memory.html)
-* [My R package vignette for pitchRx](http://cpsievert.github.io/pitchRx/demo/)
-* [knitrBootstrap](https://github.com/jimhester/knitrBootstrap?source=c) makes it incredibly easy to make Bootstrap flavored [documents](http://cpsievert.github.io/projects/615/HW5/HW5.html).
-* Inject JavaScript for [interactive visualizations](http://timelyportfolio.github.io/rCharts_nyt_home_price/)
-
-What is Markdown?
-========================================================
-
-* Markdown is a lightweight markup language for creating HTML (or XHTML) documents.
-* Markup languages are designed produce documents from human readable text (and annotations).
-* Some of you may be familiar with _LaTeX_. This is another (less human friendly) markup language for creating pdf documents.
-* Why I love Markdown:
-  * Easy to learn and use.
-  * Focus on __content__, rather than __coding__ and debugging __errors__.
-  * Once you have the basics down, you can get fancy and add HTML, JavaScript & CSS. 
-
+* [The rmarkdown website](http://rmarkdown.rstudio.com/)
+* [Tufte](https://github.com/jimhester/knitrBootstrap?source=c) style [HTML](http://cran.r-project.org/web/packages/tufterhandout/vignettes/example.html) and [pdf](http://rmarkdown.rstudio.com/examples/tufte-handout.pdf) documents.
+* [shiny](https://cpsievert.shinyapps.io/animintRmarkdown/) apps!
+* Inject custom JavaScript for [interactive visualizations](http://timelyportfolio.github.io/rCharts_nyt_home_price/).
 
 Markdown Basics
 ========================================================
@@ -263,22 +259,22 @@ When in doubt, you can always put HTML into markdown:
 I can also do fancy latex equations $\alpha = \beta$ with help from [MathJax](http://www.mathjax.org/)
 
 
-RStudio+knitr+markdown = awesome
+RStudio + rmarkdown = awesome
 ========================================================
 
 <div align="center">
-<img src="new_file.png" width=1000 height=800>
+<img src="newFile.png" width=1000 height=800>
 </div>
 
-RStudio+knitr+markdown = awesome
+RStudio + rmarkdown = awesome
 ========================================================
 title:false
 
 <div align="center">
-<img src="index.png" width=1000 height=800>
+<img src="knit.png" width=1000 height=800>
 </div>
 
-RStudio+knitr+markdown = awesome
+RStudio + rmarkdown = awesome
 ========================================================
 title:false
 
@@ -289,6 +285,7 @@ title:false
 ```{r setup, echo=FALSE}
 opts_chunk$set(eval=FALSE)
 ```
+
 
 For non-RStudio users...
 ========================================================
@@ -345,7 +342,7 @@ right:40%
 
     ```{{r results='asis'}}
     library(knitr)
-    kable(cars, 'html')
+    kable(head(cars), 'html')
     ```
     
     You can also embed plots, for example:
@@ -366,7 +363,7 @@ This is an R Markdown document.
 
 ```{r results='asis', eval=TRUE}
 library(knitr)
-kable(cars, 'html')
+kable(head(cars), 'html')
 ```
 
 ***
