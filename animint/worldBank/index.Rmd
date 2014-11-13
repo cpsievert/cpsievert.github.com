@@ -1,4 +1,4 @@
-```{r echo = FALSE, message = FALSE}
+```{r facets, echo = FALSE, message = FALSE}
 library(knitr)
 library(animint)
 library(Rserve)
