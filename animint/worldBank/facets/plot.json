@@ -62,8 +62,8 @@
  "geom": "point",
 "classed": "geom3_point_scatter",
 "aes": {
- "x": "life.expectancy",
-"y": "fertility.rate",
+ "x": "fertility.rate",
+"y": "life.expectancy",
 "clickSelects": "country",
 "showSelected": "year",
 "colour": "region",
@@ -154,8 +154,8 @@
  "geom": "text",
 "classed": "geom4_text_scatter",
 "aes": {
- "x": "life.expectancy",
-"y": "fertility.rate",
+ "x": "fertility.rate",
+"y": "life.expectancy",
 "label": "country",
 "showSelected": "country",
 "showSelected2": "year",
@@ -505,43 +505,43 @@
 ],
 "axis1": {
  "x": [
- 0.25084,
-0.56246,
-0.87409 
-],
-"xlab": [
- "40",
-"60",
-"80" 
-],
-"xrange": [ 23.901, 88.081 ],
-"xline": true,
-"xticks": true,
-"y": [
  0.22469,
 0.49609,
 0.76749 
 ],
-"ylab": [
+"xlab": [
  "2.5",
 "5.0",
 "7.5" 
 ],
-"yrange": [ 0.4303, 9.6417 ],
-"yline": true,
-"yticks": true 
-},
-"xtitle": "life.expectancy",
-"ytitle": "fertility.rate",
-"xlabs": [
+"xrange": [ 0.4303, 9.6417 ],
+"xline": true,
+"xticks": true,
+"y": [
+ 0.25084,
+0.56246,
+0.87409 
+],
+"ylab": [
  "40",
 "60",
 "80" 
 ],
-"ylabs": [
+"yrange": [ 23.901, 88.081 ],
+"yline": true,
+"yticks": true 
+},
+"xtitle": "fertility.rate",
+"ytitle": "life.expectancy",
+"xlabs": [
  "2.5",
 "5.0",
 "7.5" 
+],
+"ylabs": [
+ "40",
+"60",
+"80" 
 ],
 "legend": {
  "population": {

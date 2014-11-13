@@ -1,4 +1,4 @@
-```{r facets, echo = FALSE, message = FALSE}
+```{r echo = FALSE, message = FALSE}
 library(knitr)
 library(animint)
 library(Rserve)
@@ -18,25 +18,26 @@ good <-
                    data=WorldBank, size=4, alpha=3/5) + 
          theme(legend.position = "none") + theme_animint(width = 500),
        scatter=ggplot()+
-         geom_point(aes(life.expectancy, fertility.rate, clickSelects=country,
-                        showSelected=year, colour=region, size=population,
+         geom_point(aes(fertility.rate, life.expectancy, 
+                        clickSelects=country, showSelected=year, 
+                        colour=region, size=population,
                         tooltip=paste(country, "population", population),
                         key=country), # key aesthetic for animated transitions!
                     data=not.na)+
-         geom_text(aes(life.expectancy, fertility.rate, label=country,
+         geom_text(aes(fertility.rate, life.expectancy, label=country,
                        showSelected=country, showSelected2=year,
                        key=country), #also use key here!
                    data=not.na)+
          scale_size_animint(breaks=10^(5:9))+
          theme_animint(width = 500)+
-         make_text(WorldBank, 55, 9, "year"),
+         make_text(WorldBank, 5, 85, "year"),
        
        time=list(variable="year", ms=3000),
        bar=ggplot()+
          theme_animint(height=1200, width = 1400)+
          geom_bar(aes(country, life.expectancy, fill=region,
                       showSelected=year, clickSelects=country),
-                  data=WorldBank, stat="identity", position="identity")+
+                data=WorldBank, stat="identity", position="identity")+
          facet_wrap(~region, scales = "free", nrow = 2) + coord_flip() + 
          theme(legend.position = "none"),
        duration=list(year=1000),
