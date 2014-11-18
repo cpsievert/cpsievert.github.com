@@ -5,7 +5,8 @@ Thumbs.db
 .DS_Store
 
 !.gitkeep
-*/cache/*
+*/cache
+*index_cache
 .rbenv-version
 .rvmrc
 .DS_Store
