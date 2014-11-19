@@ -239,7 +239,7 @@ tabs[["game//team//player"]][1:5, c("first", "last", "venue", "date")]
     1. arrays => [value1, value2]
     2. objects => {"key1": value1, "key2": [value2, value3]} 
 * NOTE: you can also have arrays of objects!
-* The referred R package for R <=> JSON conversion has long been [RJSONIO](http://cran.r-project.org/web/packages/RJSONIO/index.html)
+* The preferred R package for R <=> JSON conversion has long been [RJSONIO](http://cran.r-project.org/web/packages/RJSONIO/index.html)
 * However, [jsonlite](http://cran.r-project.org/web/packages/jsonlite/index.html) is gaining a lot of momentum/attention.
 * In fact, [shiny will soon be moving from RJSONIO to jsonlite](https://github.com/rstudio/shiny/issues/572)
 
