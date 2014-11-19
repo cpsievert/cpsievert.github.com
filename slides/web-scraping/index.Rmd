@@ -19,7 +19,7 @@ opts_chunk$set(message = FALSE, cache = TRUE, warning = FALSE)
     * rows == observations (often sharing an observational unit)
     * columns == various observational attributes
 * This is a convenient statistical modeling framework, but data hardly ever begins in this tidy format (especially on the web).
-* This walk will provide a quick overview of popular methods for acquiring info/data from the web using R.
+* This talk will provide a quick overview of popular methods for acquiring info/data from the web using R.
 * If you get nothing else from this talk, just remember to...
 
 ---
