@@ -16,11 +16,10 @@ opts_chunk$set(message = FALSE, cache = TRUE, warning = FALSE)
 ## Data is messy (especially on the web)!
 
 * As statisticians, we typically think of data in a [tidy](http://vita.had.co.nz/papers/tidy-data.pdf) (i.e., tabular) format. That is
-    * table rows == observation units
-    * table columns == observational attributes
-* This is a convenient framework for developing models, but data hardly ever begins in this tidy format.
-* This is especially true of data that lives on the web.
-* This walk will provide a quick overview of popular methods for acquiring such data using R.
+    * rows == observations (often sharing an observational unit)
+    * columns == various observational attributes
+* This is a convenient statistical modeling framework, but data hardly ever begins in this tidy format (especially on the web).
+* This walk will provide a quick overview of popular methods for acquiring info/data from the web using R.
 * If you get nothing else from this talk, just remember to...
 
 ---
@@ -120,8 +119,9 @@ head(hrefs)
 
 ## Access the DOM with RSelenium
 
-* Useful if you need access to the [DOM](http://en.wikipedia.org/wiki/Document_Object_Model), not just the page source.
-* Here we use it to browse through faculty pages.
+Useful if you need access to the [DOM](http://en.wikipedia.org/wiki/Document_Object_Model), not just the page source.
+
+Just to demo, let's browse through faculty pages.
 
 ```{r, eval = FALSE}
 library(RSelenium)
@@ -130,11 +130,11 @@ remDr <- remoteDriver(browserName="firefox")
 remDr$open()
 for (i in hrefs) {
   Sys.sleep(2)
-  remDr$navigate(i)
+  remDr$navigate(i) # at this point, you could remDr$getPageSource()
 }
 ```
 
-* We use RSelenium to test whether [animint](https://github.com/tdhock/animint) plots are rendered in a browser correctly.
+* We use RSelenium to test whether [animint](https://github.com/tdhock/animint) interactive plots behave correctly.
 * I've also used it to scrape websites that have to be rendered in a browser in order to access certain info.
 
 ## Common data exchange formats
@@ -145,7 +145,7 @@ for (i in hrefs) {
 
 ## What is XML?
 
-* XML is a markup language that looks very similar to HTML.
+XML is a markup language that looks very similar to HTML.
 
 ```xml
 <mariokart>
@@ -206,7 +206,7 @@ collapse_obs(obs)
 
 ---
 
-Now (if I want) I can merge the tables into a single table.
+Now (if I want) I can merge the tables into a single table...
 
 ```{r}
 tabs <- collapse_obs(obs)
@@ -250,9 +250,6 @@ tabs[["game//team//player"]][1:5, c("first", "last", "venue", "date")]
   <img src = "json.png" width = "1000" height = "500">
 </div>
 
----
-
-<iframe src = "https://gist.github.com/cpsievert/b55ac4a210842da78ed9" width = "1000px" height = "800px"></iframe>
 
 ## Back to Mariokart {.smaller}
 
@@ -321,6 +318,10 @@ rbind.pages(vehicles)
 mario[!grepl("vehicle", names(mario))]
 ```
 
-## Thank you!
+## Thanks! Any questions?
+
+<div align = "center">
+  <img src = "http://mlblogsjaneheller.files.wordpress.com/2010/09/wave1.gif" width = "400" height = "400">
+</div>
 
 
