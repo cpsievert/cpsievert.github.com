@@ -1,0 +1,15 @@
+---
+title: "ztable"
+author: "Carson Sievert"
+date: "December 18, 2014"
+header-includes:
+   - \usepackage{booktabs}
+output: pdf_document
+---
+
+Something in reference to Table~\ref{tbl:example}
+
+```{r results='asis', echo=FALSE}
+library("ztable")
+ztable(head(mtcars), caption = "Some really ridiculously long caption text that doesn't make any sense but is \n here just to demonstrate line wrapping doesn't work in the caption", label = "tbl:example", zebra = FALSE)
+```
