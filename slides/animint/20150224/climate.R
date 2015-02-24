@@ -15,7 +15,7 @@ climate <- climate %>%
   group_by(id, month) %>%
   summarise(avgtemp = mean(temperature)) %>%
   left_join(climate) %>%
-  mutate(tempdev = temperature - avgtemp) %>%
+  mutate(tempdev = avgtemp - temperature) %>%
   mutate(time_num = decimal_date(ymd(date))) %>%
   arrange(desc(time_num)) %>% as.data.frame()
 

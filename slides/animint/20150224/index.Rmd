@@ -2,8 +2,7 @@
 title: "animint"
 subtitle: "An `R` package that extends the grammar of graphics for web-based interactive animations."
 author: "Carson Sievert (joint work with Toby Dylan Hocking & Susan Vanderplas)"
-affliation: "Follow along -- <http://cpsievert.github.io/slides/animint/20150224>"
-date: "Iowa State University"
+date: "Iowa State University <p></p> Follow along -- http://bit.ly/animint-toronto"
 output:
   ioslides_presentation:
     transition: default
