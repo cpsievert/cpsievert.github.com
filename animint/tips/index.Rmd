@@ -33,6 +33,8 @@ p2 <- ggplot() +
 plots <- list(plot1 = p1, plot2 = p2)
 # enable multiple selection
 plots$selector.types <- list(sex_smoker = "multiple")
+# select all values by default
+plots$first <- list(sex_smoker = unique(tips$sex_smoker))
 ```
 
 ```{r eval = FALSE}

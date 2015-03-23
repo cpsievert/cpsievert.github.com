@@ -61,7 +61,7 @@
 },
 "selectors": {
  "sex_smoker": {
- "selected": "Female.No",
+ "selected": [ "Female.No", "Male.No", "Male.Yes", "Female.Yes" ],
 "type": "multiple",
 "update": [
  "geom1_point_plot1",
