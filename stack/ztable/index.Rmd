@@ -11,5 +11,20 @@ Something in reference to Table~\ref{tbl:example}
 
 ```{r results='asis', echo=FALSE}
 library("ztable")
-ztable(head(mtcars), caption = "Some really ridiculously long caption text that doesn't make any sense but is \n here just to demonstrate line wrapping doesn't work in the caption", label = "tbl:example", zebra = FALSE)
+ztable(head(mtcars), caption = "Some really ridiculously long caption text that doesn't make any sense but is here just to demonstrate line wrapping doesn't work in the caption", label = "tbl:example", zebra = FALSE)
+```
+
+In reference to Table~\ref{tbl:example2}
+
+```{r results='asis', echo=FALSE}
+library("xtable")
+options(xtable.comment = FALSE)
+options(xtable.booktabs = TRUE)
+xtable(head(mtcars), caption = "Some really ridiculously long caption text that doesn't make any sense but is here just to demonstrate line wrapping doesn't work in the caption", label = "tbl:example2")
+```
+
+
+```{r results='asis', echo=FALSE}
+t <- cbind(head(mtcars), test = "test_ing")
+xtable(t)
 ```
