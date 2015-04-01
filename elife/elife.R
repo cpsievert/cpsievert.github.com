@@ -1,10 +1,14 @@
-# Load/install necessary packages
-library(devtools)
-#install_github("ropensci/elife")
-#install_github("kshirley/LDAviz")
-#install_github("cpsievert/LDAvis")
+# ------------------------------------------------------------------------
+# DISCLAMER: This script/post was created using version 0.1 of LDAvis.
+# Some backwards-incompatible changes were made since then,
+# but you can still follow this example using this version of LDAvis
+# devtools::install_github("cpsievert/LDAvis@v0.1")
+#
+# The source for the accompanying shiny app is located here --
+# https://github.com/cpsievert/shiny_apps/tree/master/LDAelife
+# ------------------------------------------------------------------------
+
 library(elife)
-library(LDAviz)
 library(LDAvis)
 library(topicmodels)
 library(tm)
@@ -69,7 +73,8 @@ topic.id <- opt@wordassignments$v
 vocab <- opt@terms
 
 # Get the phi matrix using LDAviz
-dat <- getProbs(token.id, doc.id, topic.id, vocab, K = max(topic.id), sort.topics = "byTerms")
+# devtools::install_github("kshirley/LDAtools")
+dat <- LDAtools::getProbs(token.id, doc.id, topic.id, vocab, K = max(topic.id), sort.topics = "byTerms")
 phi <- t(dat$phi.hat)
 # NOTE TO SELF: these things have to be numeric vectors or else runVis() will break...add a check in check.inputs
 token.frequency <- as.numeric(table(token.id))
