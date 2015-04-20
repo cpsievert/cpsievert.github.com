@@ -1,8 +1,0 @@
-base
-DBI
-dplyr
-ggplot2
-knitr
-pitchRx
-RSQLite
-RSQLite.extfuns
