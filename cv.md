@@ -1,9 +1,7 @@
 ---
 layout: page
 title: Resume/CV
-group: navigation
 ---
-{% include JB/setup %}
 
 [Click here for a pdf version](http://cpsievert.github.io/carson_sievert.pdf)
 
