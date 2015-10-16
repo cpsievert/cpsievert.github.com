@@ -1,11 +1,9 @@
 ---
 layout: post
 title: "Visualizing ggplot2 internals with shiny and D3"
-author: Carson Sievert
 categories: [interactive visualization]
 tags: [animint, ggplot2, shiny, D3]
 ---
-{% include JB/setup %}
 
 
 TL;DR -- I built [this shiny app](https://cpsievert.shinyapps.io/ggtree/) to visualize ggplot2
@@ -22,6 +20,10 @@ extracts the parts necessary for
 is incredibly expressive and powerful for users, as any ggplot2 developer could tell you, the
 structure underlying a ggplot object is quite complicated (sometimes, [even the original author
 needs help](https://twitter.com/hadleywickham/status/317279035937923072)).
+
+```{r echo = FALSE}
+knitr::opts_chunk$set(message = FALSE)
+```
 
 ```{r ggplot2}
 library(ggplot2)

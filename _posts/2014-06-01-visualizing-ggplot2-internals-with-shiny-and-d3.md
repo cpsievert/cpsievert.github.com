@@ -1,11 +1,9 @@
 ---
 layout: post
 title: "Visualizing ggplot2 internals with shiny and D3"
-author: Carson Sievert
 categories: [interactive visualization]
 tags: [animint, ggplot2, shiny, D3]
 ---
-{% include JB/setup %}
 
 
 TL;DR -- I built [this shiny app](https://cpsievert.shinyapps.io/ggtree/) to visualize ggplot2
@@ -22,6 +20,8 @@ extracts the parts necessary for
 is incredibly expressive and powerful for users, as any ggplot2 developer could tell you, the
 structure underlying a ggplot object is quite complicated (sometimes, [even the original author
 needs help](https://twitter.com/hadleywickham/status/317279035937923072)).
+
+
 
 
 {% highlight r %}
@@ -49,11 +49,11 @@ str(p)
 ##   ..$ gear: num [1:32] 4 4 4 3 3 3 3 4 4 4 ...
 ##   ..$ carb: num [1:32] 4 4 1 1 2 1 4 2 2 4 ...
 ##  $ layers     :List of 2
-##   ..$ :Classes 'proto', 'environment' <environment: 0x7fd2bd6b3e30> 
-##   ..$ :Classes 'proto', 'environment' <environment: 0x7fd2bd69a190> 
-##  $ scales     :Reference class 'Scales' [package "ggplot2"] with 1 fields
+##   ..$ :Classes 'proto', 'environment' <environment: 0x7fcfcd0dbb58> 
+##   ..$ :Classes 'proto', 'environment' <environment: 0x7fcfcd0f2240> 
+##  $ scales     :Reference class 'Scales' [package "ggplot2"] with 1 field
 ##   ..$ scales: list()
-##   ..and 21 methods, of which 9 are possibly relevant:
+##   ..and 21 methods, of which 9 are  possibly relevant:
 ##   ..  add, clone, find, get_scales, has_scale, initialize, input, n,
 ##   ..  non_position_scales
 ##  $ mapping    :List of 2
@@ -68,7 +68,7 @@ str(p)
 ##  $ facet      :List of 7
 ##   ..$ facets  :List of 1
 ##   .. ..$ am: symbol am
-##   .. ..- attr(*, "env")=<environment: 0x7fd2bd719378> 
+##   .. ..- attr(*, "env")=<environment: 0x7fcfcd09a2d0> 
 ##   .. ..- attr(*, "class")= chr "quoted"
 ##   ..$ free    :List of 2
 ##   .. ..$ x: logi FALSE
@@ -105,7 +105,7 @@ str(ggplot_build(p))
 ##   .. ..$ PANEL: Factor w/ 2 levels "1","2": 1 1 1 1 1 1 1 1 1 1 ...
 ##   .. ..$ group: int [1:32] 1 1 1 1 1 1 1 1 1 1 ...
 ##   ..$ :'data.frame':	32 obs. of  5 variables:
-##   .. ..$ colour: chr [1:32] "#326A97" "#55B1F7" "#326A97" "#55B1F7" ...
+##   .. ..$ colour: chr [1:32] "#336A98" "#56B1F7" "#336A98" "#56B1F7" ...
 ##   .. ..$ x     : num [1:32] 21.4 18.7 18.1 14.3 24.4 22.8 19.2 17.8 16.4 17.3 ...
 ##   .. ..$ y     : num [1:32] 3.21 3.44 3.46 3.57 3.19 ...
 ##   .. ..$ PANEL : Factor w/ 2 levels "1","2": 1 1 1 1 1 1 1 1 1 1 ...
@@ -123,13 +123,13 @@ str(ggplot_build(p))
 ##   ..$ shrink  : logi TRUE
 ##   ..$ x_scales:List of 1
 ##   .. ..$ :List of 17
-##   .. .. ..$ call        : language continuous_scale(aesthetics = c("x", "xmin", "xmax", "xend", "xintercept"),      scale_name = "position_c", palette = identity, expand = expand,  ...
+##   .. .. ..$ call        : language continuous_scale(aesthetics = c("x", "xmin", "xmax", "xend",      "xintercept"), scale_name = "position_c", palette = identity,  ...
 ##   .. .. ..$ aesthetics  : chr [1:5] "x" "xmin" "xmax" "xend" ...
 ##   .. .. ..$ scale_name  : chr "position_c"
 ##   .. .. ..$ palette     :function (x)  
-##   .. .. ..$ range       :Reference class 'Continuous' [package "scales"] with 1 fields
+##   .. .. ..$ range       :Reference class 'Continuous' [package "scales"] with 1 field
 ##   .. .. .. ..$ range: num [1:2] 10.4 33.9
-##   .. .. .. ..and 15 methods, of which 3 are possibly relevant:
+##   .. .. .. ..and 15 methods, of which 3 are  possibly relevant:
 ##   .. .. .. ..  initialize, reset, train
 ##   .. .. ..$ limits      : NULL
 ##   .. .. ..$ trans       :List of 6
@@ -143,7 +143,7 @@ str(ggplot_build(p))
 ##   .. .. ..$ na.value    : num NA
 ##   .. .. ..$ expand      : list()
 ##   .. .. .. ..- attr(*, "class")= chr "waiver"
-##   .. .. ..$ rescaler    :function (x, to = c(0, 1), from = range(x, na.rm = TRUE))  
+##   .. .. ..$ rescaler    :function (x, to = c(0, 1), from = range(x, na.rm = TRUE, finite = TRUE))  
 ##   .. .. ..$ oob         :function (x, range = c(0, 1), only.finite = TRUE)  
 ##   .. .. ..$ name        : NULL
 ##   .. .. ..$ breaks      : list()
@@ -157,13 +157,13 @@ str(ggplot_build(p))
 ##   .. .. ..- attr(*, "class")= chr [1:3] "position_c" "continuous" "scale"
 ##   ..$ y_scales:List of 1
 ##   .. ..$ :List of 17
-##   .. .. ..$ call        : language continuous_scale(aesthetics = c("y", "ymin", "ymax", "yend", "yintercept",      "ymin_final", "ymax_final"), scale_name = "position_c", palette = identity,  ...
+##   .. .. ..$ call        : language continuous_scale(aesthetics = c("y", "ymin", "ymax", "yend",      "yintercept", "ymin_final", "ymax_final"), scale_name = "position_c",  ...
 ##   .. .. ..$ aesthetics  : chr [1:7] "y" "ymin" "ymax" "yend" ...
 ##   .. .. ..$ scale_name  : chr "position_c"
 ##   .. .. ..$ palette     :function (x)  
-##   .. .. ..$ range       :Reference class 'Continuous' [package "scales"] with 1 fields
+##   .. .. ..$ range       :Reference class 'Continuous' [package "scales"] with 1 field
 ##   .. .. .. ..$ range: num [1:2] 1.51 5.42
-##   .. .. .. ..and 15 methods, of which 3 are possibly relevant:
+##   .. .. .. ..and 15 methods, of which 3 are  possibly relevant:
 ##   .. .. .. ..  initialize, reset, train
 ##   .. .. ..$ limits      : NULL
 ##   .. .. ..$ trans       :List of 6
@@ -177,7 +177,7 @@ str(ggplot_build(p))
 ##   .. .. ..$ na.value    : num NA
 ##   .. .. ..$ expand      : list()
 ##   .. .. .. ..- attr(*, "class")= chr "waiver"
-##   .. .. ..$ rescaler    :function (x, to = c(0, 1), from = range(x, na.rm = TRUE))  
+##   .. .. ..$ rescaler    :function (x, to = c(0, 1), from = range(x, na.rm = TRUE, finite = TRUE))  
 ##   .. .. ..$ oob         :function (x, range = c(0, 1), only.finite = TRUE)  
 ##   .. .. ..$ name        : NULL
 ##   .. .. ..$ breaks      : list()
@@ -231,18 +231,18 @@ str(ggplot_build(p))
 ##   .. ..$ gear: num [1:32] 4 4 4 3 3 3 3 4 4 4 ...
 ##   .. ..$ carb: num [1:32] 4 4 1 1 2 1 4 2 2 4 ...
 ##   ..$ layers     :List of 2
-##   .. ..$ :Classes 'proto', 'environment' <environment: 0x7fd2ba475fc8> 
-##   .. ..$ :Classes 'proto', 'environment' <environment: 0x7fd2be8f2340> 
-##   ..$ scales     :Reference class 'Scales' [package "ggplot2"] with 1 fields
+##   .. ..$ :Classes 'proto', 'environment' <environment: 0x7fcfcf9e8f18> 
+##   .. ..$ :Classes 'proto', 'environment' <environment: 0x7fcfcfa01d20> 
+##   ..$ scales     :Reference class 'Scales' [package "ggplot2"] with 1 field
 ##   .. ..$ scales:List of 3
 ##   .. .. ..$ :List of 17
-##   .. .. .. ..$ call        : language continuous_scale(aesthetics = c("x", "xmin", "xmax", "xend", "xintercept"),      scale_name = "position_c", palette = identity, expand = expand,  ...
+##   .. .. .. ..$ call        : language continuous_scale(aesthetics = c("x", "xmin", "xmax", "xend",      "xintercept"), scale_name = "position_c", palette = identity,  ...
 ##   .. .. .. ..$ aesthetics  : chr [1:5] "x" "xmin" "xmax" "xend" ...
 ##   .. .. .. ..$ scale_name  : chr "position_c"
 ##   .. .. .. ..$ palette     :function (x)  
-##   .. .. .. ..$ range       :Reference class 'Continuous' [package "scales"] with 1 fields
+##   .. .. .. ..$ range       :Reference class 'Continuous' [package "scales"] with 1 field
 ##   .. .. .. .. ..$ range: NULL
-##   .. .. .. .. ..and 15 methods, of which 3 are possibly relevant:
+##   .. .. .. .. ..and 15 methods, of which 3 are  possibly relevant:
 ##   .. .. .. .. ..  initialize, reset, train
 ##   .. .. .. ..$ limits      : NULL
 ##   .. .. .. ..$ trans       :List of 6
@@ -256,7 +256,7 @@ str(ggplot_build(p))
 ##   .. .. .. ..$ na.value    : num NA
 ##   .. .. .. ..$ expand      : list()
 ##   .. .. .. .. ..- attr(*, "class")= chr "waiver"
-##   .. .. .. ..$ rescaler    :function (x, to = c(0, 1), from = range(x, na.rm = TRUE))  
+##   .. .. .. ..$ rescaler    :function (x, to = c(0, 1), from = range(x, na.rm = TRUE, finite = TRUE))  
 ##   .. .. .. ..$ oob         :function (x, range = c(0, 1), only.finite = TRUE)  
 ##   .. .. .. ..$ name        : NULL
 ##   .. .. .. ..$ breaks      : list()
@@ -269,13 +269,13 @@ str(ggplot_build(p))
 ##   .. .. .. ..$ guide       : chr "none"
 ##   .. .. .. ..- attr(*, "class")= chr [1:3] "position_c" "continuous" "scale"
 ##   .. .. ..$ :List of 17
-##   .. .. .. ..$ call        : language continuous_scale(aesthetics = c("y", "ymin", "ymax", "yend", "yintercept",      "ymin_final", "ymax_final"), scale_name = "position_c", palette = identity,  ...
+##   .. .. .. ..$ call        : language continuous_scale(aesthetics = c("y", "ymin", "ymax", "yend",      "yintercept", "ymin_final", "ymax_final"), scale_name = "position_c",  ...
 ##   .. .. .. ..$ aesthetics  : chr [1:7] "y" "ymin" "ymax" "yend" ...
 ##   .. .. .. ..$ scale_name  : chr "position_c"
 ##   .. .. .. ..$ palette     :function (x)  
-##   .. .. .. ..$ range       :Reference class 'Continuous' [package "scales"] with 1 fields
+##   .. .. .. ..$ range       :Reference class 'Continuous' [package "scales"] with 1 field
 ##   .. .. .. .. ..$ range: NULL
-##   .. .. .. .. ..and 15 methods, of which 3 are possibly relevant:
+##   .. .. .. .. ..and 15 methods, of which 3 are  possibly relevant:
 ##   .. .. .. .. ..  initialize, reset, train
 ##   .. .. .. ..$ limits      : NULL
 ##   .. .. .. ..$ trans       :List of 6
@@ -289,7 +289,7 @@ str(ggplot_build(p))
 ##   .. .. .. ..$ na.value    : num NA
 ##   .. .. .. ..$ expand      : list()
 ##   .. .. .. .. ..- attr(*, "class")= chr "waiver"
-##   .. .. .. ..$ rescaler    :function (x, to = c(0, 1), from = range(x, na.rm = TRUE))  
+##   .. .. .. ..$ rescaler    :function (x, to = c(0, 1), from = range(x, na.rm = TRUE, finite = TRUE))  
 ##   .. .. .. ..$ oob         :function (x, range = c(0, 1), only.finite = TRUE)  
 ##   .. .. .. ..$ name        : NULL
 ##   .. .. .. ..$ breaks      : list()
@@ -302,13 +302,13 @@ str(ggplot_build(p))
 ##   .. .. .. ..$ guide       : chr "none"
 ##   .. .. .. ..- attr(*, "class")= chr [1:3] "position_c" "continuous" "scale"
 ##   .. .. ..$ :List of 17
-##   .. .. .. ..$ call        : language continuous_scale(aesthetics = "colour", scale_name = "gradient", palette = seq_gradient_pal(low,      high, space), na.value = na.value, guide = guide)
+##   .. .. .. ..$ call        : language continuous_scale(aesthetics = "colour", scale_name = "gradient",      palette = seq_gradient_pal(low, high, space), na.value = na.value,  ...
 ##   .. .. .. ..$ aesthetics  : chr "colour"
 ##   .. .. .. ..$ scale_name  : chr "gradient"
 ##   .. .. .. ..$ palette     :function (x)  
-##   .. .. .. ..$ range       :Reference class 'Continuous' [package "scales"] with 1 fields
+##   .. .. .. ..$ range       :Reference class 'Continuous' [package "scales"] with 1 field
 ##   .. .. .. .. ..$ range: num [1:2] 4 8
-##   .. .. .. .. ..and 15 methods, of which 3 are possibly relevant:
+##   .. .. .. .. ..and 15 methods, of which 3 are  possibly relevant:
 ##   .. .. .. .. ..  initialize, reset, train
 ##   .. .. .. ..$ limits      : NULL
 ##   .. .. .. ..$ trans       :List of 6
@@ -322,7 +322,7 @@ str(ggplot_build(p))
 ##   .. .. .. ..$ na.value    : chr "grey50"
 ##   .. .. .. ..$ expand      : list()
 ##   .. .. .. .. ..- attr(*, "class")= chr "waiver"
-##   .. .. .. ..$ rescaler    :function (x, to = c(0, 1), from = range(x, na.rm = TRUE))  
+##   .. .. .. ..$ rescaler    :function (x, to = c(0, 1), from = range(x, na.rm = TRUE, finite = TRUE))  
 ##   .. .. .. ..$ oob         :function (x, range = c(0, 1), only.finite = TRUE)  
 ##   .. .. .. ..$ name        : NULL
 ##   .. .. .. ..$ breaks      : list()
@@ -334,9 +334,9 @@ str(ggplot_build(p))
 ##   .. .. .. ..$ legend      : NULL
 ##   .. .. .. ..$ guide       : chr "colourbar"
 ##   .. .. .. ..- attr(*, "class")= chr [1:3] "gradient" "continuous" "scale"
-##   .. ..and 21 methods, of which 9 are possibly relevant:
-##   .. ..  add, clone, find, get_scales, has_scale, initialize, input, n,
-##   .. ..  non_position_scales
+##   .. ..and 21 methods, of which 9 are  possibly relevant:
+##   .. ..  add, clone, find, get_scales, has_scale, initialize, input,
+##   .. ..  n, non_position_scales
 ##   ..$ mapping    :List of 2
 ##   .. ..$ x: symbol mpg
 ##   .. ..$ y: symbol wt
@@ -349,7 +349,7 @@ str(ggplot_build(p))
 ##   ..$ facet      :List of 7
 ##   .. ..$ facets  :List of 1
 ##   .. .. ..$ am: symbol am
-##   .. .. ..- attr(*, "env")=<environment: 0x7fd2bd719378> 
+##   .. .. ..- attr(*, "env")=<environment: 0x7fcfcd09a2d0> 
 ##   .. .. ..- attr(*, "class")= chr "quoted"
 ##   .. ..$ free    :List of 2
 ##   .. .. ..$ x: logi FALSE

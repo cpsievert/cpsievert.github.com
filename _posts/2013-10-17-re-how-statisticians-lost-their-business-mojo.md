@@ -1,11 +1,9 @@
 ---
 layout: post
 title: "RE: How Statisticians Lost Their Business Mojo"
-author: Carson Sievert
 categories: [statistics, business]
 tags: [statistics, business]
 ---
-{% include JB/setup %}
 
 I recently stumbled across [@statwonk](https://twitter.com/statwonk)'s post on [how statisticians
 lost their business

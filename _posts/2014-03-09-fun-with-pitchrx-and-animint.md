@@ -1,12 +1,9 @@
 ---
 layout: post
 title: "Fun with pitchRx and animint"
-author: Carson Sievert
 categories: [PITCHfx, interactive graphics]
 tags: [pitchRx, animint]
 ---
-{% include JB/setup %}
-
 
 If you are anything like me, you spend most of the day wrangling data with
 [plyr](http://cran.r-project.org/web/packages/plyr/index.html) (or
@@ -25,20 +22,30 @@ where other similar (and also great) packages like [rCharts](http://rcharts.io/)
 
 {% highlight r %}
 library(pitchRx)
+pitches$type <- with(
+  pitches, 
+  interaction(pitch_type, pitcher_name)
+)
+counts <- dplyr::count(pitches, pitch_type, pitcher_name, type)
 library(animint)
-data(pitches, package = "pitchRx")
-pitches$type <- interaction(pitches$pitch_type, pitches$pitcher_name)
-counts <- ddply(pitches, c("pitch_type", "pitcher_name", "type"),
-                summarise, count = length(px))
-viz <- list(bars = ggplot() +
-              geom_bar(aes(x = factor(pitch_type), y = count,
-                           fill = pitcher_name, clickSelects = type),
-                      position = "dodge", stat = "identity", data = counts),
-            scatter = ggplot() +
-              geom_point(aes(start_speed, end_speed, fill = pitcher_name, showSelected = type),
-                         alpha = 0.65, data = pitches))
-gg2animint(viz)
+viz <- list(
+  bars = ggplot() +
+    geom_bar(
+      aes(x = factor(pitch_type), 
+          y = n, fill = pitcher_name, 
+          clickSelects = type),
+      position = "dodge", 
+      stat = "identity", 
+      data = counts
+    ) + theme(legend.position = "none"),
+  scatter = ggplot() +
+    geom_point(
+      aes(start_speed, end_speed, 
+          fill = pitcher_name, showSelected = type),
+      alpha = 0.65, 
+      data = pitches)
+  )
+animint2gist(viz)
 {% endhighlight %}
 
-
-<iframe src="http://cpsievert.github.io/pitchRx/animint/" width="1200" height="500"> </iframe>
+<iframe src="http://bl.ocks.org/cpsievert/raw/e41929a8927daecb4dbc/" width="1000" height="500"></iframe>

@@ -1,13 +1,10 @@
 _site/*
-_theme_packages/*
 
-Thumbs.db
-
-*/cache
-*index_cache
+cache/*
+*index_cache/*
 .rbenv-version
 .rvmrc
-.DS_Store
+*.DS_Store
 *.Rhistory
 _source/__*
 .Rproj.user

@@ -4,8 +4,11 @@ title: About
 permalink: /about/
 ---
 
-Hi! I'm a graduate student in the Department of [Statistics](http://www.stat.iastate.edu) at Iowa State University and currently teaching [Introduction to Business Statistics](http://www.registrar.iastate.edu/catalog/2009-11/courses/stat.html#200). My interests are quickly gravitating toward interactive statistical graphics. I love using [R-studio, knitr, and Markdown](http://rstudio.org/docs/authoring/using_markdown) to create [reproducible](http://en.wikipedia.org/wiki/Open_research_computation#Reproducibility_and_open_research_computing), flexible, and dynamic [stuff](http://cpsievert.github.com/pitchRx/demo). Besides golf, traveling, and guinness, I can't get enough of: data-oriented programming, [short cuts](http://plyr.had.co.nz/), and [good graphics](http://d3js.org/).
+<span class="marginnote">
+  <img src="http://i.imgur.com/lSvKY.jpg">
+</span>
 
-<div align="center">
-    <a href="http://imgur.com/RxynA"><img src="http://i.imgur.com/RxynA.jpg" width="300"/></a><a href="http://imgur.com/lSvKY"><img src="http://i.imgur.com/lSvKY.jpg" width="300" /></a>
-</div>
+Hi, I'm Carson. I'm a PhD student in the Department of [Statistics at Iowa State University](http://www.stat.iastate.edu) working on interactive graphics, statistical computation, sports statistics, and web technologies. I'm primarily interested in problems where visualization can augment/enhance/improve statistical methods and/or automated tasks. As you can see from my [GitHub profile](https://github.com/cpsievert), I'm  passionate about open source, and I [occasionally tweet](https://twitter.com/cpsievert) about stuff I'm working on.
+
+
+
