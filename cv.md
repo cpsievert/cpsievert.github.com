@@ -58,9 +58,12 @@ __Data Analyst__, [Hardwick-Day Inc.](http://hardwickday.com/) Nov. 2010 - Nov. 
 
 ### Invited
 
-* Interactive and Dynamic Web-Based Statistical Graphics ([slides](http://cpsievert.github.io/slides/web-graphics/wehi/#1)). Walter and Eliza Hall Institute for Medical Research. Melbourne, Australia. September, 2015.
+* Dynamic Interactive Web Graphics for Data Analysis ([slides](http://cpsievert.github.io/slides/web-graphics/murdoch)). Murdoch Childrens Research Institute. Melbourne, Australia. December, 2015
+* Interactive and Dynamic Web-Based Statistical Graphics ([slides](http://cpsievert.github.io/slides/web-graphics/wehi/#1)). Walter and Eliza Hall Institute for Medical Research. Melbourne, Australia. September, 2015
 * Acquiring, Visualizing, and Modeling MLB Umpire Strike/Ball Decisions with PITCHf/x Data ([slides](http://cpsievert.github.io/slides/pitchRx/jsm15/)). Joint Statistical Meetings. Seattle, WA. August, 2015
 * Recent Advances in Interactive Graphics for Data Analysis ([slides](http://cpsievert.github.io/slides/web-graphics/jsm15/)). Joint Statistical Meetings. Seattle, WA. August, 2015
+* Web Scraping in R ([slides](http://cpsievert.github.io/slides/web-scraping/20150612/#1)). Great Plain R Users Group, Sioux Falls, SD. June, 2015
+
 
 ### Selected
 
