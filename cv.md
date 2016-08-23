@@ -11,14 +11,14 @@ title: CV
 * Double B.A. in Mathematics & Economics, Saint John's University (May 2010)
 
 ## Experience
-
-__Research Assistant__, [Monash University](http://www.monash.edu/). September 2015 - Present
-
-* Advise honours student research and present workshops on data science in R.
   
 __Software Developer__, [plotly](https://plot.ly/). May 2015 - Present
 
 * Maintainer and lead developer of plotly's R package  <https://plot.ly/r/>
+
+__Research Assistant__, [Monash University](http://www.monash.edu/). September 2015 - May 2016
+
+* Advise honours student research and present workshops on data science in R.
     
 __Lecturer/TA__, [Iowa State University](http://www.stat.iastate.edu/). Aug. 2011 - May 2015
 
@@ -54,7 +54,9 @@ __Data Analyst__, [Hardwick-Day Inc.](http://hardwickday.com/) Nov. 2010 - Nov. 
 * Toby Dylan Hocking, Carson Sievert, and Susan VanderPlas (2015). [Animint: A Grammar for Interactive Animations](https://github.com/tdhock/animint-paper/blob/master/HOCKING-animint.pdf)
 * Carson Sievert and Brian Mills (2015). Pitching expertise and evaluation in baseball.
 
-## Presentations 
+## Talks
+
+All talks given in 2016 (and beyond) are listed here -- <http://cpsievert.github.io/talks/>
 
 ### Invited
 
@@ -63,7 +65,6 @@ __Data Analyst__, [Hardwick-Day Inc.](http://hardwickday.com/) Nov. 2010 - Nov. 
 * Acquiring, Visualizing, and Modeling MLB Umpire Strike/Ball Decisions with PITCHf/x Data ([slides](http://cpsievert.github.io/slides/pitchRx/jsm15/)). Joint Statistical Meetings. Seattle, WA. August, 2015
 * Recent Advances in Interactive Graphics for Data Analysis ([slides](http://cpsievert.github.io/slides/web-graphics/jsm15/)). Joint Statistical Meetings. Seattle, WA. August, 2015
 * Web Scraping in R ([slides](http://cpsievert.github.io/slides/web-scraping/20150612/#1)). Great Plain R Users Group, Sioux Falls, SD. June, 2015
-
 
 ### Selected
 

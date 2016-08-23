@@ -8,4 +8,3 @@ cache/*
 *.Rhistory
 _source/__*
 .Rproj.user
-*.Rproj
