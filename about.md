@@ -8,7 +8,4 @@ permalink: /about/
   <img src="http://i.imgur.com/lSvKY.jpg">
 </span>
 
-Hi, I'm Carson. I'm a PhD student in the Department of [Statistics at Iowa State University](http://www.stat.iastate.edu) working on interactive graphics, statistical computation, sports statistics, and web technologies. I'm primarily interested in problems where visualization can augment/enhance/improve statistical methods and/or automated tasks. As you can see from my [GitHub profile](https://github.com/cpsievert), I'm  passionate about open source, and I [occasionally tweet](https://twitter.com/cpsievert) about stuff I'm working on.
-
-
-
+Hi, I'm Carson. I recently received my PhD in statistics from Iowa State University. My thesis was on [Interfacing R with Web Technologies for Interactive Statistical Graphics and Computing with Data](https://github.com/cpsievert/phd-thesis). I enjoy building things that help make data analysis more accessible and efficient. Most of my work is available as open source R packages on [my GitHub profile](https://github.com/cpsievert), and I'm also currently the maintainer and [primary contributor](https://github.com/ropensci/plotly/graphs/contributors) to the R package [plotly](https://github.com/ropensci/plotly). I'm always looking for new and exciting projects to work on, so please contact me via Twitter ([@cpsievert](https://twitter.com/cpsievert)) or email ([cpsievert1 AT gmail.com](mailto:cpsievert1@gmail.com)) if you would like to collaborate!
