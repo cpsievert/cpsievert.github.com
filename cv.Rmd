@@ -54,7 +54,7 @@ __Data Analyst__, [Hardwick-Day Inc.](http://hardwickday.com/) Nov. 2010 - Nov. 
 
 ### Book Chapters
 
-* Carson Sievert and Brian Mills (2017). "Using Publicly Available Baseball Data to Measure and Evaluate Pitching Performance" in [Handbook of Statistical Methods and Analyses in Sports](https://www.crcpress.com/Handbook-of-Statistical-Methods-and-Analyses-in-Sports/Albert-Glickman-Swartz-Koning/p/book/9781498737364), edited by Jim Albert, Mark E. Glickman, Tim B. Swartz, and Ruud H. Koning. Chapman & Hall/CRC. ISBN 9781498737364.
+* Carson Sievert and Brian Mills (2017). "Using Publicly Available Baseball Data to Measure and Evaluate Pitching Performance" in [Handbook of Statistical Methods and Analyses in Sports](https://www.crcpress.com/Handbook-of-Statistical-Methods-and-Analyses-in-Sports/Albert-Glickman-Swartz-Koning/p/book/9781498737364), edited by Jim Albert, Mark E. Glickman, Tim B. Swartz, and Ruud H. Koning. Chapman & Hall/CRC. ISBN 9781498737364. ([preprint](pitching-chapter.pdf))
 
 ### Journal Articles
 
