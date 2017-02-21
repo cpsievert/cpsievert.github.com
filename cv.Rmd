@@ -94,6 +94,7 @@ All talks given in 2016 (and beyond) are listed here -- <http://cpsievert.github
 
 ## Honors/Awards
 
+* 2017 [Chambers award](http://stat-computing.org/awards/jmc/winners.html) winner
 * Invited participant of [2016 rOpenSci Unconference Australia](http://auunconf.ropensci.org/).
 * Awarded first place in the [2014 statistical graphics video competition](http://web.archive.org/web/20140215133100/http://streaming.stat.iastate.edu/~dicook/video-competition/) for [this submission](http://web.archive.org/web/20160509234133/http://stat-graphics.org/movies/ldavis.html). 
 * Invited participant of the [2014 rOpenSci hackathon](http://ropensci.github.io/hackathon/) (see my [blog post](https://ropensci.org/blog/2014/04/16/topic-modeling-in-R/))
