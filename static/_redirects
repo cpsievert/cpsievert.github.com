@@ -1,1 +1,3 @@
-/plotly_book            https://plotly-book.cpsievert.me
+/blog           /post
+/plotly_book/*  https://plotly-book.cpsievert.me/:splat
+/talks/*        https://talks.cpsievert.me/:splat
