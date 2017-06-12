@@ -1,0 +1,50 @@
+---
+title: "Fun with pitchRx and animint"
+date: "2014-03-09"
+categories: [PITCHfx, interactive graphics]
+tags: [pitchRx, animint]
+---
+
+If you are anything like me, you spend most of the day wrangling data with
+[plyr](http://cran.r-project.org/web/packages/plyr/index.html) (or
+[dplyr](http://cran.r-project.org/web/packages/dplyr/index.html)) and visualizing it with
+[ggplot2](http://cran.r-project.org/web/packages/ggplot2/index.html). For this reason, I got really
+excited when I heard about the [animint](https://github.com/tdhock/animint) package which allows
+one to create linked, interactive (even animated) web graphics using ggplot2 code.
+
+This short post demonstrates linked plots using data from the
+[pitchRx](http://cran.r-project.org/web/packages/pitchRx/) package. If you click on the bars in the
+bar chart below, the corresponding start versus end speed scatterplot should change to reflect the
+current selection. I really want to spend more time with animint since it seems to fill a void
+where other similar (and also great) packages like [rCharts](http://rcharts.io/) and
+[ggvis](http://ggvis.rstudio.com/) currently fall short.
+
+```{r dat, results='asis', tidy=FALSE, eval=FALSE}
+library(pitchRx)
+pitches$type <- with(
+  pitches, 
+  interaction(pitch_type, pitcher_name)
+)
+counts <- dplyr::count(pitches, pitch_type, pitcher_name, type)
+library(animint)
+viz <- list(
+  bars = ggplot() +
+    geom_bar(
+      aes(x = factor(pitch_type), 
+          y = n, fill = pitcher_name, 
+          clickSelects = type),
+      position = "dodge", 
+      stat = "identity", 
+      data = counts
+    ) + theme(legend.position = "none"),
+  scatter = ggplot() +
+    geom_point(
+      aes(start_speed, end_speed, 
+          fill = pitcher_name, showSelected = type),
+      alpha = 0.65, 
+      data = pitches)
+  )
+animint2gist(viz)
+```
+
+<iframe src="http://bl.ocks.org/cpsievert/raw/e41929a8927daecb4dbc/" width="1000" height="500"></iframe>

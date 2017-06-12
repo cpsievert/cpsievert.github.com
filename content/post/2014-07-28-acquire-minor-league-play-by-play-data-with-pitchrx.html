@@ -1,0 +1,141 @@
+---
+title: "Acquire minor league play-by-play data with pitchRx"
+date: "2014-07-28"
+categories: [Baseball, R]
+---
+
+
+
+<p>Inspired <a href="https://twitter.com/albertlyu/status/485529440160448512">by a tweet</a> from Albert Lyu, I recently discovered the <a href="http://gd2.mlb.com/components/">Gameday site</a> that hosts PITCHf/x and other play-by-play data also has play-by-play for minor league games. The newest version of <a href="https://github.com/cpsievert/pitchRx">pitchRx</a> has support to acquire play-by-play data from any minor league game. This post will show you how to go about doing that.</p>
+<div id="gameday-identifiers-revisited" class="section level2">
+<h2>Gameday identifiers, revisited</h2>
+<p>In <a href="http://baseballwithr.wordpress.com/2014/06/30/pitchrx-meet-openwar-4/">my last post</a>, I discussed how to use gameday identifiers to acquire data for specific games. If you want minor league play-by-play data, you’ll have to use this approach. Just for demonstration purposes, consider the behavior of <code>scrape</code> when using a <code>start</code> and <code>end</code> date:</p>
+<pre class="r"><code>library(pitchRx)
+dat &lt;- scrape(start = &quot;2012-01-01&quot;, end = &quot;2013-01-01&quot;)</code></pre>
+<p>This considers <em>any</em> game that a major league team played in during 2012 – even games between a major league and minor league team. We can replicate this result using gameday identifiers (that is, <code>gids</code>) instead.</p>
+<pre class="r"><code>data(gids, package = &quot;pitchRx&quot;)
+gids12 &lt;- gids[grepl(&quot;2012&quot;, gids)]
+dat &lt;- scrape(game.ids = gids12)</code></pre>
+<pre class="r"><code>gids12[[1]]</code></pre>
+<pre class="r"><code>## [1] &quot;gid_2012_02_29_fanbbc_phimlb_1&quot;</code></pre>
+<p>The first element of <code>gids12</code> identifies a game between the Florida State University Seminoles (which has a team code of ‘fan’) and the Philadelphia Phillies (which has a team code of ‘phi’). The ‘bbc’ bit after ‘fan’ is a league code that let’s us know that, in this case, the away team ‘fan’ is a college team. Similarly, the ‘mlb’ bit after ‘phi’ tells us the home team is an MLB team. To gain some insight on both the type and quantity of games by league type, consider the following:</p>
+<pre class="r"><code>league.away &lt;- substr(gids12, 19, 21)
+league.home &lt;- substr(gids12, 26, 28)
+leagues &lt;- paste(league.away, league.home, sep = &quot;-&quot;)
+sort(table(leagues), decreasing = TRUE)</code></pre>
+<pre class="r"><code>## leagues
+## mlb-mlb bbc-mlb mlb-aaa mlb-jml min-mlb mlb-aax aaa-mlb afa-mlb mlb-afa 
+##    2976      10       4       4       3       3       1       1       1</code></pre>
+<p>This table shows there are nearly 3000 games between <em>two</em> major league teams in 2012 that are available for data aquisition and just a handful of games between a major and minor league team. As it turns out, there is a wealth of data on games between minor league teams. Here is a table of translations for all the league codes (<a href="https://twitter.com/albertlyu/status/485643587011354624">thanks Albert and Harry</a>):</p>
+<table>
+<thead>
+<tr class="header">
+<th>Code</th>
+<th>Full name</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>aaa</td>
+<td>Triple A</td>
+</tr>
+<tr class="even">
+<td>aax</td>
+<td>Double A</td>
+</tr>
+<tr class="odd">
+<td>afa</td>
+<td>High A</td>
+</tr>
+<tr class="even">
+<td>afx</td>
+<td>Low A</td>
+</tr>
+<tr class="odd">
+<td>asx</td>
+<td>Short Season A-ball</td>
+</tr>
+<tr class="even">
+<td>bbc</td>
+<td>College</td>
+</tr>
+<tr class="odd">
+<td>hsb</td>
+<td>High School</td>
+</tr>
+<tr class="even">
+<td>int</td>
+<td>World Baseball Classic</td>
+</tr>
+<tr class="odd">
+<td>jml</td>
+<td>Japanese</td>
+</tr>
+<tr class="even">
+<td>min</td>
+<td>Generic Minors</td>
+</tr>
+<tr class="odd">
+<td>mlb</td>
+<td>Major League Baseball</td>
+</tr>
+<tr class="even">
+<td>nae</td>
+<td>Junior National Team</td>
+</tr>
+<tr class="odd">
+<td>nat</td>
+<td>National Team</td>
+</tr>
+<tr class="even">
+<td>rok</td>
+<td>Rookie Ball</td>
+</tr>
+<tr class="odd">
+<td>win</td>
+<td>Winter League</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="acquiring-data-from-non-mlb-games" class="section level2">
+<h2>Acquiring data from non-MLB games</h2>
+<p>As we’ve seen, the <code>gids</code> data object that comes packaged with pitchRx contains games with at least one MLB team, but what about <em>non</em>-MLB games? The new <code>nonMLBgids</code> object provides similar identifiers for non-MLB games which can be used to acquire data just like <code>gids</code>. For example, say I want any triple A game played on June 1st. First, let’s extract the appropriate set of identifiers from all the available identifiers:</p>
+<pre class="r"><code>data(nonMLBgids, package = &quot;pitchRx&quot;)
+aaa &lt;- nonMLBgids[grepl(&quot;2011_06_01_[a-z]{3}aaa_[a-z]{3}aaa&quot;, nonMLBgids)]</code></pre>
+<p>Now we just pass these gameday identifiers to <code>scrape</code>‘s <code>game.ids</code> argument. Note that we can also use the <code>suffix</code> argument in the usual way to acquire data from more file types than just the ’inning/inning_all.xml’ default.</p>
+<pre class="r"><code>dat &lt;- scrape(game.ids=aaa, suffix=c(&quot;inning/inning_all.xml&quot;,
+                                    &quot;inning/inning_hit.xml&quot;,
+                                    &quot;players.xml&quot;,
+                                    &quot;miniscoreboard.xml&quot;))</code></pre>
+<p>Since we specified ‘inning/inning_hit.xml’ in <code>suffix</code>, the ‘hip’ (hits-in-play) table is one of the many tables returned by <code>scrape</code>. Let’s use this data to plot all the hits in play on June 1st. This turns out to be very easy with some help from <a href="https://github.com/beanumber/openWAR/">openWAR</a>.</p>
+<pre class="r"><code>library(openWAR)
+# &#39;recenter&#39; hit locations
+hip.day &lt;- openWAR:::recenter(dat$hip)
+class(hip.day) &lt;- c(&quot;GameDayPlays&quot;, &quot;data.frame&quot;)
+names(hip.day) &lt;- sub(&quot;des&quot;, &quot;event&quot;, names(hip.day))
+plot(hip.day)</code></pre>
+<p><img src="/post/images/openwar-plot.png" style="display: block; margin: auto;" /></p>
+</div>
+<div id="thats-a-lot-of-games" class="section level2">
+<h2>That’s a lot of games!</h2>
+<p><code>nonMLBgids</code> contains roughly 5 times more identifiers than <code>gids</code>. To give an idea of the scale, remember that <code>gids</code> contained about 3000 identifiers from 2012, so <code>nonMLBgids</code> contains about 15000 identifiers from 2012.</p>
+<pre class="r"><code>nonMLB12 &lt;- nonMLBgids[grep(&quot;2012&quot;, nonMLBgids)]
+length(nonMLB12)</code></pre>
+<p>And those non-MLB games from 2012 broken down by league type:</p>
+<pre class="r"><code>league.away &lt;- substr(nonMLB12, 19, 21)
+league.home &lt;- substr(nonMLB12, 26, 28)
+leagues &lt;- paste(league.away, league.home, sep = &quot;-&quot;)
+sort(table(leagues), decreasing = TRUE)</code></pre>
+</div>
+<div id="building-a-non-mlb-database" class="section level2">
+<h2>Building a non-MLB database</h2>
+<p>Since non-MLB games don’t have PITCHf/x, the columns required for the ‘pitch’ table is a subset of columns required for MLB games. This is just one reason why you probably want to keep you’re MLB tables separated from non-MLB tables. I think the easiest approach to just maintain another (nonMLB) database. Also, since <code>nonMLBgids</code> provides access to over 100,000 games, one should think carefully about which games they actually want/need. For instance, let’s start a database and fill it with every Triple A game.</p>
+<pre class="r"><code>library(dplyr)
+db &lt;- src_sqlite(&quot;nonMLB.sqlite3&quot;, create = TRUE)
+# logical vector with TRUE if the home OR away league is Triple A
+aaa &lt;- grepl(&quot;[a-z]{3}aaa_[a-z]{6}&quot;, nonMLBgids) | grepl(&quot;[a-z]{6}_[a-z]{3}aaa&quot;, nonMLBgids)
+aaaGids &lt;- nonMLBgids[aaa]
+# DISCLAIMER: This scrapes a lot of games! Be patient!
+scrape(game.ids = nonMLBgids, connect = db$con)</code></pre>
+</div>

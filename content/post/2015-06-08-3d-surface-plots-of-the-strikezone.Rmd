@@ -1,0 +1,70 @@
+---
+title: "3D surface plots of the strikezone"
+date: "2015-06-08"
+categories: [Baseball, R]
+---
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(message = FALSE)
+```
+
+Over the past month, I've been working on [plotly's R package](https://github.com/ropensci/plotly); and in particular, a new interface for creating plotly visualizations from R. I'm really excited about this project and I think it's one of the most elegant, straight-forward ways to create interactive graphics that are easy to share. In this post, I'll show you just how easy it is to create 3D surface plots of the strikezone using plotly.
+
+### Kernel Densities
+
+The __MASS__ package in R has a function called `kde2d()` which performs 2D density estimation (with a bivariate normal kernel) 
+
+```{r}
+data(pitches, package = "pitchRx")
+dens <- with(pitches, MASS::kde2d(px, pz))
+```
+
+```{r}
+# plotly isn't available on CRAN, but u can install from GitHub
+# devtools::install_github("ropensci/plotly@carson-dsl")
+library(plotly)
+with(dens, plot_ly(x = x, y = y, z = z, type = "surface"))
+```
+
+Although this plot is cool, we can't perform any interesting statistical inference with it. All we can see is an estimated frequency.
+
+### Probabilistic Surfaces
+
+Brian Mills and I [have](http://princeofslides.blogspot.com/2013/07/advanced-sab-r-metrics-parallelization.html) a [number](https://baseballwithr.wordpress.com/2014/04/21/are-umpires-becoming-less-merciful/) [of](https://baseballwithr.wordpress.com/2014/10/23/a-probabilistic-model-for-interpreting-strike-zone-expansion-7/) [posts/papers](http://onlinelibrary.wiley.com/doi/10.1002/mde.2630/abstract) on using generalized additive models (GAMs) to model event probabilities over the strikezone. To keep things simple, we'll stick with the example data, and model the probablity of a called strike by allowing it to vary by location and batter stance.
+
+```{r}
+# condition on umpire decisions
+noswing <- subset(pitches, des %in% c("Ball", "Called Strike"))
+noswing$strike <- as.numeric(noswing$des %in% "Called Strike")
+library(mgcv)
+m <- bam(strike ~ s(px, pz, by = factor(stand)) + factor(stand), 
+         data = noswing, family = binomial(link = 'logit'))
+```
+
+Now we use the `predict.gam()` method to fit response values (for right handers) over a strike-zone grid.
+
+```{r}
+px <- round(seq(-2, 2, length.out = 20), 2)
+pz <- round(seq(1, 4, length.out = 20), 2)
+dat <- expand.grid(px = px, pz = pz, stand = "R")
+dat$fit <- as.numeric(predict(m, dat, type = "response"))
+```
+
+plotly's `z` argument likes numeric matrices, so we need change the data structure accordingly.
+
+```{r}
+z <- Reduce(rbind, split(dat$fit, dat$px))
+plot_ly(x = px, y = pz, z = z, type = "surface")
+```
+
+It's more interesting to look at the difference in fitted values for right/left handed batters:
+
+```{r}
+dat2 <- expand.grid(px = px, pz = pz, stand = "L")
+dat2$fit <- as.numeric(predict(m, dat2, type = "response"))
+z <- Reduce(rbind, split(dat2$fit - dat$fit, dat2$px))
+plot_ly(x = px, y = pz, z = z, type = "surface")
+```
+
+
+

@@ -1,0 +1,162 @@
+---
+title: "Write your own Gameday scraper with XML2R and pitchRx"
+date: "2014-09-24"
+categories: [Baseball, R]
+---
+
+
+
+<p><a href="http://gd2.mlb.com/components/game/mlb/">MLBAM’s website</a> hosts a wealth of data that informs the <a href="http://mlb.mlb.com/mlb/scoreboard">MLB Gameday application</a>. Most notably, this website hosts pitch-by-pitch (ie, PITCHf/x) and play-by-play data. <a href="https://github.com/cpsievert/pitchRx">pitchRx</a> provides a simple interface to acquire a good portion of Gameday data (see Table 1 of <a href="http://journal.r-project.org/archive/accepted/sievert.pdf">my paper</a>), but there is a significant amount that isn’t directly accessible using <code>pitchRx::scrape</code>. This post will show you some general techniques to acquire and manipulate data from this website.</p>
+<div id="constructing-gameday-urls" class="section level2">
+<h2>Constructing Gameday urls</h2>
+<p>When scraping data off the web, typically the first task is to construct <a href="http://en.wikipedia.org/wiki/Uniform_resource_locator">urls</a> that point to the information of interest. Sometimes this is difficult, but thankfully, the Gameday site structure urls in a sensible fashion. In fact, if we are searching for game specific data, the full address can be constructed from the Gameday identifier. To demonstrate, let’s grab Gameday identifiers for MLB and Triple-A games played in August of 2014 (<a href="http://baseballwithr.wordpress.com/2014/06/30/pitchrx-meet-openwar-4/">this post</a> has more on searching Gameday identifiers with regular expressions).</p>
+<pre class="r"><code>library(pitchRx)
+# Load gameday identifiers
+data(gids, package = &quot;pitchRx&quot;)
+data(nonMLBgids, package = &quot;pitchRx&quot;)
+# Subset MLB identifiers to August, 2014
+MLBids &lt;- gids[grepl(&quot;2014_08_[0-9]{2}&quot;, gids)]
+# Subset to Triple-A games in August, 2014
+AAAids &lt;- nonMLBgids[grepl(&quot;2014_08_[0-9]{2}_[a-z]{3}aaa_[a-z]{3}aaa&quot;, nonMLBgids)]
+ids &lt;- c(MLBids, AAAids)
+ids[1] </code></pre>
+<pre class="r"><code>## [1] &quot;gid_2014_08_01_phimlb_wasmlb_1&quot;</code></pre>
+<p>The function <code>pitchRx::makeUrls</code> can then be used to pre-append the path required to reach ‘game directories’.</p>
+<pre class="r"><code>paths &lt;- makeUrls(gids = ids)
+paths[1]</code></pre>
+<pre class="r"><code>## [1] &quot;http://gd2.mlb.com/components/game/mlb/year_2014/month_08/day_01/gid_2014_08_01_phimlb_wasmlb_1&quot;</code></pre>
+<p>Within each game directory, there are a bunch of files (to see them, click on the link above). Note that <code>pitchRx::scrape</code> has support for acquiring: <a href="http://gd2.mlb.com/components/game/mlb/year_2014/month_08/day_01/gid_2014_08_01_phimlb_wasmlb_1/miniscoreboard.xml">miniscoreboard.xml</a>, <a href="http://gd2.mlb.com/components/game/mlb/year_2014/month_08/day_01/gid_2014_08_01_phimlb_wasmlb_1/players.xml">players.xml</a>, <a href="http://gd2.mlb.com/components/game/mlb/year_2014/month_08/day_01/gid_2014_08_01_phimlb_wasmlb_1/inning/inning_all.xml">inning/inning_all.xml</a>, and <a href="http://gd2.mlb.com/components/game/mlb/year_2014/month_08/day_01/gid_2014_08_01_phimlb_wasmlb_1/inning/inning_hit.xml">inning/inning_hit.xml</a> files; but any of these XML files can be harvested using <strong>XML2R</strong>.</p>
+</div>
+<div id="motivating-xml2r" class="section level2">
+<h2>Motivating XML2R</h2>
+<p>While developing <strong>pitchRx</strong>, I found myself writing a lot of redundant R code that repeatedly transformed similarly structured XML documents into a list of data frames. Through this discovery, I found a reasonable way to abstract the common tasks into a small number of functions/conventions which are bundled into a separate R package named <a href="https://github.com/cpsievert/XML2R">XML2R</a>. In fact, <a href="http://cpsievert.github.io/XML2R/">I have a vignette</a> which explains how <strong>pitchRx</strong> uses <strong>XML2R</strong> to acquire PITCHf/x data. I intend to write more sports data scrapers on top of <strong>XML2R</strong> (e.g., <a href="https://github.com/cpsievert/bbscrapeR">bbscrapeR</a>) and possibly combine them into a central R package.</p>
+<div id="from-urls-to-observations" class="section level3">
+<h3>From urls to observations</h3>
+<p>The fundamental idea behind <strong>XML2R</strong> is that any XML structure can be coerced into a <em>list of observations</em>. Here I will transform a bunch of <a href="http://gd2.mlb.com/components/game/mlb/year_2014/month_08/day_01/gid_2014_08_01_phimlb_wasmlb_1/rawboxscore.xml">rawboxscore.xml</a> files into a list of observations using <code>XML2Obs</code>:</p>
+<pre class="r"><code>library(XML2R)
+urls &lt;- paste0(paths, &quot;/rawboxscore.xml&quot;)
+obs &lt;- XML2Obs(urls) # this will take a minute</code></pre>
+<p>The <code>names</code> of this list keeps track of the XML hierarchy. In some sense, this hierarchy can be thought as defining an observational unit. <strong>XML2R</strong> has functionality for combining and creating links between observations, but we won’t cover that here. Instead, let’s take a peek at the top 5 observational units in terms of the count of observations within each level.</p>
+<pre class="r"><code>nms &lt;- names(obs)
+top &lt;- sort(table(nms), decreasing = TRUE)
+head(top)</code></pre>
+<pre class="r"><code>## nms
+##              boxscore//team//batting//batter 
+##                                        26205 
+## boxscore//team//pitching//pitcher//strikeout 
+##                                        14047 
+##       boxscore//linescore//inning_line_score 
+##                                         8652 
+##            boxscore//team//pitching//pitcher 
+##                                         7153 
+##      boxscore//team//pitching//pitcher//walk 
+##                                         5799 
+##                    boxscore//umpires//umpire 
+##                                         3349</code></pre>
+<p>Just because, here are two observations from the most popular observational unit:</p>
+<pre class="r"><code>batter &lt;- obs[grepl(&quot;^boxscore//team//batting//batter$&quot;, nms)][1:2]
+batter</code></pre>
+<pre class="r"><code>## $`boxscore//team//batting//batter`
+##      hr  sac name_display_first_last pos  rbi id       lob bis_avg
+## [1,] &quot;0&quot; &quot;0&quot; &quot;Ryan Howard&quot;           &quot;1B&quot; &quot;0&quot; &quot;429667&quot; &quot;0&quot; &quot;.220&quot; 
+##      name     bb  bis_s_hr bam_s_so fldg    bam_s_bb hbp d   e   so  a  
+## [1,] &quot;Howard&quot; &quot;0&quot; &quot;16&quot;     &quot;124&quot;    &quot;1.000&quot; &quot;45&quot;     &quot;0&quot; &quot;0&quot; &quot;0&quot; &quot;0&quot; &quot;1&quot;
+##      bis_s_t bam_s_t sf  bam_s_r bam_s_hr h   bat_order bis_s_r bis_s_rbi
+## [1,] &quot;1&quot;     &quot;1&quot;     &quot;0&quot; &quot;48&quot;    &quot;16&quot;     &quot;0&quot; &quot;400&quot;     &quot;48&quot;    &quot;63&quot;     
+##      t   bis_s_so bis_s_h bam_s_h ao  bam_s_rbi r   bam_s_e sb  bis_s_d
+## [1,] &quot;0&quot; &quot;124&quot;    &quot;87&quot;    &quot;87&quot;    &quot;1&quot; &quot;63&quot;      &quot;0&quot; &quot;7&quot;     &quot;0&quot; &quot;11&quot;   
+##      bam_s_d bis_s_e po   ab  bis_s_bb bam_avg go 
+## [1,] &quot;11&quot;    &quot;7&quot;     &quot;12&quot; &quot;4&quot; &quot;45&quot;     &quot;.220&quot;  &quot;3&quot;
+##      url                                                                                                              
+## [1,] &quot;http://gd2.mlb.com/components/game/mlb/year_2014/month_08/day_01/gid_2014_08_01_phimlb_wasmlb_1/rawboxscore.xml&quot;
+## 
+## $`boxscore//team//batting//batter`
+##      hr  sac name_display_first_last first_sac pos id       rbi lob
+## [1,] &quot;0&quot; &quot;1&quot; &quot;Roberto Hernandez&quot;     &quot;262&quot;     &quot;P&quot; &quot;433584&quot; &quot;0&quot; &quot;2&quot;
+##      bis_avg name           bb  bis_s_hr bam_s_so fldg   
+## [1,] &quot;.056&quot;  &quot;Hernandez, R&quot; &quot;0&quot; &quot;0&quot;      &quot;17&quot;     &quot;1.000&quot;
+##      first_two_out_risp_lob bam_s_bb hbp d   e   so  a   sf  bam_s_r
+## [1,] &quot;95&quot;                   &quot;0&quot;      &quot;0&quot; &quot;0&quot; &quot;0&quot; &quot;0&quot; &quot;0&quot; &quot;0&quot; &quot;0&quot;    
+##      bam_s_hr two_out_risp_lob h   bat_order bis_s_r bis_s_rbi t  
+## [1,] &quot;0&quot;      &quot;1&quot;              &quot;0&quot; &quot;900&quot;     &quot;0&quot;     &quot;1&quot;       &quot;0&quot;
+##      bis_s_so bis_s_h bam_s_h ao  bam_s_rbi r   sb  po  ab  bis_s_bb go 
+## [1,] &quot;17&quot;     &quot;2&quot;     &quot;2&quot;     &quot;0&quot; &quot;1&quot;       &quot;0&quot; &quot;0&quot; &quot;2&quot; &quot;2&quot; &quot;0&quot;      &quot;3&quot;
+##      bam_avg
+## [1,] &quot;.056&quot; 
+##      url                                                                                                              
+## [1,] &quot;http://gd2.mlb.com/components/game/mlb/year_2014/month_08/day_01/gid_2014_08_01_phimlb_wasmlb_1/rawboxscore.xml&quot;
+</code></pre>
+<p>Note that each observation (or each list element) is a character matrix with one row. This makes it easy to row bind observations at a later point.</p>
+<pre class="r"><code>str(batter)</code></pre>
+<pre class="r"><code>## List of 2
+##  $ boxscore//team//batting//batter: chr [1, 1:46] &quot;0&quot; &quot;0&quot; &quot;Ryan Howard&quot; &quot;1B&quot; ...
+##   ..- attr(*, &quot;dimnames&quot;)=List of 2
+##   .. ..$ : NULL
+##   .. ..$ : chr [1:46] &quot;hr&quot; &quot;sac&quot; &quot;name_display_first_last&quot; &quot;pos&quot; ...
+##  $ boxscore//team//batting//batter: chr [1, 1:43] &quot;0&quot; &quot;1&quot; &quot;Roberto Hernandez&quot; &quot;262&quot; ...
+##   ..- attr(*, &quot;dimnames&quot;)=List of 2
+##   .. ..$ : NULL
+##   .. ..$ : chr [1:43] &quot;hr&quot; &quot;sac&quot; &quot;name_display_first_last&quot; &quot;first_sac&quot; ...</code></pre>
+</div>
+</div>
+<div id="from-observations-to-data-frames" class="section level2">
+<h2>From observations to data frame(s)</h2>
+<p>For our purposes, I just want to see how audience attendance differs across ballparks in both the MLB and Triple-A. To investigate, I’ll just grab the “boxscore” observational unit:</p>
+<pre class="r"><code>bs &lt;- obs[grepl(&quot;^boxscore$&quot;, nms)]
+bs[1]</code></pre>
+<pre class="r"><code>## $boxscore
+##      wind             game_type venue_name       home_sport_code
+## [1,] &quot;15 mph, L to R&quot; &quot;R&quot;       &quot;Nationals Park&quot; &quot;mlb&quot;          
+##      attendance official_scorer game_pk  date             status_ind
+## [1,] &quot;28,410&quot;   &quot;Dave Matheson&quot; &quot;382175&quot; &quot;August 1, 2014&quot; &quot;F&quot;       
+##      home_league_id elapsed_time game_id                      venue_id
+## [1,] &quot;104&quot;          &quot;2:28&quot;       &quot;2014/08/01/phimlb-wasmlb-1&quot; &quot;3309&quot;  
+##      weather              gameday_sw
+## [1,] &quot;79 degrees, cloudy&quot; &quot;P&quot;       
+##      url                                                                                                              
+## [1,] &quot;http://gd2.mlb.com/components/game/mlb/year_2014/month_08/day_01/gid_2014_08_01_phimlb_wasmlb_1/rawboxscore.xml&quot;</code></pre>
+<p>Now, since <code>scores</code> is a list of observations all with the same observational unit, we can collapse the observations into a matrix.</p>
+<pre class="r"><code>unique(names(bs))
+bs.mat &lt;- collapse_obs(bs)
+bs.mat[1:5, !grepl(&quot;url&quot;, colnames(bs.mat))] #first 5 records without &quot;url&quot; column</code></pre>
+<pre class="r"><code>##      wind                game_type venue_name                   
+## [1,] &quot;15 mph, L to R&quot;    &quot;R&quot;       &quot;Nationals Park&quot;             
+## [2,] &quot;3 mph, L to R&quot;     &quot;R&quot;       &quot;Oriole Park at Camden Yards&quot;
+## [3,] &quot;7 mph, In from CF&quot; &quot;R&quot;       &quot;Progressive Field&quot;          
+## [4,] &quot;8 mph, In from CF&quot; &quot;R&quot;       &quot;Comerica Park&quot;              
+## [5,] &quot;0 mph, None&quot;       &quot;R&quot;       &quot;Marlins Park&quot;               
+##      home_sport_code attendance official_scorer  game_pk  date            
+## [1,] &quot;mlb&quot;           &quot;28,410&quot;   &quot;Dave Matheson&quot;  &quot;382175&quot; &quot;August 1, 2014&quot;
+## [2,] &quot;mlb&quot;           &quot;39,487&quot;   &quot;Jim Henneman&quot;   &quot;382177&quot; &quot;August 1, 2014&quot;
+## [3,] &quot;mlb&quot;           &quot;27,009&quot;   &quot;Bob Maver&quot;      &quot;382179&quot; &quot;August 1, 2014&quot;
+## [4,] &quot;mlb&quot;           &quot;39,052&quot;   &quot;Dan Marowski&quot;   &quot;382170&quot; &quot;August 1, 2014&quot;
+## [5,] &quot;mlb&quot;           &quot;20,410&quot;   &quot;Ronald Jernick&quot; &quot;382169&quot; &quot;August 1, 2014&quot;
+##      status_ind home_league_id elapsed_time game_id                     
+## [1,] &quot;F&quot;        &quot;104&quot;          &quot;2:28&quot;       &quot;2014/08/01/phimlb-wasmlb-1&quot;
+## [2,] &quot;F&quot;        &quot;103&quot;          &quot;2:29&quot;       &quot;2014/08/01/seamlb-balmlb-1&quot;
+## [3,] &quot;F&quot;        &quot;103&quot;          &quot;3:23&quot;       &quot;2014/08/01/texmlb-clemlb-1&quot;
+## [4,] &quot;F&quot;        &quot;103&quot;          &quot;2:56&quot;       &quot;2014/08/01/colmlb-detmlb-1&quot;
+## [5,] &quot;F&quot;        &quot;104&quot;          &quot;2:58&quot;       &quot;2014/08/01/cinmlb-miamlb-1&quot;
+##      venue_id weather                   gameday_sw
+## [1,] &quot;3309&quot;   &quot;79 degrees, cloudy&quot;      &quot;P&quot;       
+## [2,] &quot;2&quot;      &quot;78 degrees, cloudy&quot;      &quot;P&quot;       
+## [3,] &quot;5&quot;      &quot;76 degrees, clear&quot;       &quot;P&quot;       
+## [4,] &quot;2394&quot;   &quot;81 degrees, clear&quot;       &quot;P&quot;       
+## [5,] &quot;4169&quot;   &quot;75 degrees, roof closed&quot; &quot;P&quot;</code></pre>
+<p>In R, matrices have homogeneous column types and XML2R will always return a character matrix. For this reason, some data cleaning is usually required. In this case, we coerce attendance to an integer type and collect a subset of the columns into a data frame (which can handle heterogeneous column types).</p>
+<pre class="r"><code>attendance &lt;- as.integer(gsub(&quot;\\,&quot;, &quot;&quot;, boxscore[,&quot;attendance&quot;]))
+venue &lt;- boxscore[,&quot;venue_name&quot;]
+# this is here to tell ggplot to sort venues by their median attendance
+parks &lt;- names(sort(tapply(attendance, INDEX = venue, median)))
+df &lt;- data.frame(attendance, venue = factor(venue, levels = parks),
+                 league = boxscore[,&quot;home_sport_code&quot;])</code></pre>
+</div>
+<div id="from-data-frames-to-insight" class="section level2">
+<h2>From data frame(s) to insight</h2>
+<p>Lastly, let’s visualize the distribution of single game attendance across ballparks. Not a whole lot of surprise here, but I think it is interesting that the variance is MUCH higher in the major leagues (except for the few teams with a very loyal following – I’m looking at you Red Sox &amp; Giants fans).</p>
+<pre class="r"><code>library(ggplot2)
+qplot(data = df, x = venue, y = attendance, geom = &quot;boxplot&quot;, 
+      fill = league) + coord_flip() +
+      theme(legend.position = c(0.8,0.2))</code></pre>
+<p><img src="/post/images/attendance.png" /><!-- --></p>
+</div>

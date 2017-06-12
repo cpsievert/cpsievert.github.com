@@ -1,0 +1,33 @@
+---
+title: "A bayesian approach to measuring home effects on hitting performance"
+date: "2014-12-10"
+categories: [Baseball, R]
+---
+
+
+
+<p>To celebrate finals week, I’ve decided to ‘open-source’ an old mini-paper that I wrote for one of my classes last year. Click <a href="https://github.com/cpsievert/zero-inflated-hrs">here</a> to see the repository that contains the paper and all the source code used to create the figures and tables. In the paper, I develop a model that attempts to quantify the effect that home field advantage has on the ability to hit home runs. The take home message is that the effect on the “potential” to hit a home run is negligible, but the effect on the “ability” to hit home runs <em>given</em> that there is potential is substantial. My justification for this result is that “potential” is highly dependent on the pitcher/batter matchup whereas the home/away factor becomes relevant when the batter has the upper hand.</p>
+<p>This paper is really just a proof of concept. If I were to spend more time on this idea, I would certainly use a better measure of hitting performance and look at more than 5 players.</p>
+<p>Although the details of the paper may not resonate with some readers, some of you might still be interested in how I obtained the data used to inform the model. First of all, I obtained the names of the top 5 home run leaders in 2012:</p>
+<pre class="r"><code>library(&quot;rvest&quot;)
+html(&quot;http://espn.go.com/mlb/history/leaders/_/breakdown/season/year/2012/sort/homeRuns&quot;) %&gt;%
+  html_table() -&gt; top
+top5 &lt;- top[[1]][3:8, 2]</code></pre>
+<p>Next, I connected to my <a href="https://baseballwithr.wordpress.com/2014/03/24/422/">PITCHf/x database</a> and to grab at-bats for these players from the 2012 season.</p>
+<pre class="r"><code>library(&quot;dplyr&quot;)
+db &lt;- src_sqlite(&quot;~/pitchfx/pitchRx.sqlite3&quot;)
+atbat12 &lt;- tbl(db, &quot;atbat&quot;) %&gt;% filter(batter_name %in% top5) %&gt;%
+  filter(date &gt;= &#39;2012_01_01&#39; &amp; date &lt;= &#39;2013_01_01&#39;) %&gt;%
+  select(inning_side, event, batter_name, date, url) </code></pre>
+<p>I also decided to restrict to regular season games:</p>
+<pre class="r"><code>game &lt;- tbl(db, &quot;game&quot;) %&gt;% filter(game_type == &quot;R&quot;) %&gt;% 
+  select(game_type, url) 
+atbats &lt;- inner_join(atbat12, game, by = &quot;url&quot;) %&gt;% collect</code></pre>
+<p>In the paper, the response of interest is the number of home runs in each game for each player. <code>atbats</code> is still on the at-bat level, but we can use <strong>dplyr</strong>’s <code>group_by</code>/<code>summarise</code> combo to get the desired aggregation.</p>
+<pre class="r"><code>dat &lt;- atbats %&gt;%
+  group_by(batter_name, url) %&gt;%
+  summarise(home = sum(inning_side == &quot;bottom&quot;),
+            y = sum(event == &quot;Home Run&quot;), n = n()) %&gt;%
+  # This will yield a 0/1 indicator for away/home
+  mutate(home = home/n) %&gt;%
+  collect</code></pre>

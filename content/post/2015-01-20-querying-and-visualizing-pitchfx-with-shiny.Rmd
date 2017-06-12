@@ -1,0 +1,24 @@
+---
+title: "Querying and visualizing PITCHf/x with shiny"
+date: "2015-01-20"
+categories: [Baseball, R]
+---
+
+
+TL;DR -- I made [this shiny app](http://104.131.111.111:3838/pitchRx2/) that animates average flight trajectories for any combination of game, pitcher, batter, pitch type, and time period.
+
+## Some Background
+
+Two years ago (what? really?), I made [this PITCHf/x visualization app](https://cpsievert.wordpress.com/2013/01/13/pitchrx-shiny-fun-flexible-mlb-pitchfx-visualization/). Although the app allows you upload a csv, it doesn't directly leverage the huge amount of PITCHf/x data available to us. For a long time, I've wanted to make a shiny app that queries a [PITCHf/x database](https://baseballwithr.wordpress.com/2014/03/24/422/), but it always seemed like too much data to make a useful & responsive shiny app. Today, I think I've proven myself wrong, as you can now query more than 5 million pitches with [this shiny app](http://104.131.111.111:3838/pitchRx2/).
+
+## How does it work?
+
+The app and the [PostgreSQL](http://en.wikipedia.org/wiki/PostgreSQL) database that it connects to lives on my [Digital Ocean](https://www.digitalocean.com/) droplet. One nice thing about using PostgreSQL (over something like [SQLite](http://en.wikipedia.org/wiki/SQLite)) is that the app *could* connect to a remote machine that hosts the database. I haven't decided to go that route yet, but if my puny droplet can't handle the traffic, I may host the app on <http://www.shinyapps.io/> instead. 
+
+If you look at [the script used to connect to the database](https://github.com/cpsievert/shiny_apps/blob/master/pitchRx2/01_db_connect.R), you'll notice that when the app runs on my MacBook it connects to my local SQLite database; otherwise, it attempts to connect to a local Postgres database. This was mainly so that I could develop the app on my Mac, but the point here is that if you want to run your own version of this app, you'll have to edit this file so that it connects to your own database. 
+
+To keep the app responsive, it only filters one giant table with information on every pitch thrown. Since variables I wanted to inlude (like pitcher name) are recorded on the atbat level, I joined the pitch/atbat tables ahead of time, removed records with missing values, and stored a small subset of variables (see [the source](https://github.com/cpsievert/shiny_apps/blob/master/pitchRx2/02_create_pa.R)).
+
+## Ideas welcome!
+
+As of today, I see this app as a proof of concept that we can query millions of records in shiny in a responsive manner. I am by no means in love with the current visualization, so if you have any ideas on things you'd like to see, please let me know! The current visualization draws from my previous post on [interactive animations with animint](http://cpsievert.github.io/baseballR/20140818/).

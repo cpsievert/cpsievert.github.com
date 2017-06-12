@@ -1,0 +1,23 @@
+---
+title: "Interactive visualization of strike-zone expansion"
+date: "2014-11-11"
+categories: [Baseball, R]
+---
+
+
+
+<p>This post takes another look at the model from my last post, <a href="http://baseballwithr.wordpress.com/2014/10/23/a-probabilistic-model-for-interpreting-strike-zone-expansion-7/">‘A probabilistic model for interpreting strike-zone expansion’</a>. In that post, we restricted focus to pitches thrown around the knees, but as it turns out, we can condition on <em>any</em> location. For that reason, I made <a href="http://cpsievert.github.io/baseballR/20141111/viz">this interactive visualization</a> which allows one to condition on any pitch location (within a reasonable resolution) by clicking different cells in the strikezone plots on the left-hand side. By clicking (i.e., conditioning) on different cells, two quantities will dynamically update:</p>
+<ol style="list-style-type: decimal">
+<li><p>The (estimated) odds of a called strike in 2014 compared to 2008 under various scenarios (displayed as text in cells matching the selected location). It’s worth noting that the odds is equal to the (estimated) probability of a called strike in 2014 <strong>divided by</strong> the (estimated) probability of a called strike in 2008 whereas the color represents 2008 <strong>minus</strong> 2014.</p></li>
+<li><p>Approximate 95% confidence intervals for the probability of a called strike under various scenarios. These intervals update dynamically on right-hand side of the viz based on the selected location.</p></li>
+</ol>
+<p>By default, the location <code>px=0; pz=1.7</code> is selected (which explains why the odds in <a href="https://baseballwithr.files.wordpress.com/2014/10/probs.png">the static figure of my last post</a> match the odds displayed by default for left handed batters). Instead of providing just the point estimate for the probability of a called strike, the interactive graphic provides a sense of uncertainty in estimates. In fact, if you hover over a particular interval, the lower and upper bounds should appear next to your mouse.</p>
+<p>You won’t need to hover to notice that the intervals in a 0-2 count are much wider than those in a 0-0 count (because there is a larger sample size) which means we can be more confident in estimates produced under the latter case. To be precise, we are 95% confident that the first pitch odds are between 2.14 and 2.54, but for an 0-2 count, we are 95% confident the odds are between 1.74 and 10.52. As a result, there is not enough evidence to suggest the odds is significantly different in a 0-0 count versus a 0-2 count. Note that the user can obtain the 95% confidence interval for the odds in any cell by hovering over it (shown below).</p>
+<p>
+<a href="https://baseballwithr.files.wordpress.com/2014/11/0-0.png"><img src="https://baseballwithr.files.wordpress.com/2014/11/0-0.png" alt="attendance" width="400" height="400" class="alignnone size-full wp-image-810" /></a>
+</p>
+<p>
+<a href="https://baseballwithr.files.wordpress.com/2014/11/0-2.png"><img src="https://baseballwithr.files.wordpress.com/2014/11/0-2.png" alt="attendance" width="400" height="400" class="alignnone size-full wp-image-810" /></a>
+</p>
+<p>Generally speaking, this tool helps reinforce my claim from last time that “called strikes at the knees 2-4 times more likely in 2014”. In fact, that estimate can climb towards 5, but often in more rare situations where we are less confident in the estimate. This tool also suggests that pitches thrown on the outside portion (as well as some on the inside portion) are about half as likely to be called a strike in 2014.</p>
+<p>There are clearly many more scenarios we can dissect in more detail using this viz and I hope the reader takes time to play and leave comments with their findings. The viz was created fairly quickly and easily thanks to <a href="https://github.com/tdhock/animint">animint</a>. If you’re curious about the details, feel free to peruse <a href="https://gist.github.com/cpsievert/3c0a516b33f7d89301c3">the source code</a> that created it.</p>

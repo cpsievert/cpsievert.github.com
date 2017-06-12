@@ -1,0 +1,92 @@
+---
+title: "Strikezone plots made easy with pitchRx"
+date: "2014-04-25"
+categories: [Baseball, R]
+---
+
+
+
+<div id="over-plotting" class="section level3">
+<h3>‘Over-plotting’</h3>
+<p>Many times we want strike-zone plots of many pitches at once (for example, see Jim’s great post on <a href="http://baseballwithr.wordpress.com/2014/03/31/visualizing-cliff-lees-pitches-in-the-2013-season/">visualizing Cliff Lee’s pitches</a>). When dealing with many pitches, it’s easy to plot points on top of one another, which can lead to a mis-representation of the true density of pitches. In the data visualization community, this problem is generally known as “over-plotting”. Stephen Few has a <a href="http://www.perceptualedge.com/articles/visual_business_intelligence/over-plotting_in_graphs.pdf">great overview</a> of things you can do to avoid over-plotting. I will apply a couple of these techniques to help visualize every pitch thrown by Clayton Kershaw’s during 2013 season.</p>
+</div>
+<div id="data-collection" class="section level3">
+<h3>Data collection</h3>
+<p>Before we start making plots, let’s grab the necessary data using techniques discussed in my <a href="http://baseballwithr.wordpress.com/2014/04/13/modifying-and-querying-a-pitchfx-database-with-dplyr/">last post</a>.</p>
+<pre class="r"><code>library(dplyr)
+setwd(&quot;~/pitchfx&quot;) # My directory that contains a SQLITE DB with PITCHf/x 
+db &lt;- src_sqlite(&quot;pitchRx.sqlite3&quot;)
+atbats &lt;- tbl(db, &quot;atbat&quot;) %&gt;%
+  filter(date &gt;= &#39;2013_01_01&#39; &amp; date &lt;= &#39;2014_01_01&#39;) %&gt;%
+  filter(pitcher_name == &#39;Clayton Kershaw&#39;)
+pitches &lt;- tbl(db, &quot;pitch&quot;)  
+kershaw &lt;- collect(inner_join(pitches, atbats, by = c(&quot;num&quot;, &quot;gameday_link&quot;)))</code></pre>
+<p>Just to feel for the size of this data, let’s count the number of different pitch types thrown by Kershaw broken down by batter stance:</p>
+<pre class="r"><code>kershaw %&gt;% 
+  group_by(pitch_type, stand) %&gt;%
+  summarise(count = n()) %&gt;%
+  arrange(desc(count))</code></pre>
+<pre class="r"><code>## Source: local data frame [11 x 3]
+## Groups: pitch_type
+## 
+##    pitch_type stand count
+## 1          FF     R  1831
+## 2          SL     R   770
+## 3          FF     L   594
+## 4          CU     R   405
+## 5          SL     L   211
+## 6          NA     R   109
+## 7          CH     R    98
+## 8          CU     L    97
+## 9          NA     L    22
+## 10         IN     R     7
+## 11         CH     L     2</code></pre>
+<p>The pitch type abbreviations ‘FF’, ‘SL’, ‘CU’, ‘CH’, and ‘IN’ stand for (respectively) ‘four-seam fastball’, ‘slider’, ‘curveball’, ‘change-up’, and ‘intentional walk’. The intentional walks won’t be very interesting from a visual standpoint, so let’s get rid of them:</p>
+<pre class="r"><code>kershaw &lt;- filter(kershaw, pitch_type != &quot;IN&quot;)</code></pre>
+</div>
+<div id="strike-zones-made-easy-with-strikefx" class="section level3">
+<h3>Strike-zones made easy with <code>strikeFX</code></h3>
+<p>The <code>strikeFX</code> function from the <a href="http://cran.r-project.org/web/packages/pitchRx/">pitchRx</a> package was created to provide a quick yet flexible way to visualize PITCHf/x data. Even if you’re not versed in ggplot2, it’s easy to make strike-zone plots:</p>
+<pre class="r"><code>library(pitchRx)
+strikeFX(kershaw)
+# strikeFX knows to use the &#39;px&#39; and &#39;pz&#39; columns for &#39;x&#39; and &#39;y&#39;</code></pre>
+<p><img src="/post/images/strikeFX-kershaw.png" style="display: block; margin: auto;" /></p>
+<p>The two black rectangles correspond to left-handed and right-handed strike-zones created using the approach Mike Fast suggests in <a href="http://www.baseballprospectus.com/article.php?articleid=14572">this post</a>. Since the strike-zone depends on the batters height, <code>strikeFX</code> has an option to adjust the vertical pitch locations to account for the “averaged” strike-zones on the plot. <code>strikeFX</code> also uses a variety of defaults (such as coloring points by the pitch type) that can be altered. In addition to altering defaults, arguments to <code>strikeFX</code> can also add elements such as <a href="http://docs.ggplot2.org/0.9.3/stat_contour.html">contour lines</a> to the graphic (<a href="http://www.inside-r.org/packages/cran/pitchRx/docs/strikeFX">see the documentation</a> for other arguments). Note that the <code>type</code> variable contains abbreviations ‘B’, ‘S’, and ‘X’ which stands for (respectively) ‘Ball’, ‘Strike’, and ‘Hit in play’.</p>
+<pre class="r"><code>strikeFX(kershaw, color = &quot;type&quot;, point.alpha = 0.5, adjust = TRUE, contour = TRUE)</code></pre>
+<p><img src="/post/images/strikeFX-kershaw-density.png" style="display: block; margin: auto;" /></p>
+<p>If you’re familiar with <a href="http://cran.r-project.org/web/packages/ggplot2/index.html">ggplot2</a>, we can take advantage of it’s arithmetic approach to modify graphical elements, add complexities, and customize the appearance. To demonstrate, I’ll take essentially the same plot, but place pitches thrown to left-handed and right-handed batters into separate plots (with <code>facet_grid</code>), move the location of the legend (with <code>theme</code>), fix the ratio between the axes and the plot presentation (with <code>coord_equal</code>), and change the background from gray to white (with <code>theme_bw</code>).</p>
+<pre class="r"><code>strikeFX(kershaw, color = &quot;type&quot;, point.alpha = 0.2,
+         adjust = TRUE, contour = TRUE) + facet_grid(. ~ stand) + 
+  theme(legend.position = &quot;right&quot;, legend.direction = &quot;vertical&quot;) +
+  coord_equal() + theme_bw()</code></pre>
+<p><img src="/post/images/strikeFX-kershaw-density2.png" style="display: block; margin: auto;" /></p>
+<p>Now it’s clear that the density estimate (that is, the contour lines) in the second plot was heavily influenced by pitches thrown to right-handed batters. We can gain further insight by simply adding <code>pitch_type</code> to <code>facet_grid</code>.</p>
+<pre class="r"><code>strikeFX(kershaw, color = &quot;type&quot;, point.alpha = 0.1,
+         adjust = TRUE, contour = TRUE) + facet_grid(pitch_type ~ stand) + 
+  theme(legend.position = &quot;right&quot;, legend.direction = &quot;vertical&quot;) +
+  coord_equal() + theme_bw()</code></pre>
+<p><img src="/post/images/strikeFX-kershaw-density3.png" style="display: block; margin: auto;" /></p>
+<p>Now it’s clear that a much lower proportion of strikes occur outside of the strike-zone for four-seamers (compared to the other pitch types). Also, the location of highest density is much higher in the strike-zone for four-seamers (compared to the other pitch types). This shouldn’t be that surprising, but reassuring that the data matches our intuition.</p>
+<p>In addition to using a categorical variable for color assignment, we can also use a numerical variable and <code>strikeFX</code> will automatically know to use a one-way color scale:</p>
+<pre class="r"><code>strikeFX(kershaw, color = &quot;end_speed&quot;, point.alpha = 0.1, 
+         adjust = TRUE, contour = TRUE) + facet_grid(pitch_type ~ stand) + 
+  theme(legend.position = &quot;right&quot;, legend.direction = &quot;vertical&quot;) +
+  coord_equal() + theme_bw()</code></pre>
+<p><img src="/post/images/strikeFX-kershaw-density4.png" style="display: block; margin: auto;" /></p>
+<p>From this plot, it’s fairly obvious that <code>end_speed</code> is a good indicator of <code>pitch_type</code>, except that it doesn’t provide a great distinction between change-ups (CH) and sliders (SL). There are a number of other varibles that should be a decent predictor of the pitch type, including spin direction. If we wish to use spin direction instead of speed as a coloring variable, it’s not a great idea to use the same one-way color scale since spin direction is measured as an (0 to 360 degree) angle. In other words, a different scale is needed since a spin direction of 0 is closer a spin direction of 360 (compared to, say, 180).</p>
+<p>It is recommended that one-way color scales use constant hue, but vary chroma and luminance. That explains why the points in the previous plot vary between dark blue and light blue. With respect to spin direction, we definitely want to vary hue, but probably want to hold chroma and luminance constant (<a href="https://twitter.com/cpsievert/status/464852096064307200">thanks Thomas Lumley</a>). Upon researching this idea, I discovered that the I’ve heard rumors are true…<a href="http://en.wikipedia.org/wiki/Colorimetry">colorimetry</a> is hard/complicated. Thankfully, ggplot2 has a simple built-in solution to our issue – <a href="http://docs.ggplot2.org/0.9.3.1/scale_gradientn.html">scale_colour_gradientn</a>. This provides a way to use “smooth transitions” between an arbitrary number of colors. Although this approach allows chroma and luminance to vary, I think the result is reasonable:</p>
+<pre class="r"><code>strikeFX(kershaw, color = &quot;spin_dir&quot;, point.alpha = 0.3, 
+         adjust = TRUE, contour = TRUE) + facet_grid(pitch_type ~ stand) + 
+  theme(legend.position = &quot;right&quot;, legend.direction = &quot;vertical&quot;) +
+  coord_equal() + theme_bw() + scale_colour_gradientn(colours = rainbow(7))</code></pre>
+<p><img src="/post/images/strikeFX-kershaw-density5.png" style="display: block; margin: auto;" /></p>
+<p>A few things I take away from this plot is that spin direction:</p>
+<ul>
+<li>provides a nice distinction between curveballs and fastballs.</li>
+<li>provides a decent distinction between sliders and changeups.</li>
+<li>is more variable amongst sliders than any other pitch type.</li>
+<li>for sliders is somewhere between curveballs and fastballs on average.</li>
+<li>for changeups is slightly lower on average compared to fastballs.</li>
+</ul>
+<p>For more demonstrations of the capabilities of <code>strikeFX</code>, check out the <a href="http://cpsievert.github.io/pitchRx/">pitchRx introduction page</a> and <a href="http://cpsievert.github.io/pitchRx/RJwrapper.pdf">the RJournal article</a>.</p>
+</div>

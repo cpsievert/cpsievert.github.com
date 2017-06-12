@@ -1,0 +1,53 @@
+---
+title: "Automatic PITCHf/x database updates with pitchRx"
+date: "2014-06-09"
+categories: [Baseball, R]
+---
+
+
+
+<p>This post is a follow up of sorts to <a href="http://baseballwithr.wordpress.com/2014/04/13/modifying-and-querying-a-pitchfx-database-with-dplyr/">modifying and querying a PITCHf/x database</a>. The query portion of that post is still very relevant, but I didn’t want to impose the hack to obtain dates upon users, so I updated pitchRx to explicitly include dates by default. I also added some functionality to make database updates painless.</p>
+<div id="dates-are-now-supported" class="section level3">
+<h3>Dates are now supported!</h3>
+<p>Since dates are so vital to PITCHf/x analysis in practice, I decided to officially add support for a ‘date’ column in the ‘atbat’ table. Just to demonstrate, let’s create a <em>new</em> database, add one day’s worth of data to it, and print a few records from the date column:</p>
+<pre class="r"><code>library(dplyr)
+library(pitchRx) 
+# Make sure you have pitchRx 1.5 -- as 1.4 has a couple bugs...
+# You can `devtools::install_github(&quot;cpsievert/pitchRx&quot;)` to get newest version
+packageVersion(&quot;pitchRx&quot;) </code></pre>
+<pre><code>## [1] &#39;1.8.2&#39;</code></pre>
+<pre class="r"><code>db &lt;- src_sqlite(&quot;new-db.sqlite3&quot;, create = TRUE)
+scrape(start = &quot;2014-06-01&quot;, end = &quot;2014-06-01&quot;, connect = db$con)</code></pre>
+<pre class="r"><code>select(tbl(db, &quot;atbat&quot;), date)</code></pre>
+<pre><code>## Source:   query [?? x 1]
+## Database: sqlite 3.11.1 [new-db.sqlite3]
+## 
+## # A tibble: ?? x 1
+##          date
+##         &lt;chr&gt;
+##  1 2014_06_01
+##  2 2014_06_01
+##  3 2014_06_01
+##  4 2014_06_01
+##  5 2014_06_01
+##  6 2014_06_01
+##  7 2014_06_01
+##  8 2014_06_01
+##  9 2014_06_01
+## 10 2014_06_01
+## # ... with more rows</code></pre>
+<p>If you already have a PITCHf/x database without a date column, <code>scrape</code> now knows to create this date column for you (using a process similar to what I describe <a href="http://baseballwithr.wordpress.com/2014/04/13/modifying-and-querying-a-pitchfx-database-with-dplyr/">here</a>).</p>
+</div>
+<div id="introducing-update_db" class="section level3">
+<h3>Introducing <code>update_db</code></h3>
+<p>In the past, my recommended solution for updating a PITCHf/x database was admittingly ambiguous/painful, so I’ve decided to automate that job. The new <code>update_db</code> function is my attempt at doing so. Give this function a database connection and it knows how to append new data to all your existing tables. It does this by finding the most recent game from the ‘gameday_link’ column in the ‘atbat’ table, then grabs data for all games after that date. For this reason, if your tables conflict in terms of the most recent date, <strong>do not</strong> use this function and use <code>scrape</code> to perform an update instead. Now, by default, <code>update_db</code> includes games up to and including <em>yesterday</em>. The reason is that files are updated in real-time on MLBAM’s servers which can lead to missing/duplicate records if you aren’t incredibly careful about adding <em>today’s</em> data to your database. Of course, you can still get your hands on today’s data, but don’t say I didn’t warn you if you append it to your database! :)</p>
+<pre class="r"><code>dat &lt;- scrape(start = Sys.Date(), end = Sys.Date())</code></pre>
+</div>
+<div id="automatic-updates" class="section level3">
+<h3>Automatic updates!</h3>
+<p>I’m a bit embarassed it took me so long to learn about <a href="http://en.wikipedia.org/wiki/Cron">cron</a> jobs considering how easy it is to <a href="http://tgmstat.wordpress.com/2013/09/11/schedule-rscript-with-cron/">create scheduled jobs to run R scripts</a> on a unix/linux based machine. Thanks to cron jobs, I no longer have to think about updating my database – it updates by itself. To make this happen, I first save <a href="https://gist.github.com/cpsievert/fef5e5c77dc541aafaec">this script</a> under the <code>/Users/cpsievert/pitchfx/</code> directory. This directory also has my PITCHf/x database saved as <code>pitchRx.sqlite3</code>. Next, I open my terminal and enter</p>
+<pre class="bash"><code>sudo crontab -e</code></pre>
+<p>After entering my password, this opens my default text editor where I then have:</p>
+<pre class="bash"><code>0 12 * * * Rscript /Users/cpsievert/pitchfx/update.R</code></pre>
+<p>This tells my machine to update my database everyday at noon. I’m not so sure how to schedule automated tasks on windows, but <a href="http://stackoverflow.com/questions/132971/what-is-the-windows-version-of-cron">this thread</a> might be a good starting point if your interested.</p>
+</div>

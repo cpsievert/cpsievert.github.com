@@ -1,0 +1,87 @@
+---
+title: "Investigating missingness in PITCHf/x Data"
+date: "2015-03-03"
+categories: [Baseball, R]
+---
+
+
+
+<p>This post explores some characteristics of missing data in PITCHf/x data acquired via <a href="https://github.com/cpsievert/pitchRx"><strong>pitchRx</strong></a></p>
+<div id="get-your-data-into-memory" class="section level2">
+<h2>Get your data into memory</h2>
+<p>When working with PITCHf/x data, it is often useful to join the <code>&quot;pitch&quot;</code> table with the <code>&quot;atbat&quot;</code> table. To avoid repeating an expensive join operation, I’ve found it generally useful to join the entire <code>&quot;pitch&quot;</code> table with the <code>&quot;atbat&quot;</code> table and store the resulting table in <a href="https://baseballwithr.wordpress.com/2014/03/24/422/">my PITCHf/x database</a>.</p>
+<pre class="r"><code>library(&quot;dplyr&quot;)
+db &lt;- src_sqlite(&quot;~/pitchfx/pitchRx.sqlite3&quot;)
+pa_full &lt;- left_join(tbl(db, &quot;pitch&quot;), tbl(db, &quot;atbat&quot;), 
+                     by = c(&quot;num&quot;, &quot;gameday_link&quot;))
+compute(pa_full, name = &quot;pa_full&quot;, temporary = FALSE)</code></pre>
+<p>Although this table is quite large, it fits into memory on machines with a decent amount of RAM (it takes up about 5 out of the 8GB available on my laptop). In general, having your data in memory can <strong>drastically</strong> reduce the computational time of operations. Thus, if you can, <code>collect()</code> this table to pull it into R as a data frame.</p>
+<pre class="r"><code>pa_full &lt;- tbl(db, &quot;pa_full&quot;) %&gt;% collect()
+dim(pa_full)</code></pre>
+<pre><code>[1] 5348578      74</code></pre>
+</div>
+<div id="exploring-missingness" class="section level2">
+<h2>Exploring missingness</h2>
+<p>Now that <code>pa_full</code> is in memory, let’s compute the proportion of <code>NA</code>s (which is <code>R</code>’s way of encoding missing values) for each variable broken down by year.</p>
+<pre class="r"><code>prop_na &lt;- function(x) mean(is.na(x))
+nas &lt;- pa_full %&gt;% 
+  mutate(year = substr(date, 0, 4)) %&gt;%
+  group_by(year) %&gt;% 
+  summarise_each(funs(prop_na))</code></pre>
+<p>To plot the proportions, we should transform <code>nas</code> from “wide form” (where each variable has it’s own column) to “long form” (where variable names are stored in a single column). This is a job for <code>tidyr::gather()</code>:</p>
+<pre class="r"><code>na_tidy &lt;- nas %&gt;% 
+  tidyr::gather(variable, prop_na, -year) %&gt;%
+  # the row_names variable is useless
+  filter(variable != &quot;row_names&quot;)</code></pre>
+<p>For visualization purposes, we’ll also want the ordering of the variables to reflect the overall proportion of <code>NA</code>s.</p>
+<pre class="r"><code># order variables according to the proportion of NAs
+na_sort &lt;- na_tidy %&gt;%
+  group_by(variable) %&gt;%
+  summarise(avg_na = mean(prop_na)) %&gt;%
+  arrange(desc(avg_na))
+# reorder the variable factor in na_tidy 
+na_tidy$variable &lt;- factor(na_tidy$variable, levels = na_sort$variable)
+library(&quot;ggplot2&quot;)
+ggplot(data = na_tidy, aes(x = variable, y = prop_na, color = year)) + 
+  geom_point(alpha = 0.4) + coord_flip() + xlab(&quot;&quot;)</code></pre>
+<p>
+<a href="https://baseballwithr.files.wordpress.com/2015/03/prop_na.png"><img src="https://baseballwithr.files.wordpress.com/2015/03/prop_na.png" alt="prop_na" width="500" height="800" class="alignnone size-full wp-image-810" /></a>
+</p>
+<p>I see roughly three different categories of missingness here: (1) nothing missing, (2) partially missing (3) mostly missing.</p>
+<p>Thankfully, variables that are mostly missing are that way by design. It’s not very intuitive that <code>away_team_runs</code>, <code>home_team_runs</code>, or <code>score</code> would have missing values, but for some reason, MLBAM programmers decided to populate these variables only when a run was scored during that at-bat/pitch. For modeling purposes, you probably want to replace <code>NA</code> with 0 in these columns, but you may also prefer to have these columns have the running total instead (in that case, you can use <a href="https://github.com/cpsievert/pitchRx/issues/17">this</a>). It makes sense that <code>event2</code>, <code>event2</code>, &amp; <code>event4</code> are mostly missing since most at-bat outcomes can be adequately summarised with a single event (but some need an additional tag like wild-pitch, error, and/or pick-off). We can also see that Spanish translations of at-bat &amp; pitch descriptions (<code>des_es</code> &amp; <code>atbat_des_es</code>) started in 2012.</p>
+<p>The variables that are partially missing (for example, <code>px</code>, <code>pz</code>, etc) are potentially more worrisome since these are the actual PITCHf/x variables. As I’ve pointed out in <a href="https://baseballwithr.wordpress.com/2014/07/28/acquire-minor-league-play-by-play-data-with-pitchrx-4/">other posts</a>, it’s important to remember that by default, <strong>pitchRx</strong> will acquire some non-MLB games played in non-MLB venues. Thus, we have some observations where it <em>wasn’t possible</em> to measure these variables.</p>
+<p>To investigate, we essentially perform the same computations as before, but distinguish between regular and non-regular season games.</p>
+<pre class="r"><code>game &lt;- tbl(db, &quot;game&quot;) %&gt;%
+  mutate(reg = as.integer(game_type == &quot;R&quot;)) %&gt;%
+  select(gameday_link, reg) %&gt;%
+  collect()
+# unfortunately we have to prepend &quot;gid_&quot; for this variable
+# to match the one in pa_full
+game &lt;- game %&gt;%
+  mutate(gameday_link = paste0(&quot;gid_&quot;, gameday_link))
+pa_full &lt;- pa_full %&gt;%
+  left_join(game, by = &quot;gameday_link&quot;)</code></pre>
+<pre class="r"><code>nas &lt;- pa_full %&gt;% 
+  mutate(year = substr(date, 0, 4)) %&gt;%
+  group_by(year, reg) %&gt;% 
+  summarise_each(funs(prop_na))
+na_tidy &lt;- nas %&gt;% 
+  tidyr::gather(variable, prop_na, -(year:reg)) %&gt;%
+  # the row_names variable is useless
+  filter(variable != &quot;row_names&quot;)
+# order variables according to the proportion of NAs
+na_sort &lt;- na_tidy %&gt;%
+  group_by(variable) %&gt;%
+  summarise(avg_na = mean(prop_na)) %&gt;%
+  arrange(desc(avg_na))
+# reorder the variable factor in na_tidy 
+na_tidy$variable &lt;- factor(na_tidy$variable, levels = na_sort$variable)
+library(&quot;ggplot2&quot;)
+ggplot(data = na_tidy, aes(x = variable, y = prop_na, color = year)) + 
+  geom_point(alpha = 0.4) + coord_flip() + xlab(&quot;&quot;) +
+  facet_wrap(~reg)</code></pre>
+<p>
+<a href="https://baseballwithr.files.wordpress.com/2015/03/prop_na2.png"><img src="https://baseballwithr.files.wordpress.com/2015/03/prop_na2.png" alt="prop_na2" width="500" height="800" class="alignnone size-full wp-image-810" /></a>
+</p>
+<p>Within the regular season panel (labeled ‘1’) above, there are hardly any missing values for the variables I previously called partially missing. If you look closely in that panel, most of the missing values occur in 2008 when the PITCHf/x system was still being adopted. This means that we can explain the missing values based on what we’ve observed, which is a type of missingness that statisticians refer to as <em>Missing At Random</em> or <em>ignorable</em>. This is a good thing, since this type of missing data can be ignored without it effecting likelihood based models (<a href="https://baseballwithr.wordpress.com/2014/04/21/are-umpires-becoming-less-merciful/">such as</a> the Generative Additive Models <a href="https://baseballwithr.wordpress.com/2014/10/23/a-probabilistic-model-for-interpreting-strike-zone-expansion-7/">I’ve used</a> to model the probability of a called strike).</p>
+</div>

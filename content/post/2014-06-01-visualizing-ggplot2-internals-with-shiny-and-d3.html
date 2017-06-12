@@ -1,0 +1,471 @@
+---
+title: "Visualizing ggplot2 internals with shiny and D3"
+date: "2014-06-01"
+categories: [interactive visualization]
+tags: [animint, ggplot2, shiny, D3]
+---
+
+
+
+<p>TL;DR – I built <a href="https://cpsievert.shinyapps.io/ggtree/">this shiny app</a> to visualize ggplot2 internals.</p>
+<p>I’m fortunate enough to be participating in Google’s Summer of Code program where I’m helping develop the R package <a href="https://github.com/tdhock/animint">animint</a>. This package is one of <a href="http://ggvis.rstudio.com/">many</a> <a href="http://rcharts.io/">attempts</a> to bring interactive web graphics to the R console. Animint’s approach is somewhat unique in it’s translation of ggplot2 code to HTML/SVG output. To do this, animint first <a href="https://github.com/tdhock/animint/wiki/Compiler-details">compiles</a> a list of ggplot objects and extracts the parts necessary for <a href="https://github.com/tdhock/animint/wiki/Renderer-details">rendering</a> output. Although the language is incredibly expressive and powerful for users, as any ggplot2 developer could tell you, the structure underlying a ggplot object is quite complicated (sometimes, <a href="https://twitter.com/hadleywickham/status/317279035937923072">even the original author needs help</a>).</p>
+<pre class="r"><code>library(ggplot2)
+p &lt;- ggplot(mtcars, aes(mpg, wt)) +
+ geom_point(colour=&#39;grey50&#39;, size = 4) +
+ geom_point(aes(colour = cyl)) + facet_wrap(~am, nrow = 2)
+str(p)</code></pre>
+<pre><code>## List of 9
+##  $ data       :&#39;data.frame&#39;: 32 obs. of  11 variables:
+##   ..$ mpg : num [1:32] 21 21 22.8 21.4 18.7 18.1 14.3 24.4 22.8 19.2 ...
+##   ..$ cyl : num [1:32] 6 6 4 6 8 6 8 4 4 6 ...
+##   ..$ disp: num [1:32] 160 160 108 258 360 ...
+##   ..$ hp  : num [1:32] 110 110 93 110 175 105 245 62 95 123 ...
+##   ..$ drat: num [1:32] 3.9 3.9 3.85 3.08 3.15 2.76 3.21 3.69 3.92 3.92 ...
+##   ..$ wt  : num [1:32] 2.62 2.88 2.32 3.21 3.44 ...
+##   ..$ qsec: num [1:32] 16.5 17 18.6 19.4 17 ...
+##   ..$ vs  : num [1:32] 0 0 1 1 0 1 0 1 1 1 ...
+##   ..$ am  : num [1:32] 1 1 1 0 0 0 0 0 0 0 ...
+##   ..$ gear: num [1:32] 4 4 4 3 3 3 3 4 4 4 ...
+##   ..$ carb: num [1:32] 4 4 1 1 2 1 4 2 2 4 ...
+##  $ layers     :List of 2
+##   ..$ :Classes &#39;LayerInstance&#39;, &#39;Layer&#39;, &#39;ggproto&#39;, &#39;gg&#39; &lt;ggproto object: Class LayerInstance, Layer, gg&gt;
+##     aes_params: list
+##     compute_aesthetics: function
+##     compute_geom_1: function
+##     compute_geom_2: function
+##     compute_position: function
+##     compute_statistic: function
+##     data: waiver
+##     draw_geom: function
+##     finish_statistics: function
+##     geom: &lt;ggproto object: Class GeomPoint, Geom, gg&gt;
+##         aesthetics: function
+##         default_aes: uneval
+##         draw_group: function
+##         draw_key: function
+##         draw_layer: function
+##         draw_panel: function
+##         extra_params: na.rm
+##         handle_na: function
+##         non_missing_aes: size shape colour
+##         optional_aes: 
+##         parameters: function
+##         required_aes: x y
+##         setup_data: function
+##         use_defaults: function
+##         super:  &lt;ggproto object: Class Geom, gg&gt;
+##     geom_params: list
+##     inherit.aes: TRUE
+##     layer_data: function
+##     map_statistic: function
+##     mapping: NULL
+##     position: &lt;ggproto object: Class PositionIdentity, Position, gg&gt;
+##         compute_layer: function
+##         compute_panel: function
+##         required_aes: 
+##         setup_data: function
+##         setup_params: function
+##         super:  &lt;ggproto object: Class Position, gg&gt;
+##     print: function
+##     show.legend: NA
+##     stat: &lt;ggproto object: Class StatIdentity, Stat, gg&gt;
+##         aesthetics: function
+##         compute_group: function
+##         compute_layer: function
+##         compute_panel: function
+##         default_aes: uneval
+##         extra_params: na.rm
+##         finish_layer: function
+##         non_missing_aes: 
+##         parameters: function
+##         required_aes: 
+##         retransform: TRUE
+##         setup_data: function
+##         setup_params: function
+##         super:  &lt;ggproto object: Class Stat, gg&gt;
+##     stat_params: list
+##     subset: NULL
+##     super:  &lt;ggproto object: Class Layer, gg&gt; 
+##   ..$ :Classes &#39;LayerInstance&#39;, &#39;Layer&#39;, &#39;ggproto&#39;, &#39;gg&#39; &lt;ggproto object: Class LayerInstance, Layer, gg&gt;
+##     aes_params: list
+##     compute_aesthetics: function
+##     compute_geom_1: function
+##     compute_geom_2: function
+##     compute_position: function
+##     compute_statistic: function
+##     data: waiver
+##     draw_geom: function
+##     finish_statistics: function
+##     geom: &lt;ggproto object: Class GeomPoint, Geom, gg&gt;
+##         aesthetics: function
+##         default_aes: uneval
+##         draw_group: function
+##         draw_key: function
+##         draw_layer: function
+##         draw_panel: function
+##         extra_params: na.rm
+##         handle_na: function
+##         non_missing_aes: size shape colour
+##         optional_aes: 
+##         parameters: function
+##         required_aes: x y
+##         setup_data: function
+##         use_defaults: function
+##         super:  &lt;ggproto object: Class Geom, gg&gt;
+##     geom_params: list
+##     inherit.aes: TRUE
+##     layer_data: function
+##     map_statistic: function
+##     mapping: uneval
+##     position: &lt;ggproto object: Class PositionIdentity, Position, gg&gt;
+##         compute_layer: function
+##         compute_panel: function
+##         required_aes: 
+##         setup_data: function
+##         setup_params: function
+##         super:  &lt;ggproto object: Class Position, gg&gt;
+##     print: function
+##     show.legend: NA
+##     stat: &lt;ggproto object: Class StatIdentity, Stat, gg&gt;
+##         aesthetics: function
+##         compute_group: function
+##         compute_layer: function
+##         compute_panel: function
+##         default_aes: uneval
+##         extra_params: na.rm
+##         finish_layer: function
+##         non_missing_aes: 
+##         parameters: function
+##         required_aes: 
+##         retransform: TRUE
+##         setup_data: function
+##         setup_params: function
+##         super:  &lt;ggproto object: Class Stat, gg&gt;
+##     stat_params: list
+##     subset: NULL
+##     super:  &lt;ggproto object: Class Layer, gg&gt; 
+##  $ scales     :Classes &#39;ScalesList&#39;, &#39;ggproto&#39;, &#39;gg&#39; &lt;ggproto object: Class ScalesList, gg&gt;
+##     add: function
+##     clone: function
+##     find: function
+##     get_scales: function
+##     has_scale: function
+##     input: function
+##     n: function
+##     non_position_scales: function
+##     scales: list
+##     super:  &lt;ggproto object: Class ScalesList, gg&gt; 
+##  $ mapping    :List of 2
+##   ..$ x: symbol mpg
+##   ..$ y: symbol wt
+##  $ theme      : list()
+##  $ coordinates:Classes &#39;CoordCartesian&#39;, &#39;Coord&#39;, &#39;ggproto&#39;, &#39;gg&#39; &lt;ggproto object: Class CoordCartesian, Coord, gg&gt;
+##     aspect: function
+##     distance: function
+##     expand: TRUE
+##     is_linear: function
+##     labels: function
+##     limits: list
+##     modify_scales: function
+##     range: function
+##     render_axis_h: function
+##     render_axis_v: function
+##     render_bg: function
+##     render_fg: function
+##     setup_data: function
+##     setup_layout: function
+##     setup_panel_params: function
+##     setup_params: function
+##     transform: function
+##     super:  &lt;ggproto object: Class CoordCartesian, Coord, gg&gt; 
+##  $ facet      :Classes &#39;FacetWrap&#39;, &#39;Facet&#39;, &#39;ggproto&#39;, &#39;gg&#39; &lt;ggproto object: Class FacetWrap, Facet, gg&gt;
+##     compute_layout: function
+##     draw_back: function
+##     draw_front: function
+##     draw_labels: function
+##     draw_panels: function
+##     finish_data: function
+##     init_scales: function
+##     map_data: function
+##     params: list
+##     setup_data: function
+##     setup_params: function
+##     shrink: TRUE
+##     train_scales: function
+##     vars: function
+##     super:  &lt;ggproto object: Class FacetWrap, Facet, gg&gt; 
+##  $ plot_env   :&lt;environment: R_GlobalEnv&gt; 
+##  $ labels     :List of 3
+##   ..$ x     : chr &quot;mpg&quot;
+##   ..$ y     : chr &quot;wt&quot;
+##   ..$ colour: chr &quot;cyl&quot;
+##  - attr(*, &quot;class&quot;)= chr [1:2] &quot;gg&quot; &quot;ggplot&quot;</code></pre>
+<p>Of course, this structure gets much more complicated after we “build” the plot –</p>
+<pre class="r"><code>str(ggplot_build(p))</code></pre>
+<pre><code>## List of 3
+##  $ data  :List of 2
+##   ..$ :&#39;data.frame&#39;: 32 obs. of  10 variables:
+##   .. ..$ x     : num [1:32] 21.4 18.7 18.1 14.3 24.4 22.8 19.2 17.8 16.4 17.3 ...
+##   .. ..$ y     : num [1:32] 3.21 3.44 3.46 3.57 3.19 ...
+##   .. ..$ PANEL : Factor w/ 2 levels &quot;1&quot;,&quot;2&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+##   .. ..$ group : int [1:32] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 ...
+##   .. ..$ shape : num [1:32] 19 19 19 19 19 19 19 19 19 19 ...
+##   .. ..$ colour: chr [1:32] &quot;grey50&quot; &quot;grey50&quot; &quot;grey50&quot; &quot;grey50&quot; ...
+##   .. ..$ size  : num [1:32] 4 4 4 4 4 4 4 4 4 4 ...
+##   .. ..$ fill  : logi [1:32] NA NA NA NA NA NA ...
+##   .. ..$ alpha : logi [1:32] NA NA NA NA NA NA ...
+##   .. ..$ stroke: num [1:32] 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 ...
+##   ..$ :&#39;data.frame&#39;: 32 obs. of  10 variables:
+##   .. ..$ colour: chr [1:32] &quot;#336A98&quot; &quot;#56B1F7&quot; &quot;#336A98&quot; &quot;#56B1F7&quot; ...
+##   .. ..$ x     : num [1:32] 21.4 18.7 18.1 14.3 24.4 22.8 19.2 17.8 16.4 17.3 ...
+##   .. ..$ y     : num [1:32] 3.21 3.44 3.46 3.57 3.19 ...
+##   .. ..$ PANEL : Factor w/ 2 levels &quot;1&quot;,&quot;2&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+##   .. ..$ group : int [1:32] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 ...
+##   .. ..$ shape : num [1:32] 19 19 19 19 19 19 19 19 19 19 ...
+##   .. ..$ size  : num [1:32] 1.5 1.5 1.5 1.5 1.5 1.5 1.5 1.5 1.5 1.5 ...
+##   .. ..$ fill  : logi [1:32] NA NA NA NA NA NA ...
+##   .. ..$ alpha : logi [1:32] NA NA NA NA NA NA ...
+##   .. ..$ stroke: num [1:32] 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 ...
+##  $ layout:Classes &#39;Layout&#39;, &#39;ggproto&#39;, &#39;gg&#39; &lt;ggproto object: Class Layout, gg&gt;
+##     coord: &lt;ggproto object: Class CoordCartesian, Coord, gg&gt;
+##         aspect: function
+##         distance: function
+##         expand: TRUE
+##         is_linear: function
+##         labels: function
+##         limits: list
+##         modify_scales: function
+##         range: function
+##         render_axis_h: function
+##         render_axis_v: function
+##         render_bg: function
+##         render_fg: function
+##         setup_data: function
+##         setup_layout: function
+##         setup_panel_params: function
+##         setup_params: function
+##         transform: function
+##         super:  &lt;ggproto object: Class CoordCartesian, Coord, gg&gt;
+##     coord_params: list
+##     facet: &lt;ggproto object: Class FacetWrap, Facet, gg&gt;
+##         compute_layout: function
+##         draw_back: function
+##         draw_front: function
+##         draw_labels: function
+##         draw_panels: function
+##         finish_data: function
+##         init_scales: function
+##         map_data: function
+##         params: list
+##         setup_data: function
+##         setup_params: function
+##         shrink: TRUE
+##         train_scales: function
+##         vars: function
+##         super:  &lt;ggproto object: Class FacetWrap, Facet, gg&gt;
+##     facet_params: list
+##     finish_data: function
+##     get_scales: function
+##     layout: data.frame
+##     map_position: function
+##     panel_params: list
+##     panel_scales_x: list
+##     panel_scales_y: list
+##     render: function
+##     render_labels: function
+##     reset_scales: function
+##     setup: function
+##     setup_panel_params: function
+##     train_position: function
+##     xlabel: function
+##     ylabel: function
+##     super:  &lt;ggproto object: Class Layout, gg&gt; 
+##  $ plot  :List of 9
+##   ..$ data       :&#39;data.frame&#39;:  32 obs. of  11 variables:
+##   .. ..$ mpg : num [1:32] 21 21 22.8 21.4 18.7 18.1 14.3 24.4 22.8 19.2 ...
+##   .. ..$ cyl : num [1:32] 6 6 4 6 8 6 8 4 4 6 ...
+##   .. ..$ disp: num [1:32] 160 160 108 258 360 ...
+##   .. ..$ hp  : num [1:32] 110 110 93 110 175 105 245 62 95 123 ...
+##   .. ..$ drat: num [1:32] 3.9 3.9 3.85 3.08 3.15 2.76 3.21 3.69 3.92 3.92 ...
+##   .. ..$ wt  : num [1:32] 2.62 2.88 2.32 3.21 3.44 ...
+##   .. ..$ qsec: num [1:32] 16.5 17 18.6 19.4 17 ...
+##   .. ..$ vs  : num [1:32] 0 0 1 1 0 1 0 1 1 1 ...
+##   .. ..$ am  : num [1:32] 1 1 1 0 0 0 0 0 0 0 ...
+##   .. ..$ gear: num [1:32] 4 4 4 3 3 3 3 4 4 4 ...
+##   .. ..$ carb: num [1:32] 4 4 1 1 2 1 4 2 2 4 ...
+##   ..$ layers     :List of 2
+##   .. ..$ :Classes &#39;LayerInstance&#39;, &#39;Layer&#39;, &#39;ggproto&#39;, &#39;gg&#39; &lt;ggproto object: Class LayerInstance, Layer, gg&gt;
+##     aes_params: list
+##     compute_aesthetics: function
+##     compute_geom_1: function
+##     compute_geom_2: function
+##     compute_position: function
+##     compute_statistic: function
+##     data: waiver
+##     draw_geom: function
+##     finish_statistics: function
+##     geom: &lt;ggproto object: Class GeomPoint, Geom, gg&gt;
+##         aesthetics: function
+##         default_aes: uneval
+##         draw_group: function
+##         draw_key: function
+##         draw_layer: function
+##         draw_panel: function
+##         extra_params: na.rm
+##         handle_na: function
+##         non_missing_aes: size shape colour
+##         optional_aes: 
+##         parameters: function
+##         required_aes: x y
+##         setup_data: function
+##         use_defaults: function
+##         super:  &lt;ggproto object: Class Geom, gg&gt;
+##     geom_params: list
+##     inherit.aes: TRUE
+##     layer_data: function
+##     map_statistic: function
+##     mapping: NULL
+##     position: &lt;ggproto object: Class PositionIdentity, Position, gg&gt;
+##         compute_layer: function
+##         compute_panel: function
+##         required_aes: 
+##         setup_data: function
+##         setup_params: function
+##         super:  &lt;ggproto object: Class Position, gg&gt;
+##     print: function
+##     show.legend: NA
+##     stat: &lt;ggproto object: Class StatIdentity, Stat, gg&gt;
+##         aesthetics: function
+##         compute_group: function
+##         compute_layer: function
+##         compute_panel: function
+##         default_aes: uneval
+##         extra_params: na.rm
+##         finish_layer: function
+##         non_missing_aes: 
+##         parameters: function
+##         required_aes: 
+##         retransform: TRUE
+##         setup_data: function
+##         setup_params: function
+##         super:  &lt;ggproto object: Class Stat, gg&gt;
+##     stat_params: list
+##     subset: NULL
+##     super:  &lt;ggproto object: Class Layer, gg&gt; 
+##   .. ..$ :Classes &#39;LayerInstance&#39;, &#39;Layer&#39;, &#39;ggproto&#39;, &#39;gg&#39; &lt;ggproto object: Class LayerInstance, Layer, gg&gt;
+##     aes_params: list
+##     compute_aesthetics: function
+##     compute_geom_1: function
+##     compute_geom_2: function
+##     compute_position: function
+##     compute_statistic: function
+##     data: waiver
+##     draw_geom: function
+##     finish_statistics: function
+##     geom: &lt;ggproto object: Class GeomPoint, Geom, gg&gt;
+##         aesthetics: function
+##         default_aes: uneval
+##         draw_group: function
+##         draw_key: function
+##         draw_layer: function
+##         draw_panel: function
+##         extra_params: na.rm
+##         handle_na: function
+##         non_missing_aes: size shape colour
+##         optional_aes: 
+##         parameters: function
+##         required_aes: x y
+##         setup_data: function
+##         use_defaults: function
+##         super:  &lt;ggproto object: Class Geom, gg&gt;
+##     geom_params: list
+##     inherit.aes: TRUE
+##     layer_data: function
+##     map_statistic: function
+##     mapping: uneval
+##     position: &lt;ggproto object: Class PositionIdentity, Position, gg&gt;
+##         compute_layer: function
+##         compute_panel: function
+##         required_aes: 
+##         setup_data: function
+##         setup_params: function
+##         super:  &lt;ggproto object: Class Position, gg&gt;
+##     print: function
+##     show.legend: NA
+##     stat: &lt;ggproto object: Class StatIdentity, Stat, gg&gt;
+##         aesthetics: function
+##         compute_group: function
+##         compute_layer: function
+##         compute_panel: function
+##         default_aes: uneval
+##         extra_params: na.rm
+##         finish_layer: function
+##         non_missing_aes: 
+##         parameters: function
+##         required_aes: 
+##         retransform: TRUE
+##         setup_data: function
+##         setup_params: function
+##         super:  &lt;ggproto object: Class Stat, gg&gt;
+##     stat_params: list
+##     subset: NULL
+##     super:  &lt;ggproto object: Class Layer, gg&gt; 
+##   ..$ scales     :Classes &#39;ScalesList&#39;, &#39;ggproto&#39;, &#39;gg&#39; &lt;ggproto object: Class ScalesList, gg&gt;
+##     add: function
+##     clone: function
+##     find: function
+##     get_scales: function
+##     has_scale: function
+##     input: function
+##     n: function
+##     non_position_scales: function
+##     scales: list
+##     super:  &lt;ggproto object: Class ScalesList, gg&gt; 
+##   ..$ mapping    :List of 2
+##   .. ..$ x: symbol mpg
+##   .. ..$ y: symbol wt
+##   ..$ theme      : list()
+##   ..$ coordinates:Classes &#39;CoordCartesian&#39;, &#39;Coord&#39;, &#39;ggproto&#39;, &#39;gg&#39; &lt;ggproto object: Class CoordCartesian, Coord, gg&gt;
+##     aspect: function
+##     distance: function
+##     expand: TRUE
+##     is_linear: function
+##     labels: function
+##     limits: list
+##     modify_scales: function
+##     range: function
+##     render_axis_h: function
+##     render_axis_v: function
+##     render_bg: function
+##     render_fg: function
+##     setup_data: function
+##     setup_layout: function
+##     setup_panel_params: function
+##     setup_params: function
+##     transform: function
+##     super:  &lt;ggproto object: Class CoordCartesian, Coord, gg&gt; 
+##   ..$ facet      :Classes &#39;FacetWrap&#39;, &#39;Facet&#39;, &#39;ggproto&#39;, &#39;gg&#39; &lt;ggproto object: Class FacetWrap, Facet, gg&gt;
+##     compute_layout: function
+##     draw_back: function
+##     draw_front: function
+##     draw_labels: function
+##     draw_panels: function
+##     finish_data: function
+##     init_scales: function
+##     map_data: function
+##     params: list
+##     setup_data: function
+##     setup_params: function
+##     shrink: TRUE
+##     train_scales: function
+##     vars: function
+##     super:  &lt;ggproto object: Class FacetWrap, Facet, gg&gt; 
+##   ..$ plot_env   :&lt;environment: R_GlobalEnv&gt; 
+##   ..$ labels     :List of 3
+##   .. ..$ x     : chr &quot;mpg&quot;
+##   .. ..$ y     : chr &quot;wt&quot;
+##   .. ..$ colour: chr &quot;cyl&quot;
+##   ..- attr(*, &quot;class&quot;)= chr [1:2] &quot;gg&quot; &quot;ggplot&quot;
+##  - attr(*, &quot;class&quot;)= chr &quot;ggplot_built&quot;</code></pre>
+<p>As I started this project, I became frustrated trying to understand/navigate through the nested list-like structure of ggplot objects. As you can imagine, it isn’t an optimal approach to print out the structure everytime you want to checkout a particular element. Out of this frustration came an idea to build <a href="https://cpsievert.shinyapps.io/ggtree/">this tool</a> to help interact with and visualize this structure. Thankfully, my wonderful GSoC mentor <a href="http://sugiyama-www.cs.titech.ac.jp/~toby/">Toby Dylan Hocking</a> agreed that this project could bring value to the ggplot2 community and encouraged me to pursue it.</p>
+<p>By default, this tool presents a <a href="http://bl.ocks.org/mbostock/4339184">radial Reingold–Tilford Tree</a> of this nested list structure, but also has options to use the <a href="http://bl.ocks.org/mbostock/4339083">collapsable</a> or <a href="http://bl.ocks.org/mbostock/4339184">cartesian</a> versions. It also leverages the <a href="https://github.com/trestletech/shinyAce">shinyAce</a> package which allows users to send arbitrary ggplot2 code to a <a href="http://shiny.rstudio.com/">shiny</a> server thats evaluate the results and re-renders the visuals. I’m quite happy with the results as I think this tool is a great way to quickly grasp the internal building blocks of ggplot(s). Please share your thoughts below!</p>

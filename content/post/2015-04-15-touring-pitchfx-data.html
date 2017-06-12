@@ -1,0 +1,50 @@
+---
+title: "Touring PITCHf/x Data"
+date: "2015-04-15"
+categories: [Baseball, R]
+---
+
+
+
+<p>If you haven’t read them already, go check out Brian’s <a href="https://baseballwithr.wordpress.com/2015/01/11/pitch-classification-with-mclust/">great</a> <a href="https://baseballwithr.wordpress.com/2015/02/22/pitch-classification-with-k-means-clustering/">posts</a> on pitch classification and cluster analysis. I particularly like his argument that our goal should be to “Identify all the pitches that can reasonably be classified as ‘different’ from one another”. Grouping observations into similar sets is a very common task in <a href="http://en.wikipedia.org/wiki/Unsupervised_learning">unsupervised settings</a> where a response variable of interest is either unknown or doesn’t exist. There are a mind-boggling number of different methods for “learning” the “best” grouping and Brian has gracefully covered two of them (k-means and model based clustering). Here I’ll present yet another approach that relies on human perception and our ability to recognize patterns.</p>
+<p>In Brian’s post on model based clustering, he visually inspected the fit of the model in the data space with <code>mclust::coordProj()</code>. This approach is limited in the sense that we can only verify how the model fits onto a scatterplot(s) between two numeric variables, but the whole data space is a higher dimensional beast. Although we are visually limited to 3 dimensions, we can still dynamically explore projections of data in high dimensions in such a way that allows us to construct a mental model of the entire space (commonly referred to as touring multidimensional data).</p>
+<p>There are many ways to tour multidimensional data. The most common are the <em>grand</em> tour and the <em>guided</em> tour. The grand tour interpolates through random projections of the data whereas the guided tour progresses through “interesting” projections. In this post, I’ll keep things simple, and we’ll take a grand tour of Mariano Rivera’s pitches from 2011.</p>
+<pre class="r"><code>data(pitches, package = &quot;pitchRx&quot;)
+rivera &lt;- subset(pitches, pitcher_name == &quot;Mariano Rivera&quot;)</code></pre>
+<p>When I say a grand tour walks through random projections, I really mean that it goes through random <a href="http://en.wikipedia.org/wiki/Linear_combination">linear combinations</a> of all the variables that we give it (subject to some constraints). This is important since this implies that we can’t include categorical variables in the tour. Let’s use the same numeric variables that Brian did when examining Mark Buerhle’s pitches:</p>
+<pre class="r"><code>vars &lt;- c(&quot;start_speed&quot;, &quot;break_y&quot;, &quot;break_angle&quot;, &quot;break_length&quot;)
+rivera_num &lt;- rivera[names(rivera) %in% vars]
+# ensure these variables are numeric
+rivera_num[] &lt;- lapply(rivera_num, as.numeric)</code></pre>
+<p>With the <a href="http://www.jstatsoft.org/v40/i02/paper"><strong>tourr</strong></a> package, it’s really easy to perform the grand tour (although, I’ve had problems running this code inside of RStudio, so you may want to run this outside of RStudio):</p>
+<pre class="r"><code>library(tourr)
+animate(rivera_num, grand_tour(), display_xy())</code></pre>
+<p>We can actually mimic this functionality and make the results easier to share using <a href="https://github.com/tdhock/animint"><strong>animint</strong></a>. In fact, I’ve provided a <a href="https://gist.github.com/cpsievert/4673815529b7a1e6c1aa">convenience function</a> for creating tours of PITCHf/x data called <code>pitch_tour()</code>. By default, <code>pitch_tour()</code> will use MLBAM’s pitch type classification for the point color.</p>
+<pre class="r"><code>devtools::source_gist(&quot;4673815529b7a1e6c1aa&quot;)
+pitch_tour(rivera)</code></pre>
+<p>If you view the result <a href="http://cpsievert.github.io/baseballR/20150415/rivera">here</a> (best viewed with Chrome), you’ll notice that the projection begins with <code>break_y</code> on the y-axis and <code>start_speed</code> on the x-axis. There appears to be 4-5 very distinct groups/clusters of pitches along the <code>break_y</code> axis (I’ll return to this shortly). As the tour progresses through the random projections, you should also notice that MLBAM’s classification is almost entirely determined by the <code>break_angle</code> (that is, we could draw a line orthogonal to the <code>break_angle</code> axis that separates red points from blue points):</p>
+<pre class="r"><code>library(ggplot2)
+rivera$break_angle &lt;- as.numeric(rivera$break_angle)
+ggplot(rivera, aes(x = break_angle, fill = pitch_type)) + 
+  geom_density(alpha = 0.2)</code></pre>
+<p><a href="https://baseballwithr.files.wordpress.com/2015/04/density.png"><img src="https://baseballwithr.files.wordpress.com/2015/04/density.png?w=300" alt="density" width="300" height="243" class="alignnone size-medium wp-image-1344" /></a></p>
+<pre class="r"><code>rivera$mlbam_type &lt;- cut(rivera$break_angle, c(-100, 0, 100))
+with(rivera, table(mlbam_type, pitch_type))</code></pre>
+<pre><code>          pitch_type
+mlbam_type    FC  FF
+  (-100,0]   775   4
+  (0,100]     14 119</code></pre>
+<p>However, given what we’ve seen in the tour, splitting on <code>break_y</code> is clearly better if our goal is to produce the most “distinct” grouping (that is, most separated from one another in the data space). In fact, <a href="http://cpsievert.github.io/baseballR/20150415/rivera-mbc">a model based clustering mostly agrees with our visual intuition</a>:</p>
+<pre class="r"><code>m &lt;- mclust::Mclust(rivera_num)
+rivera_num$classification &lt;- m$classification
+pitch_tour(rivera_num, color_by = &quot;classification&quot;, out_dir = &quot;rivera-mbc&quot;)</code></pre>
+<p>Of course, Rivera doesn’t have anywhere near 8 different pitch types. The point here is that the cluster analysis is fooled by the “discreteness” of <code>break_y</code>. Rivera’s <code>break_y</code> only varies from 23.6 to 24.0 and the precision of <code>break_y</code> measurements only goes to the tenth place. Whenever the ratio of precision to range for a numerical variable is this large, it is bound to cause problems, so we should to remove it from consideration for Rivera. Interestingly, Mark Buerhle’s <code>break_y</code> data is similar to Rivera’s, but the <a href="http://cpsievert.github.io/baseballR/20150415/mark-mbc">model based clustering approach doesn’t get fooled as badly</a>. I suppose that is due to that fact that Mark has a higher number of actual types are more spread out in the data space.</p>
+<pre class="r"><code>mark &lt;- read.csv(&quot;http://www.brianmmills.com/uploads/2/3/9/3/23936510/markb2013.csv&quot;)
+table(mark$break_y)</code></pre>
+<pre><code>23.6 23.7 23.8 23.9   24 
+  24  521 2128  668   27 </code></pre>
+<pre class="r"><code>mark_num &lt;- mark[names(mark) %in% vars]
+mark_num[] &lt;- lapply(mark_num, as.numeric)
+m2 &lt;- mclust::Mclust(mark_num)
+mark_num$classification &lt;- m2$classification
+pitch_tour(mark_num, color_by = &quot;classification&quot;, out_dir = &quot;mark-mbc&quot;)</code></pre>

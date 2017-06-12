@@ -1,0 +1,103 @@
+# TODO: change to https://cpsievert.me ?
+baseurl = "/"
+relativeurls = true
+languageCode = "en-us"
+title = "The personal website of Carson Sievert"
+theme = "hugo-lithium-theme"
+googleAnalytics = "UA-60116966-2"
+# TODO: just enable comments on blog posts?
+#disqusShortname = "cpsievert"
+ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
+RSSLink = true
+
+# NOTE: the .html extension was added to support "legacy" links
+[permalinks]
+    post = "/:year/:month/:day/:slug.html"
+
+
+[[menu.main]]
+    name = "Consulting"
+    url = "/consulting/"
+    weight = 1
+
+[[menu.main]]
+    name = "Blog"
+    url = "/post/"
+    weight = 2
+
+[[menu.main]]
+    name = "Talks"
+    url = "/talkz/"
+    weight = 3
+    
+[[menu.main]]
+    name = "Software"
+    url = "/software/"
+    weight = 4
+
+[[menu.main]]
+    name = "About"
+    url = "/about/"
+    weight = 5
+
+[params]
+    description = "The personal website of Carson Sievert"
+
+    # options for highlight.js (version, additional languages, and theme)
+    highlightjsVersion = "9.11.0"
+    highlightjsCDN = "//cdn.bootcss.com"
+    highlightjsLang = ["r", "yaml"]
+    highlightjsTheme = "github"
+
+    MathJaxCDN = "//cdn.bootcss.com"
+    MathJaxVersion = "2.7.1"
+    
+    [params.logo]
+      url = "/img/logo.png"
+      width = 100
+      height = 100
+      alt = "Logo"
+      
+      
+[[params.social]]
+  icon = "pencil-square-o"
+  icon_pack = "fa"
+  link = "https://carsonsievert.typeform.com/to/FGtIgd"
+  text = "Hire me"
+
+[[params.social]]
+  icon = "money"
+  icon_pack = "fa"
+  link = "https://patreon.com/cpsievert"
+  text = "Support me"
+  
+[[params.social]]
+  icon = "twitter"
+  icon_pack = "fa"
+  link = "https://twitter.com/cpsievert"
+  text = "Twitter"
+  
+[[params.social]]
+  icon = "github"
+  icon_pack = "fa"
+  link = "https://github.com/cpsievert"
+  text = "GitHub"  
+  
+[[params.social]]
+  icon = "vimeo"
+  icon_pack = "fa"
+  link = "https://vimeo.com/cpsievert"
+  text = "Vimeo"
+  
+[[params.social]]
+  icon = "envelope"
+  icon_pack = "fa"
+  link = "mailto:cpsievert1@gmail.com"
+  text = "Email"
+
+  
+[[params.social]]
+  icon = "rss"
+  icon_pack = "fa"
+  link = "index.xml"
+  text = "RSS"

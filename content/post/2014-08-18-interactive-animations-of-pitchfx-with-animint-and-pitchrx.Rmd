@@ -1,0 +1,7 @@
+---
+title: "Interactive animations of PITCHf/x with animint and pitchRx"
+date: "2014-08-18"
+categories: [Baseball, R]
+---
+
+See <https://cpsievert.github.io/baseballR/20140818/>

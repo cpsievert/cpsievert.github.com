@@ -1,0 +1,100 @@
+---
+title: "pitchRx, meet openWAR"
+date: "2014-06-30"
+categories: [Baseball, R]
+---
+
+
+
+<p>Both <a href="https://github.com/cpsievert/pitchRx">pitchRx</a> and <a href="https://github.com/beanumber/openWAR">openWAR</a> scrape Gameday data, but are quite different in their implementation. This post will help expose those differences and show how to combine them to make <code>1 + 1 &gt; 2</code>.</p>
+<div id="similaritiesdifferences-between-openwar-and-pitchrx" class="section level2">
+<h2>Similarities/differences between openWAR and pitchRx</h2>
+<p>Both openWAR and pitchRx can obtain so-called “play-by-play” Gameday data, but provide it in a different format. One reason for this difference is due to pitchRx’s agnostic approach to the type of analysis you’d like to perform. It simply returns data in a collection of tables that closely resembles the <a href="http://gd2.mlb.com/components/game/mlb/year_2011/month_04/day_04/gid_2011_04_04_minmlb_nyamlb_1/inning/inning_all.xml">raw form</a>. On the other hand, openWAR returns the play-by-play data in a format which is convenient for computing openWAR estimates. Fortunately, I think this format is quite useful for a wide variety of problems and enhances a <a href="http://baseballwithr.wordpress.com/2014/03/24/422/">PITCHf/x database created using pitchRx</a>.</p>
+<p>On a side note, the data format returned by <code>openWAR::getData</code> <em>could</em> be produced from tables returned by <code>scrape</code>, but it’s not easy (the ‘atbat’, ‘runner’, ‘action’, ‘hip’, and ‘player’ tables collectively contain the same info). So, in effect, it does not add new data to a pitchRx database, but it can dramatically simplify certain queries (e.g. searching for PITCHf/x by catcher, shortstop, center fielder, etc). Before “Adding openWAR data to your PITCHf/x database” (the last section below), I’ll explain in detail how to acquire play-by-play data for a particular set of games since both pitchRx and openWAR have this capability. Along the way, we’ll also learn how to merge openWAR’s play-by-play data with pitchRx pitch-by-pitch data.</p>
+</div>
+<div id="game-specific-data-acquistion" class="section level2">
+<h2>Game specific data acquistion</h2>
+<p>Just like <code>pitchRx::scrape</code>, <code>openWAR::getData</code> can acquire data from any set of games using MLBAM’s gameday identifiers. pitchRx comes prepackaged will all the available game identifiers which we can use to query a specific set of games over an extended period of time. To understand how this works, let’s take a look at the format of these identifiers.</p>
+<div id="understanding-gameday-identifiers" class="section level3">
+<h3>Understanding gameday identifiers</h3>
+<pre class="r"><code>library(pitchRx)
+data(gids, package = &quot;pitchRx&quot;)
+head(gids)</code></pre>
+<pre class="r"><code>## [1] &quot;gid_2008_02_26_fanbbc_phimlb_1&quot; &quot;gid_2008_02_26_flsbbc_detmlb_1&quot;
+## [3] &quot;gid_2008_02_26_umibbc_flomlb_1&quot; &quot;gid_2008_02_26_umwbbc_nynmlb_1&quot;
+## [5] &quot;gid_2008_02_27_cinmlb_phimlb_1&quot; &quot;gid_2008_02_27_colmlb_chamlb_1&quot;</code></pre>
+<p>All the ids have the general form ‘gid_YYYY_MM_DD_xxxaaa_yyybbb_1’. The ‘gid_’ part of this identifier is the only part that does not change from game to game. Most identifiers will end with ’_1’, but only if it is not the second game of a doubleheader. The ‘YYYY’, ‘MM’ and ‘DD’ parts are numeric representations of the year, month and day (respectively). The ‘xxx’ part is an abbreviation for the away team name and the ‘aaa’ part is an abbreviation of the away team’s league. The same goes for the ‘yyybbb’ part except this abbreviation is for the home team. As you can see from the output above, some of these identifiers correspond to preseason games (the regular season doesn’t usually begin until the start of April).</p>
+</div>
+<div id="using-regular-expressions" class="section level3">
+<h3>Using regular expressions</h3>
+<p><a href="http://www.fon.hum.uva.nl/praat/manual/Regular_expressions_2__Quantifiers.html">Regular expressions</a> are useful for extracting a particular set of gameday identifiers since they allows us to search for patterns in a set of strings. For instance, this regular expression would match every Twins home game in 2013:</p>
+<pre class="r"><code>reg.ex &lt;- &quot;2013_[0-9]{2}_[0-9]{2}_[a-z]{6}_minmlb&quot;</code></pre>
+<p>For those not familiar with regular expressions, the <code>[0-9]{2}</code> bit says “any two numbers may go here” and the <code>[a-z]{6}</code> bit says “any six letters (from the Roman alphabet) may go here”. Remember that <code>gids</code> contains preseason, regular season and postseason games. So, if by “every home game” we really meant “every <em>regular season</em> home game”, we can easily restrict to games in April through September (if we change <code>[0-9]+</code> to <code>0[4-9]</code> in the month slot).</p>
+<pre class="r"><code>home &lt;- &quot;2013_0[4-9]_[0-9]{2}_[a-z]{6}_minmlb&quot;</code></pre>
+<p>Now, to use this expression to obtain the relevant <code>gids</code>, we can use the base <code>R</code> function <code>grepl</code> (or <code>grep</code>). <code>grepl</code> returns a logical vector the same length the object it is searching. A particular element of that vector will be <code>TRUE</code> if and only if the regular expression found a match. Thus, we can extract the relevant elements of <code>gids</code> by passing this logical vector to R’s <code>[</code> operator like so:</p>
+<pre class="r"><code>reg.home &lt;- gids[grepl(home, gids)]</code></pre>
+<p>Let’s do the same thing for away games so that we have every Twins’s regular season game from 2013.</p>
+<pre class="r"><code>reg.away &lt;- gids[grepl(&quot;2013_0[4-9]_[0-9]{2}_minmlb_[a-z]{6}&quot;, gids)]
+reg.season &lt;- c(reg.home, reg.away)
+length(reg.season)</code></pre>
+</div>
+<div id="not-all-identifiers-are-created-equal" class="section level3">
+<h3>Not all identifiers are created equal</h3>
+<p>According to <code>reg.season</code>, the Twin’s played 167 regular season games. This is clearly more than the usual 162 games that we would expect. Just for investigative purposes, I’ll search my PITCHf/x database to find out which of these games were not considered “Final”.</p>
+<pre class="r"><code>library(dplyr)
+db &lt;- src_sqlite(&quot;~/pitchfx/pitchRx.sqlite3&quot;)
+games &lt;- tbl(db, &quot;game&quot;) %&gt;% select(gameday_link, status) %&gt;% 
+  filter(status != &quot;Final&quot;) %&gt;% collect()
+subset(games, gameday_link %in% sub(&quot;gid_&quot;, &quot;&quot;, reg.season))</code></pre>
+<pre class="r"><code>## Source: local data frame [5 x 2]
+## 
+##                   gameday_link    status
+## 324 2013_04_14_nynmlb_minmlb_1 Postponed
+## 328 2013_04_17_anamlb_minmlb_1 Postponed
+## 333 2013_04_19_minmlb_chamlb_1 Postponed
+## 334 2013_04_22_miamlb_minmlb_1 Postponed
+## 350 2013_06_07_minmlb_wasmlb_1 Postponedminor</code></pre>
+<p>These “Postponed” games would explain the discrepancy between the length of <code>reg.season</code> and the true length of the regular season. Fortunately, both <code>pitchRx::scrape</code> and <code>openWAR::getData</code> are smart enough to “ignore” this issue when collecting play-by-play and/or PITCHf/x data. In fact, if we navigate to the gameday page specific to <a href="http://gd2.mlb.com/components/game/mlb/year_2013/month_04/day_14/gid_2013_04_14_nynmlb_minmlb_1/">gid_2013_04_14_nynmlb_minmlb_1</a>, we’ll see that the ‘inning’ directory where play-by-play and PITCHf/x would appear is missing.</p>
+</div>
+<div id="combining-forces" class="section level3">
+<h3>Combining forces</h3>
+<p>At this point, once we have the gameday identifiers of interest, it is very simple to use <code>openWAR::getData</code> and/or <code>pitchRx::scrape</code> to obtain data for these specific games. Just for the sake of not abusing MLBAM’s website, I’ll acquire data from just the first two regular season games.</p>
+<pre class="r"><code>plays &lt;- openWAR::getData(gameIds = reg.season[1:2])
+dat &lt;- pitchRx::scrape(game.ids = reg.season[1:2])</code></pre>
+<p>The data returned by <code>openWAR::getData</code> could be seen as a replacement of sorts to the ‘atbat’ table returned by <code>pitchRx::scrape</code>. Both of them have one atbat per record (meaning the atbat order and gameday identifier columns together form a <a href="http://en.wikipedia.org/wiki/Unique_key">unique key</a>). Before we merge openWAR’s play-by-play data with pitchRx’s pitch-by-pitch data, we’ll have to clean up a few of the column names.</p>
+<pre class="r"><code># Get column names to match (needed in order to join play-by-play &amp; pitch-by-pitch)
+names(plays) &lt;- sub(&quot;ab_num&quot;, &quot;num&quot;, names(plays))
+names(plays) &lt;- sub(&quot;gameId&quot;, &quot;gameday_link&quot;, names(plays))
+# There are two set of &#39;x&#39; and &#39;y&#39; columns that mean two different things
+# Let&#39;s rename the pitch location &#39;x&#39; and &#39;y&#39; to &#39;old_x&#39; and &#39;old_y&#39; since
+# these are pitch locations under the &#39;old&#39; Gameday coordinate system
+names(dat$pitch) &lt;- sub(&quot;^x$&quot;, &quot;old_x&quot;, names(dat$pitch))
+names(dat$pitch) &lt;- sub(&quot;^y$&quot;, &quot;old_y&quot;, names(dat$pitch))
+pitchfx &lt;- dplyr::inner_join(dat$pitch, plays, by = c(&quot;num&quot;, &quot;gameday_link&quot;))</code></pre>
+<p>Now we can easily do stuff like search pitches by player positions. For instance, maybe you want to called strikes where Joe Mauer was playing catcher. The <code>pitchfx</code> data.frame currently has player IDs for each player position, but we can easily map those to player names using the <code>players</code> data.frame which comes with pitchRx.</p>
+<pre class="r"><code>data(players, package = &quot;pitchRx&quot;)
+names(players) &lt;- c(&quot;playerId.C&quot;, &quot;catcherName&quot;)
+pitchfx %&gt;%
+  dplyr::left_join(players, by = &quot;playerId.C&quot;) %&gt;%
+  filter(catcherName == &quot;Joe Mauer&quot;) %&gt;%
+  filter(des == &quot;Called Strike&quot;) %&gt;%
+  strikeFX() + facet_wrap( ~ stand) + 
+  theme_bw() + coord_equal()</code></pre>
+<p><img src="/post/images/minor.png" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="adding-openwar-data-to-your-pitchfx-database" class="section level2">
+<h2>Adding openWAR data to your PITCHf/x database</h2>
+<p>If you have a PITCHf/x database that was obtained using pitchRx, it’s pretty simple to add openWAR’s play-by-play data to your database.</p>
+<pre class="r"><code>db &lt;- src_sqlite(&quot;~/pitchfx/pitchRx.sqlite3&quot;)
+# Acquire 2008 play-by-play data
+dat08 &lt;- openWAR::getData(start = &quot;2008-01-01&quot;, end = &quot;2009-01-01&quot;)
+# Creates new table named &#39;openWAR&#39; in database with 08 data
+pitchRx::export(db$con, value = dat08, name = &quot;openWAR&quot;)
+# Acquire 2009 play-by-play
+dat09 &lt;- openWAR::getData(start = &quot;2009-01-01&quot;, end = &quot;2010-01-01&quot;)
+# Appends 09 data to the &#39;openWAR&#39; table
+pitchRx::export(db$con, value = dat09, name = &quot;openWAR&quot;)
+# Keep repeating this process...</code></pre>
+<p>To query your database with your newly added openWAR table, you can follow the principles outlined <a href="http://baseballwithr.wordpress.com/2014/04/13/modifying-and-querying-a-pitchfx-database-with-dplyr/">here</a> (replacing the ‘atbat’ table with the ‘openWAR’ table)</p>
+</div>

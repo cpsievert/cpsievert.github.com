@@ -1,0 +1,89 @@
+---
+title: "A probabilistic model for interpreting strike-zone expansion"
+date: "2014-10-21"
+categories: [Baseball, R]
+---
+
+
+
+<p>To welcome <a href="http://www.brianmmills.com/">Brian</a> to the team, I made this post as a tribute to his work on PITCHf/x and home plate umpire decision making. Very recently, there was a <a href="http://www.washingtonpost.com/blogs/wonkblog/wp/2014/10/01/baseball-teams-arent-scoring-runs-and-it-isnt-just-about-steroids/">swarm</a> <a href="http://online.wsj.com/articles/scoring-in-baseball-is-down-blame-the-umpires-1412114614?tesla=y">of</a> <a href="http://www.theatlantic.com/entertainment/archive/2014/09/baseball-offensive-drought-and-camera-technology/379443/">news</a> <a href="http://www.thedailybeast.com/cheats/2014/10/01/umpires-behind-shrinking-baseball-scores.html">articles</a> quoting him regarding the <a href="http://www.washingtonpost.com/wp-apps/imrs.php?src=http://img.washingtonpost.com/blogs/wonkblog/files/2014/10/Baseball-runs.png&amp;w=1484">decline in runs scored in recent years</a>. According to Brian, roughly 40% of that decline can be attributed to the expansion of the strike-zone (the WSJ <a href="http://online.wsj.com/news/interactive/COUNT1001?ref=SB11791489885250284008304580186391024013752">spruced up</a> his <a href="http://cdn.theatlantic.com/newsroom/img/posts/2014/09/Screen_Shot_2014_09_03_at_11.00.07_AM/7db3f2b97.png">original</a> <a href="http://cdn.theatlantic.com/newsroom/img/posts/2014/09/Screen_Shot_2014_09_03_at_10.59.57_AM/33b677674.png">visualization</a> of that expansion). Those graphics provide evidence of an expanding strike-zone, but <strong>my goal here is to estimate how much more likely a called strike is now compared to when PITCHf/x was first introduced (given pitch location and other important covariates such as batting stance).</strong></p>
+<p>I must point out that Brian actually informed me that this type of quantification was possible using generalized additive models (gams). He has a couple of <a href="http://princeofslides.blogspot.com/2010/12/rethinking-loess-for-binomial-response.html">nice</a> blog <a href="http://princeofslides.blogspot.com/2013/07/advanced-sab-r-metrics-parallelization.html">posts</a> justifying the use of gams (and the R package <a href="http://cran.r-project.org/web/packages/mgcv/index.html">mgcv</a> ) to model a binomial response over the strike-zone. In fact, these posts inspired the eventual incorporation of the <code>model</code> argument to the <code>pitchRx::strikeFX</code> function (we’ll use this function later on).</p>
+<div id="first-grab-some-data" class="section level2">
+<h2>First, grab some data</h2>
+<p>To reach the goal stated above, I first grabbed every <em>called</em> strike and ball during the 2008 and 2014 seasons from my <a href="http://baseballwithr.wordpress.com/2014/03/24/422/">PITCHf/x database</a>. This restricts us to cases where the home plate umpire has to make a decision between strike and ball. Also, pitches with missing horizontal (px) and vertical (pz) locations were thrown out (these are mostly preseason games anyway).</p>
+<pre class="r"><code>library(dplyr)
+db &lt;- src_sqlite(&quot;~/pitchfx/pitchRx.sqlite&quot;)
+pitches &lt;- tbl(db, &quot;pitch&quot;) %&gt;%
+  select(px, pz, des, count, num, gameday_link) %&gt;%
+  filter(px != &quot;NA&quot; &amp; pz != &quot;NA&quot;) %&gt;%
+  filter(des %in% c(&quot;Called Strike&quot;, &quot;Ball&quot;)) %&gt;%
+  # Create a 0-1 indicator for strike (the response)
+  mutate(strike = as.numeric(des == &quot;Called Strike&quot;))</code></pre>
+<p>Some other important co-variates that we should include in our model are recorded on the at-bat level, so we join that information accordingly before executing the query and pulling the data into R.</p>
+<pre class="r"><code>atbats &lt;- tbl(db, &quot;atbat&quot;) %&gt;%
+  mutate(year = substr(date, 5L, -4L)) %&gt;%
+  select(stand, b_height, num, year, gameday_link) %&gt;%
+  filter(year %in% c(&quot;2008&quot;, &quot;2014&quot;))
+# Join these &#39;tables&#39; together into one table
+tab &lt;- left_join(x = pitches, y = atbats, 
+                 by = c(&quot;gameday_link&quot;, &quot;num&quot;))
+# Execute the database query and bring data into R
+dat &lt;- collect(tab)</code></pre>
+<p>To keep <strong>mgcv</strong> happy, any character variables that we put in the model need to be coerced into factors:</p>
+<pre class="r"><code>dat$stand &lt;- factor(dat$stand)
+dat$count &lt;- factor(dat$count)
+dat$year &lt;- factor(dat$year)</code></pre>
+</div>
+<div id="the-model" class="section level2">
+<h2>The Model</h2>
+<p>In addition to batter stance, <a href="http://baseballwithr.wordpress.com/2014/04/21/are-umpires-becoming-less-merciful/">the pitch count can also affect the likelihood of a called strike</a>. For this reason, I fit a model with a different surface (the surface estimates the probability of a called strike) for each unique combination of stand, year, and count (that gives us 2 x 2 x 12 = 48 surfaces)! Note that since I am using <code>interaction(stand, year, count)</code> for both intercept and ‘by’ variables, both the ‘average’ height and ‘wiggliness’ of each surface are allowed to be different. If you’d like to know more details about gams, the <code>help(gam.models)</code> is a decent place to start.</p>
+<pre class="r"><code>library(mgcv)
+m &lt;- bam(strike ~ interaction(stand, year, count) +
+            s(px, pz, by = interaction(stand, year, count)),
+          data = dat, family = binomial(link = &#39;logit&#39;))</code></pre>
+</div>
+<div id="results" class="section level2">
+<h2>Results</h2>
+<p>Since there are so many coefficients, I’ll spare you the output of <code>summary(m1)</code>. In short, the coefficients for the smoothed term are all highly significant while the coefficients for the intercept term are significant when the number of balls is 0 or 1. More interestingly, we can estimate the probability of a called strike at any arbitrary location and study how this estimate changes given different co-variate values. For example, the probability of a called strike for a knee-high first pitch thrown in middle of plate to a left hander in 2008 is 0.37, but in 2014, that probability increases 0.86. In other words, for this example, umpires were 2.3 times more likely to call a strike in 2014 than in 2008.</p>
+<pre class="r"><code>df &lt;- data.frame(px = c(0, 0), pz = c(1.7, 1.7), 
+                 stand = c(&quot;L&quot;, &quot;L&quot;), count = c(&quot;0-0&quot;, &quot;0-0&quot;), 
+                 year = c(&quot;2008&quot;, &quot;2014&quot;))
+predict(m, newdata = df, type = &quot;response&quot;)</code></pre>
+<pre><code>##         1         2 
+## 0.3707173 0.8617872 </code></pre>
+<p>The code and plot below is meant to extend this type of comparison in probabilities for every possible count. More specifically, the y-axis represents the probability of a called strike for a knee-high first pitch thrown in middle of plate to a left hander and x-axis has the various pitch counts. The text in the middle of the plot represents how many times more likely a called strike is when going from 2008 to 2014. The plot indicates that as the number of strikes increases, the probability of a called strike decreases and the odds for a called strike in 2014 (against a called strike in 2008) increases. One other interesting thing here is that the number of strikes in a three ball count had a tremendous affect in 2008, but it no longer has much impact.</p>
+<pre class="r"><code>counts &lt;- rep(sort(unique(dat$count)), each = 2)
+n &lt;- length(counts)
+df2 &lt;- data.frame(px = rep(0, n), pz = rep(1.7, n), 
+                  stand = rep(&quot;L&quot;, n), count = counts,
+                  year = rep(c(&quot;2008&quot;, &quot;2014&quot;), n/2))
+df2$prob &lt;- as.numeric(predict(m, newdata = df2, 
+                               type = &quot;response&quot;))
+times &lt;- with(df2, tapply(prob, INDEX = count, 
+                          function(x) round(x[2]/x[1], 1)))
+y &lt;- with(df2, tapply(prob, INDEX = count, 
+                      function(x) (x[2] + x[1])/2))
+df3 &lt;- data.frame(count = row.names(times), 
+                  times = times, y = y)
+library(ggplot2)
+ggplot() + geom_point(data = df2, 
+                      aes(y = prob, x = count, color = year)) +
+  geom_text(data = df3, 
+            aes(y = y, x = count, label = times))</code></pre>
+<p><img src="/post/images/strike-plot.png" /><!-- --></p>
+<p>Instead of restricting focus to a single location, <code>strikeFX</code> provides a convenient way to plot entire surfaces as well as the difference between surfaces. In the function call below, we take each 2008 surface and subtract the corresponding 2014 surface. This reduces our original 48 surfaces to 24 differenced surfaces. These differenced surfaces estimate the difference in probability of a called strike in 2008 versus 2014 (in various scenarios). Notice how the difference in probability for a pitch at the knees is mostly around -0.5 (which is consistent with the earlier plot).</p>
+<pre class="r"><code>strikeFX(dat, model = m, density1 = list(year = &quot;2008&quot;),
+          density2 = list(year = &quot;2014&quot;), 
+          layer = facet_grid(count ~ stand)) +
+      coord_equal()</code></pre>
+<p><img src="/post/images/strike-plot2.png" /><!-- --></p>
+<p>Not only are called strikes at the knees 2-4 times <em>more</em> likely in 2014, but called strikes up-and-in or up-and-away are much <em>less</em> likely nowadays. I also find it interesting that in two-strike counts, the probability of a called strike in 2014 is more likely for a large portion of the strike-zone (most noticeably at the top of the strike-zone).</p>
+</div>
+<div id="aside-on-technical-issues" class="section level2">
+<h2>Aside on technical issues</h2>
+<p>In the past, I’ve used <code>bam</code> to fit models in parallel with this much data on my local machine following <a href="http://princeofslides.blogspot.com/2013/07/advanced-sab-r-metrics-parallelization.html">Brian’s advice</a>. I got tired of it hogging my machine’s resources for many hours at a time, so I decided to look into using <a href="https://www.digitalocean.com/">DigitalOcean</a> to run these jobs on a cloud server (<a href="https://education.github.com/pack">students can get $100 in free credit</a>). To be honest, it was painful to set up, but it should pay off in the long run. Part of the problem is that Ubuntu wants to kill R when it eats up too much memory. There must be a way to prevent the system from killing R, but I’m no Linux guru, so my solution was to scale the server up to 256GB of RAM just to fit the model.</p>
+<div id="update" class="section level4">
+<h4>Update</h4>
+<p>Thanks to Hadley Wickham <a href="https://twitter.com/hadleywickham/status/525306378215100416">for recognizing</a> that <a href="https://www.digitalocean.com/community/tutorials/how-to-add-swap-on-ubuntu-12-04">a swap file</a> will help prevent the R process from being killed.</p>
+</div>
+</div>
