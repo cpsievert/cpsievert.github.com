@@ -1,3 +1,14 @@
-/blog           /post
-/plotly_book/*  https://plotly-book.cpsievert.me/:splat
-/talks/*        https://talks.cpsievert.me/:splat
+/blog                  /post
+/home                  /
+/plotly_book/*         https://plotly-book.cpsievert.me/:splat
+/talks/*               https://talks.cpsievert.me/:splat
+
+/slides/*              https://slides.cpsievert.me/:splat
+/LDAvis/*              https://LDAvis.cpsievert.me/:splat
+/pitchRx/*             https://pitchRx.cpsievert.me/:splat
+/XML2R/*               https://XML2R.cpsievert.me/:splat
+/2016election/*        https://2016election.cpsievert.me/:splat
+/pedestrians/*         https://pedestrians.cpsievert.me/:splat
+/plotcon17/*           https://plotcon17.cpsievert.me/:splat
+/plotly-test-table/*   https://plotly-test-table.cpsievert.me/:splat
+/phd-thesis/*          https://phd-thesis.cpsievert.me/:splat
