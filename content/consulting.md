@@ -10,7 +10,7 @@ I help my clients[^1] turn data into insight and actionable software products. F
 
 I'm also available to run [workshops](/talkz) to help train and educate your team about free and open source data science (I'm a trusted [RStudio instructor](https://www.rstudio.com/instructors/)!)
 
-[Read more about my process](/2017/06/12/developing-data-science-tools.html) or contact me if you're interested in working together:
+[Read more about my process](/2017/06/13/developing-tools-for-exploratory-visualization.html) or contact me if you're interested in working together:
 
 <iframe width="100%" height="300" frameborder="0" src="https://carsonsievert.typeform.com/to/FGtIgd?typeform-embed=embed-widget" ></iframe>
 
