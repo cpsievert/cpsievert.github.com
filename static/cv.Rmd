@@ -15,11 +15,13 @@ output:
 
 ## Education
 
-* Ph.D. in Statistics, Iowa State University \hfill (Spring 2017)
+* Ph.D. in Statistics, Iowa State University \hfill (2016)
     * __Thesis__: Interfacing R with Web Technologies for Interactive Statistical Graphics and Computing with Data ([preprint](https://github.com/cpsievert/phd-thesis))
-* M.S. in Statistics, Iowa State University \hfill (May 2013)
+    
+* M.S. in Statistics, Iowa State University \hfill (2013)
 	  * __Thesis:__ Tools for Collecting and Analyzing MLB PITCHf/x Data ([slides](http://cpsievert.github.io/slides/pitchRx/CC/))
-* Double B.A. in Mathematics & Economics, Saint John's University \hfill (May 2010)
+	  
+* Double B.A. in Mathematics & Economics, Saint John's University \hfill (2010)
 
 ## Experience
   
