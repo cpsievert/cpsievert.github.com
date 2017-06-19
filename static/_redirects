@@ -1,8 +1,9 @@
 /blog                  /post
 /home                  /
 /plotly_book/*         https://plotly-book.cpsievert.me/:splat
-/talks/*               https://talks.cpsievert.me/:splat
 
+/projects/*            https://projects.cpsievert.me/:splat
+/talks/*               https://talks.cpsievert.me/:splat
 /slides/*              https://slides.cpsievert.me/:splat
 /LDAvis/*              https://LDAvis.cpsievert.me/:splat
 /pitchRx/*             https://pitchRx.cpsievert.me/:splat
