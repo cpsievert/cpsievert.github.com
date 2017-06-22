@@ -54,6 +54,12 @@ Most of my (open-source) software projects are made available as [R](https://cra
 
 [The R package **pitchRx**](https://github.com/cpsievert/pitchRx) provides a programming interface for acquiring and visualizing MLBAM's PITCHf/x data. [This publication](https://journal.r-project.org/archive/2014-1/sievert.pdf) describes the project and its use cases.
 
+
+<a href="https://github.com/cpsievert/pitchRx" target="_blank">
+  <img src="https://i.imgur.com/VdrqgOp.png" width="100%" height="400" />
+</a>
+
+
 ## 2016election
 
 [The **2016election** repository](https://github.com/cpsievert/2016election) provides some R scripts to collect and visualize outcomes from the 2016 US presidential election. The video below shows some insights gleaned from this data:

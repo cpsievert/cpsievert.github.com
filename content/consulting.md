@@ -8,7 +8,7 @@ I offer a wide variety of consulting services via Sievert Consulting LLC. This p
 
 I help my clients[^1] turn data into insight and actionable software products. For example, I've built interactive web pages to visualize [housing/census](/software/#bcviz) data, monitor [disease outbreak](/software/#zikar), and recognize patterns in [foot traffic](/software/#pedestrians). I've also created programming interfaces that [earth scientists](/software/#plotdap), [sabermetricans](/software/#pitchrx), and other [analysts](/software/#plotly) use to do their work more efficiently. I pull on this experience to *rapidly* build prototypes for my clients -- which ensures we don't waste time on the wrong problem.
 
-I'm also available to run [workshops](/talkz) to help train and educate your team about free and open source data science (I'm a trusted [RStudio instructor](https://www.rstudio.com/instructors/)!)
+I'm also available to run [workshops](/workshopz) to help educate you and/or your team about practical R tools for data analysis and visualization (I'm a certified [NYC Data Science](http://nycdatascience.com/about-us/) and [RStudio](https://www.rstudio.com/instructors/) instructor).
 
 [Read more about my process](/2017/06/13/developing-tools-for-exploratory-visualization.html) or contact me if you're interested in working together:
 

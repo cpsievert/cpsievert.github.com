@@ -17,28 +17,33 @@ RSSLink = true
 
 [[menu.main]]
     name = "Consulting"
-    url = "/consulting/"
+    url = "/consulting"
     weight = 1
 
 [[menu.main]]
-    name = "Blog"
-    url = "/post/"
+    name = "Software"
+    url = "/software"
     weight = 2
 
 [[menu.main]]
-    name = "Talks"
-    url = "/talkz/"
+    name = "Workshops"
+    url = "/workshopz"
     weight = 3
-    
-[[menu.main]]
-    name = "Software"
-    url = "/software/"
-    weight = 4
 
 [[menu.main]]
-    name = "About"
-    url = "/about/"
+    name = "Talks"
+    url = "/talkz"
+    weight = 4
+    
+[[menu.main]]
+    name = "Blog"
+    url = "/post"
     weight = 5
+
+[[menu.main]]
+    name = "About/CV"
+    url = "/about"
+    weight = 6
 
 [params]
     description = "The personal website of Carson Sievert"
