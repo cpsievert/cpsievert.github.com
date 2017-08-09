@@ -64,17 +64,23 @@ RSSLink = true
       alt = "Logo"
       
       
-[[params.social]]
-  icon = "pencil-square-o"
-  icon_pack = "fa"
-  link = "https://carsonsievert.typeform.com/to/FGtIgd"
-  text = "Hire me"
+#[[params.social]]
+#  icon = "pencil-square-o"
+#  icon_pack = "fa"
+#  link = "https://carsonsievert.typeform.com/to/FGtIgd"
+#  text = "Hire me"
+
+#[[params.social]]
+#  icon = "money"
+#  icon_pack = "fa"
+#  link = "https://patreon.com/cpsievert"
+#  text = "Support me"
 
 [[params.social]]
-  icon = "money"
+  icon = "envelope"
   icon_pack = "fa"
-  link = "https://patreon.com/cpsievert"
-  text = "Support me"
+  link = "mailto:cpsievert1@gmail.com"
+  text = "Email"
   
 [[params.social]]
   icon = "twitter"
@@ -93,12 +99,6 @@ RSSLink = true
   icon_pack = "fa"
   link = "https://vimeo.com/cpsievert"
   text = "Vimeo"
-  
-[[params.social]]
-  icon = "envelope"
-  icon_pack = "fa"
-  link = "mailto:cpsievert1@gmail.com"
-  text = "Email"
 
   
 [[params.social]]

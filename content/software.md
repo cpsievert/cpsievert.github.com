@@ -14,7 +14,7 @@ Most of my (open-source) software projects are made available as [R](https://cra
 
 ## bcviz
 
-[The R package **bcviz**](https://github.com/cpsievert/housing-data-challenge-plotly) provides a web application for exploring housing and census data in British Columbia. The video below shows how to navigate the application.
+[The R package **bcviz**](https://github.com/cpsievert/housing-data-challenge-plotly) provides a (shiny) web application for exploring housing and census data in British Columbia. The video below shows how to navigate the application.
 
 <iframe src="https://player.vimeo.com/video/207379729" width="100%" height="450" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
@@ -26,7 +26,7 @@ Most of my (open-source) software projects are made available as [R](https://cra
 
 ## zikar
 
-[The R package **zikar**](https://github.com/cpsievert/zikar) provides a web application for exploring publicly available Zika virus data. The video below shows how the app may be used to compare the distribution of confirmed/suspected cases overall versus inside the map.
+[The R package **zikar**](https://github.com/cpsievert/zikar) provides a (shiny) web application for exploring publicly available Zika virus data. The video below shows how the app may be used to compare the distribution of confirmed/suspected cases overall versus inside the map.
 
 <iframe src="https://player.vimeo.com/video/190610577" width="100%" height="400" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
@@ -46,7 +46,7 @@ Most of my (open-source) software projects are made available as [R](https://cra
 
 ## eechidna
 
-[The R package **eechidna**](https://github.com/ropenscilabs/eechidna) provides a web application for exploring Australian election and census data. The video below shows how the app may be used to compare the demographics (and geographic location) of electorates that elected a liberal party representative (in green) versus a labour representive (orange).
+[The R package **eechidna**](https://github.com/ropenscilabs/eechidna) provides a (shiny) web application for exploring Australian election and census data. The video below shows how the app may be used to compare the demographics (and geographic location) of electorates that elected a liberal party representative (in green) versus a labour representive (orange).
 
 <iframe src="https://player.vimeo.com/video/221026626" width="100%" height="400" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
